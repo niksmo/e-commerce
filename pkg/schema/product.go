@@ -88,16 +88,30 @@ func ProductV1Avro() avro.Schema {
 	return s
 }
 
-func ProductV1AvroEncodeFn() func(v any) ([]byte, error) {
-	return func(v any) ([]byte, error) {
-		s := ProductV1Avro()
-		return avro.Marshal(s, v)
-	}
+const ProductFilterSchemaTextV1 = `{
+	"type": "record",
+	"namespace": "products",
+	"name": "product_filter",
+	"fields" : [
+		{"name": "name", "type": "string"},
+		{"name": "blocked", "type": "boolean"}
+	]
+}`
+
+type ProductFilterV1 struct {
+	Name    string `avro:"name"`
+	Blocked bool   `avro:"blocked"`
 }
 
-func ProductV1AvroDecodeFn() func([]byte, any) error {
-	return func(data []byte, v any) error {
-		s := ProductV1Avro()
-		return avro.Unmarshal(s, data, v)
+func ProductFilterV1Avro() avro.Schema {
+	s, err := avro.Parse(ProductFilterSchemaTextV1)
+	if err != nil {
+		err = fmt.Errorf(
+			"failed to parse ProductFilterSchemaTextV1,"+
+				" contact with package dev team: %w",
+			err,
+		)
+		panic(err)
 	}
+	return s
 }

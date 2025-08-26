@@ -92,17 +92,17 @@ func TestProductV1(t *testing.T) {
 			StoreID:        "testStoreID",
 		}
 
-		var productSchema avro.Schema
+		var pSchema avro.Schema
 
 		require.NotPanics(t, func() {
-			productSchema = ProductV1Avro()
+			pSchema = ProductV1Avro()
 		})
 
-		data, err := avro.Marshal(productSchema, vMarshal)
+		data, err := avro.Marshal(pSchema, vMarshal)
 		require.NoError(t, err)
 
 		var vUnmarshal ProductV1
-		err = avro.Unmarshal(productSchema, data, &vUnmarshal)
+		err = avro.Unmarshal(pSchema, data, &vUnmarshal)
 		require.NoError(t, err)
 
 		assert.Equal(t, vMarshal.ProductID, vUnmarshal.ProductID)
@@ -132,4 +132,26 @@ func TestProductV1(t *testing.T) {
 
 		fmt.Printf("UnvarshaledValue: %+v\n", vUnmarshal)
 	})
+}
+
+func TestProductFilterV1(t *testing.T) {
+	vMarshal := ProductFilterV1{
+		Name:    "testProductName",
+		Blocked: true,
+	}
+
+	var fSchema avro.Schema
+
+	require.NotPanics(t, func() {
+		fSchema = ProductFilterV1Avro()
+	})
+
+	data, err := avro.Marshal(fSchema, vMarshal)
+	require.NoError(t, err)
+
+	var vUnmarshal ProductFilterV1
+	err = avro.Unmarshal(fSchema, data, &vUnmarshal)
+	require.NoError(t, err)
+
+	assert.Equal(t, vMarshal, vUnmarshal)
 }
