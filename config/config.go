@@ -12,15 +12,15 @@ import (
 
 type brokerConfig struct {
 	SeedBrokers        []string `mapstructure:"seed_brokers"`
-	CARootCert         string   `mapstructure:"ca_root_cert"`
-	User               string   `mapstructure:"user"`
-	Pass               string   `mapstructure:"pass"`
 	SchemaRegistryURLs []string `mapstructure:"schema_registry_urls"`
+	ShopProductsTopic  string   `mapstructure:"shop_products_topic"`
+	ClientEventTopic   string   `mapstructure:"client_events_topic"`
 }
 
 type Config struct {
-	LogLevel slog.Level   `mapstructure:"log_level"`
-	Broker   brokerConfig `mapstructure:"broker"`
+	LogLevel       slog.Level   `mapstructure:"log_level"`
+	HTTPServerAddr string       `mapstructure:"http_server_addr"`
+	Broker         brokerConfig `mapstructure:"broker"`
 }
 
 func Load() Config {
@@ -61,11 +61,12 @@ func die(err error) {
 func print(c Config) {
 	tamplate := `
 	LogLevel=%q
+	HTTPServerAddr=%q
 	SeedBrokers=%q
-	CARootCert=%q
-	User=%q
-	Pass=%q
 	SchemaRegistryURLs=%q
+	ShopProductsTopic=%q
+	ClientEventTopic=%q
+
 
 `
 	fmt.Println("Loaded config:")
@@ -73,9 +74,8 @@ func print(c Config) {
 		strings.TrimLeft(tamplate, "\n"),
 		c.LogLevel,
 		c.Broker.SeedBrokers,
-		c.Broker.CARootCert,
-		c.Broker.User,
-		c.Broker.Pass,
 		c.Broker.SchemaRegistryURLs,
+		c.Broker.ShopProductsTopic,
+		c.Broker.ClientEventTopic,
 	)
 }

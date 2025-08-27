@@ -34,5 +34,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/viper v1.20.1
 	github.com/twmb/franz-go v1.19.5
+	github.com/twmb/franz-go/pkg/sr v1.5.0
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

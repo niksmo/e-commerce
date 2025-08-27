@@ -10,7 +10,7 @@ import (
 )
 
 var _ port.ProductsSender = (*Service)(nil)
-var _ port.ProductsFilterRule = (*Service)(nil)
+var _ port.ProductsFilterSetter = (*Service)(nil)
 var _ port.ProductsSaver = (*Service)(nil)
 
 type Service struct {

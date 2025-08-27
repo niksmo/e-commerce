@@ -14,12 +14,6 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
-type ConsumerClient interface {
-	PollFetches(context.Context) kgo.Fetches
-	CommitUncommittedOffsets(context.Context) error
-	Close()
-}
-
 type ConsumerOpt func(*consumerOpts) error
 
 func ConsumerClientOpt(cl ConsumerClient) ConsumerOpt {

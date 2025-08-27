@@ -10,7 +10,7 @@ type ProductsSender interface {
 	SendProducts(context.Context, []domain.Product) error
 }
 
-type ProductsFilterRule interface {
+type ProductsFilterSetter interface {
 	SetRule(context.Context, domain.ProductFilter) error
 }
 

@@ -10,75 +10,102 @@ import (
 	"github.com/niksmo/e-commerce/internal/core/port"
 	"github.com/niksmo/e-commerce/pkg/schema"
 	"github.com/twmb/franz-go/pkg/kgo"
+	"github.com/twmb/franz-go/pkg/sr"
 )
 
-var _ port.ProductsProducer = (*Producer)(nil)
+var _ port.ProductsProducer = (*ProductsProducer)(nil)
 
-type ProducerClient interface {
-	Close()
-	ProduceSync(ctx context.Context, rs ...*kgo.Record) kgo.ProduceResults
-}
+type ProductsProducerOpt func(*productsProducerOpts) error
 
-type ProducerOpt func(*producerOpts) error
-
-func ProducerClientOpt(cl ProducerClient) ProducerOpt {
-	return func(opts *producerOpts) error {
-		if cl != nil {
-			opts.cl = cl
-			return nil
+func ProductsProducerClientOpt(
+	ctx context.Context, seedBrokers []string, topic string,
+) ProductsProducerOpt {
+	return func(opts *productsProducerOpts) error {
+		cl, err := kgo.NewClient(
+			kgo.SeedBrokers(seedBrokers...),
+			kgo.DefaultProduceTopicAlways(),
+			kgo.DefaultProduceTopic(topic),
+		)
+		if err != nil {
+			return err
 		}
-		return errors.New("producer client is nil")
-	}
-}
 
-func ProducerEncodeFnOpt(encodeFn func(v any) ([]byte, error)) ProducerOpt {
-	return func(opts *producerOpts) error {
-		if encodeFn != nil {
-			opts.encodeFn = encodeFn
-			return nil
+		if err := cl.Ping(ctx); err != nil {
+			return err
 		}
-		return errors.New("producer encode func in nil")
+		opts.cl = cl
+		return nil
 	}
 }
 
-type producerOpts struct {
-	cl       ProducerClient
-	encodeFn func(v any) ([]byte, error)
+func ProductsProducerEncoderOpt(
+	ctx context.Context, sc SchemaCreater, subject string,
+) ProductsProducerOpt {
+	return func(opts *productsProducerOpts) error {
+		if sc == nil {
+			return errors.New("producer schema creater is nil")
+		}
+		ss, err := sc.CreateSchema(
+			ctx, subject, sr.Schema{
+				Type:   sr.TypeAvro,
+				Schema: schema.ProductSchemaTextV1,
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		serde := new(sr.Serde)
+		serde.Register(
+			ss.ID,
+			schema.ProductV1{},
+			sr.EncodeFn(schema.AvroEncodeFn(schema.ProductV1Avro())),
+		)
+		opts.encoder = serde
+		return nil
+	}
 }
 
-type Producer struct {
-	cl       ProducerClient
-	encodeFn func(v any) ([]byte, error)
+type productsProducerOpts struct {
+	cl      ProducerClient
+	encoder Encoder
 }
 
-func NewProducer(opts ...ProducerOpt) Producer {
-	const op = "NewProducer"
+type ProductsProducer struct {
+	cl      ProducerClient
+	encoder Encoder
+}
 
-	if len(opts) == 0 {
-		panic(fmt.Errorf("%s: options not set", op)) // develop mistake
+func NewProductsProducer(
+	opts ...ProductsProducerOpt,
+) (ProductsProducer, error) {
+	const op = "NewProductsProducer"
+
+	if len(opts) != 2 {
+		panic(fmt.Errorf("%s: too few options", op)) // develop mistake
 	}
 
-	var options producerOpts
+	var options productsProducerOpts
 	for _, opt := range opts {
 		if err := opt(&options); err != nil {
-			panic(err) // develop mistake
+			return ProductsProducer{}, fmt.Errorf("%s: %w", op, err)
 		}
 	}
-	return Producer{options.cl, options.encodeFn}
+	return ProductsProducer{options.cl, options.encoder}, nil
 }
 
-func (p Producer) Close() {
-	const op = "Producer.Close"
+func (p ProductsProducer) Close() {
+	const op = "ProductsProducer.Close"
 	log := slog.With("op", op)
 	log.Info("closing producer...")
 	p.cl.Close()
 	log.Info("producer is closed")
 }
 
-func (p Producer) ProduceProducts(
+func (p ProductsProducer) ProduceProducts(
 	ctx context.Context, ps []domain.Product,
 ) error {
-	const op = "Producer.ProduceProducts"
+	const op = "ProductsProducer.ProduceProducts"
 
 	if err := ctx.Err(); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
@@ -96,14 +123,14 @@ func (p Producer) ProduceProducts(
 	return nil
 }
 
-func (p Producer) createRecords(
+func (p ProductsProducer) createRecords(
 	products []domain.Product,
 ) (rs []*kgo.Record, err error) {
-	const op = "Producer.createRecord"
+	const op = "ProductsProducer.createRecord"
 
 	for _, product := range products {
 		s := p.toSchema(product)
-		v, err := p.encodeFn(s)
+		v, err := p.encoder.Encode(s)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -114,8 +141,10 @@ func (p Producer) createRecords(
 	return rs, nil
 }
 
-func (p Producer) produce(ctx context.Context, rs []*kgo.Record) error {
-	const op = "Producer.produce"
+func (p ProductsProducer) produce(
+	ctx context.Context, rs []*kgo.Record,
+) error {
+	const op = "ProductsProducer.produce"
 	res := p.cl.ProduceSync(ctx, rs...)
 	if err := res.FirstErr(); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
@@ -123,7 +152,9 @@ func (p Producer) produce(ctx context.Context, rs []*kgo.Record) error {
 	return nil
 }
 
-func (p Producer) toSchema(product domain.Product) (s schema.ProductV1) {
+func (p ProductsProducer) toSchema(
+	product domain.Product,
+) (s schema.ProductV1) {
 	s.ProductID = product.ProductID
 	s.Name = product.Name
 	s.SKU = product.SKU
