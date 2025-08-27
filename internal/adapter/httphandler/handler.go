@@ -83,10 +83,10 @@ func (h ProductsHandler) productsToDomain(
 }
 
 type FilterHandler struct {
-	pFilter port.ProductsFilter
+	pFilter port.ProductsFilterRule
 }
 
-func RegisterFilter(mux *http.ServeMux, pFilter port.ProductsFilter) {
+func RegisterFilter(mux *http.ServeMux, pFilter port.ProductsFilterRule) {
 	h := FilterHandler{pFilter}
 
 	mux.HandleFunc("POST /v1/filter/products", h.PostProductsRule)

@@ -10,14 +10,22 @@ type ProductsSender interface {
 	SendProducts(context.Context, []domain.Product) error
 }
 
-type ProductsFilter interface {
+type ProductsFilterRule interface {
 	SetRule(context.Context, domain.ProductFilter) error
 }
 
+type ProductsSaver interface {
+	SaveProducts(context.Context, []domain.Product) error
+}
+
 type ProductsProducer interface {
-	Produce(context.Context, []domain.Product) error
+	ProduceProducts(context.Context, []domain.Product) error
 }
 
 type ProductsFilterProducer interface {
-	Produce(context.Context, domain.ProductFilter) error
+	ProduceFilter(context.Context, domain.ProductFilter) error
+}
+
+type ProductsStorage interface {
+	StoreProducts(context.Context, []domain.Product) error
 }
