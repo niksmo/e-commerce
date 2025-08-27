@@ -2,12 +2,10 @@ log_level: 0
 http_server_addr: 127.0.0.1:8000
 broker:
   seed_brokers:
-    - 127.0.0.1:19092
-    - 127.0.0.1:29092
-    - 127.0.0.1:39092
+    - 127.0.0.1:19094
+    - 127.0.0.1:29094
+    - 127.0.0.1:39094
   schema_registry_urls:
-    - http://127.0.0.1:19192
-    - http://127.0.0.1:29192
-    - http://127.0.0.1:39192
+    - http://127.0.0.1:8081
   shop_products_topic: shop-products
   client_events_topic: client-events

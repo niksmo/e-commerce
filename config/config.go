@@ -14,7 +14,7 @@ type brokerConfig struct {
 	SeedBrokers        []string `mapstructure:"seed_brokers"`
 	SchemaRegistryURLs []string `mapstructure:"schema_registry_urls"`
 	ShopProductsTopic  string   `mapstructure:"shop_products_topic"`
-	ClientEventTopic   string   `mapstructure:"client_events_topic"`
+	ClientEventsTopic  string   `mapstructure:"client_events_topic"`
 }
 
 type Config struct {
@@ -65,7 +65,7 @@ func print(c Config) {
 	SeedBrokers=%q
 	SchemaRegistryURLs=%q
 	ShopProductsTopic=%q
-	ClientEventTopic=%q
+	ClientEventsTopic=%q
 
 
 `
@@ -73,9 +73,10 @@ func print(c Config) {
 	fmt.Printf(
 		strings.TrimLeft(tamplate, "\n"),
 		c.LogLevel,
+		c.HTTPServerAddr,
 		c.Broker.SeedBrokers,
 		c.Broker.SchemaRegistryURLs,
 		c.Broker.ShopProductsTopic,
-		c.Broker.ClientEventTopic,
+		c.Broker.ClientEventsTopic,
 	)
 }

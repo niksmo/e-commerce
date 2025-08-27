@@ -46,12 +46,12 @@ func main() {
 	<-sigCtx.Done()
 	slog.Info("application is closing...")
 
-	timeoutCtx, cancelTimeout := context.WithTimeout(
+	shutdownCtx, cancelTimeout := context.WithTimeout(
 		context.Background(), 10*time.Second,
 	)
 	defer cancelTimeout()
 
-	if err := httpServer.Shutdown(timeoutCtx); err != nil {
+	if err := httpServer.Shutdown(shutdownCtx); err != nil {
 		slog.Error("failed to shutdown http server gracefully")
 	}
 
