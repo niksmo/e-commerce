@@ -28,6 +28,6 @@ type (
 )
 
 type ProductFilter struct {
-	Name    string
-	Blocked bool
+	ProductName string
+	Blocked     bool
 }

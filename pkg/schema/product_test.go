@@ -136,8 +136,8 @@ func TestProductV1(t *testing.T) {
 
 func TestProductFilterV1(t *testing.T) {
 	vMarshal := ProductFilterV1{
-		Name:    "testProductName",
-		Blocked: true,
+		ProductName: "testProductName",
+		Blocked:     true,
 	}
 
 	var fSchema avro.Schema

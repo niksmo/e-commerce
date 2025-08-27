@@ -93,14 +93,14 @@ const ProductFilterSchemaTextV1 = `{
 	"namespace": "products",
 	"name": "product_filter",
 	"fields" : [
-		{"name": "name", "type": "string"},
+		{"name": "product_name", "type": "string"},
 		{"name": "blocked", "type": "boolean"}
 	]
 }`
 
 type ProductFilterV1 struct {
-	Name    string `avro:"name"`
-	Blocked bool   `avro:"blocked"`
+	ProductName string `avro:"product_name"`
+	Blocked     bool   `avro:"blocked"`
 }
 
 func ProductFilterV1Avro() avro.Schema {

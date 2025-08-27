@@ -1,11 +1,23 @@
 package port
 
-import "github.com/niksmo/e-commerce/internal/core/domain"
+import (
+	"context"
+
+	"github.com/niksmo/e-commerce/internal/core/domain"
+)
 
 type ProductsSender interface {
-	SendProducts([]domain.Product) error
+	SendProducts(context.Context, []domain.Product) error
+}
+
+type ProductsFilter interface {
+	SetRule(context.Context, domain.ProductFilter) error
 }
 
 type ProductsProducer interface {
-	Produce([]domain.Product) error
+	Produce(context.Context, []domain.Product) error
+}
+
+type ProductsFilterProducer interface {
+	Produce(context.Context, domain.ProductFilter) error
 }

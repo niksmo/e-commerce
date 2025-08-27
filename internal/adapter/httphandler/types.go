@@ -27,7 +27,7 @@ type (
 	}
 )
 
-type ProductFilter struct {
+type FilterRule struct {
 	Name    string `json:"name"`
 	Blocked bool   `json:"blocked"`
 }
