@@ -104,6 +104,7 @@ func (h FilterHandler) PostProductsRule(
 	}
 
 	pf := h.toProductFilter(rule)
+
 	err := h.pFilter.SetRule(r.Context(), pf)
 	if err != nil {
 		http.Error(

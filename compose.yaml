@@ -51,7 +51,7 @@ services:
         EXTERNAL:PLAINTEXT
       # KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true # DOTO: set to false after develop
       # ACL
       # KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       # KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: false
@@ -114,7 +114,7 @@ services:
         EXTERNAL:PLAINTEXT
       # KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true # DOTO: set to false after develop
       # ACL
       # KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       # KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: false
@@ -177,7 +177,7 @@ services:
         EXTERNAL:PLAINTEXT
       # KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true # DOTO: set to false after develop
       # ACL
       # KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       # KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: false

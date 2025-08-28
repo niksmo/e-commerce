@@ -36,6 +36,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	httphandler.RegisterProducts(mux, service)
+	httphandler.RegisterFilter(mux, service)
 
 	httpHandler := httphandler.AllowJSON(mux)
 
