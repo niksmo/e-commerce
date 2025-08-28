@@ -26,6 +26,7 @@ func ProductsProducerClientOpt(
 			kgo.DefaultProduceTopicAlways(),
 			kgo.DefaultProduceTopic(topic),
 			kgo.RequiredAcks(kgo.AllISRAcks()),
+			kgo.AllowAutoTopicCreation(),
 		)
 		if err != nil {
 			return err

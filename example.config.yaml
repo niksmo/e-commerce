@@ -1,4 +1,4 @@
-log_level: 0
+log_level: -4
 http_server_addr: 127.0.0.1:8000
 broker:
   seed_brokers:
@@ -8,4 +8,5 @@ broker:
   schema_registry_urls:
     - http://127.0.0.1:8081
   shop_products_topic: shop-products
+  products_filter_topic: products-filter
   client_events_topic: client-events

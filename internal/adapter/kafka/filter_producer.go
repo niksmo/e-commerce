@@ -17,7 +17,7 @@ var _ port.ProductFilterProducer = (*ProductFilterProducer)(nil)
 
 type ProductFilterProducerOpt func(*productFilterProducerOpts) error
 
-func FilterProducerClientOpt(
+func ProductFilterProducerClientOpt(
 	ctx context.Context, seedBrokers []string, topic string,
 ) ProductFilterProducerOpt {
 	return func(opts *productFilterProducerOpts) error {
@@ -26,6 +26,7 @@ func FilterProducerClientOpt(
 			kgo.DefaultProduceTopicAlways(),
 			kgo.DefaultProduceTopic(topic),
 			kgo.RequiredAcks(kgo.AllISRAcks()),
+			kgo.AllowAutoTopicCreation(),
 		)
 		if err != nil {
 			return err
@@ -60,7 +61,7 @@ func ProductFilterProducerEncoderOpt(
 		serde.Register(
 			ss.ID,
 			schema.ProductFilterV1{},
-			sr.EncodeFn(schema.AvroEncodeFn(schema.ProductV1Avro())),
+			sr.EncodeFn(schema.AvroEncodeFn(schema.ProductFilterV1Avro())),
 		)
 		opts.encoder = serde
 		return nil
@@ -128,13 +129,13 @@ func (p ProductFilterProducer) createRecord(
 	fv domain.ProductFilter,
 ) (rs kgo.Record, err error) {
 	const op = "ProductFilterProducer.createRecord"
-	s := p.toSchema(fv)
 
+	s := p.toSchema(fv)
 	v, err := p.encoder.Encode(s)
 	if err != nil {
 		return kgo.Record{}, fmt.Errorf("%s: %w", op, err)
 	}
-	r := kgo.Record{Value: v}
+	r := kgo.Record{Key: []byte(s.ProductName), Value: v}
 
 	return r, nil
 }

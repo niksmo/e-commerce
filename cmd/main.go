@@ -27,12 +27,27 @@ func main() {
 	initLogger(cfg.LogLevel)
 	slog.Info("application is running")
 
-	sr := createSRClient(cfg.Broker.SchemaRegistryURLs)
+	schemaRegistry := createSRClient(cfg.Broker.SchemaRegistryURLs)
 
-	pp := createProductsProducer(sigCtx, cfg.Broker.SeedBrokers,
-		cfg.Broker.ShopProductsTopic, sr)
+	productsProducer := createProductsProducer(
+		sigCtx,
+		cfg.Broker.SeedBrokers,
+		cfg.Broker.ShopProductsTopic,
+		schemaRegistry,
+	)
 
-	service := service.New(pp, nil, nil)
+	productFilterProducer := createProductFilterProducer(
+		sigCtx,
+		cfg.Broker.SeedBrokers,
+		cfg.Broker.ProductsFilterTopic,
+		schemaRegistry,
+	)
+
+	service := service.New(
+		productsProducer,
+		productFilterProducer,
+		nil,
+	)
 
 	mux := http.NewServeMux()
 	httphandler.RegisterProducts(mux, service)
@@ -56,7 +71,8 @@ func main() {
 		slog.Error("failed to shutdown http server gracefully")
 	}
 
-	pp.Close()
+	productsProducer.Close()
+	productFilterProducer.Close()
 
 	slog.Info("application is closed")
 }
@@ -113,10 +129,27 @@ func createProductsProducer(
 	topic string,
 	sc kafka.SchemaCreater,
 ) kafka.ProductsProducer {
-	const op = "main.craeteProductsProducer"
+	const op = "main.createProductsProducer"
 	p, err := kafka.NewProductsProducer(
 		kafka.ProductsProducerClientOpt(ctx, seedBrokers, topic),
 		kafka.ProductsProducerEncoderOpt(ctx, sc, topic+"-value"),
+	)
+	if err != nil {
+		die(op, err)
+	}
+	return p
+}
+
+func createProductFilterProducer(
+	ctx context.Context,
+	seedBrokers []string,
+	topic string,
+	sc kafka.SchemaCreater,
+) kafka.ProductFilterProducer {
+	const op = "main.createProductFilterProducer"
+	p, err := kafka.NewProductFilterProducer(
+		kafka.ProductFilterProducerClientOpt(ctx, seedBrokers, topic),
+		kafka.ProductFilterProducerEncoderOpt(ctx, sc, topic+"-value"),
 	)
 	if err != nil {
 		die(op, err)
