@@ -24,6 +24,12 @@ type SchemaCreater interface {
 	) (sr.SubjectSchema, error)
 }
 
+type SchemaLookuperer interface {
+	LookupSchema(
+		ctx context.Context, subject string, s sr.Schema,
+	) (sr.SubjectSchema, error)
+}
+
 type Encoder interface {
 	Encode(v any) ([]byte, error)
 }

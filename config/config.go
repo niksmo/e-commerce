@@ -14,7 +14,8 @@ type brokerConfig struct {
 	SeedBrokers         []string `mapstructure:"seed_brokers"`
 	SchemaRegistryURLs  []string `mapstructure:"schema_registry_urls"`
 	ShopProductsTopic   string   `mapstructure:"shop_products_topic"`
-	ProductsFilterTopic string   `mapstructure:"products_filter_topic"`
+	FilterProductStream string   `mapstructure:"filter_product_stream"`
+	FilterProductGroup  string   `mapstructure:"filter_product_group"`
 	ClientEventsTopic   string   `mapstructure:"client_events_topic"`
 }
 
@@ -66,7 +67,8 @@ func print(c Config) {
 	SeedBrokers=%q
 	SchemaRegistryURLs=%q
 	ShopProductsTopic=%q
-	ProductsFilterTopic=%q
+	FilterProductStream=%q
+	FilterProductGroup=%q
 	ClientEventsTopic=%q
 
 
@@ -79,7 +81,8 @@ func print(c Config) {
 		c.Broker.SeedBrokers,
 		c.Broker.SchemaRegistryURLs,
 		c.Broker.ShopProductsTopic,
-		c.Broker.ProductsFilterTopic,
+		c.Broker.FilterProductStream,
+		c.Broker.FilterProductGroup,
 		c.Broker.ClientEventsTopic,
 	)
 }

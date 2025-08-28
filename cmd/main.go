@@ -39,7 +39,7 @@ func main() {
 	productFilterProducer := createProductFilterProducer(
 		sigCtx,
 		cfg.Broker.SeedBrokers,
-		cfg.Broker.ProductsFilterTopic,
+		cfg.Broker.FilterProductStream,
 		schemaRegistry,
 	)
 
