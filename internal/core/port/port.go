@@ -22,8 +22,8 @@ type ProductsProducer interface {
 	ProduceProducts(context.Context, []domain.Product) error
 }
 
-type ProductFilterEmitter interface {
-	EmitFilter(context.Context, domain.ProductFilter) error
+type ProductFilterProducer interface {
+	ProduceFilter(context.Context, domain.ProductFilter) error
 }
 
 type ProductsStorage interface {

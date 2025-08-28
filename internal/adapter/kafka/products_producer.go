@@ -25,6 +25,7 @@ func ProductsProducerClientOpt(
 			kgo.SeedBrokers(seedBrokers...),
 			kgo.DefaultProduceTopicAlways(),
 			kgo.DefaultProduceTopic(topic),
+			kgo.RequiredAcks(kgo.AllISRAcks()),
 		)
 		if err != nil {
 			return err
@@ -43,7 +44,7 @@ func ProductsProducerEncoderOpt(
 ) ProductsProducerOpt {
 	return func(opts *productsProducerOpts) error {
 		if sc == nil {
-			return errors.New("producer schema creater is nil")
+			return errors.New("schema creater is nil")
 		}
 		ss, err := sc.CreateSchema(
 			ctx, subject, sr.Schema{

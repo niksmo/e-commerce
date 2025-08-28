@@ -14,14 +14,14 @@ var _ port.ProductsFilterSetter = (*Service)(nil)
 var _ port.ProductsSaver = (*Service)(nil)
 
 type Service struct {
-	productsProducer     port.ProductsProducer
-	productFilterEmitter port.ProductFilterEmitter
-	productsStorage      port.ProductsStorage
+	productsProducer      port.ProductsProducer
+	productFilterProducer port.ProductFilterProducer
+	productsStorage       port.ProductsStorage
 }
 
 func New(
 	productsProducer port.ProductsProducer,
-	productsFilterProducer port.ProductFilterEmitter,
+	productsFilterProducer port.ProductFilterProducer,
 	productsStorage port.ProductsStorage,
 ) Service {
 	return Service{
@@ -60,7 +60,7 @@ func (s Service) SetRule(ctx context.Context, pf domain.ProductFilter) error {
 
 	log.Debug("started setting the rule")
 
-	err := s.productFilterEmitter.EmitFilter(ctx, pf)
+	err := s.productFilterProducer.ProduceFilter(ctx, pf)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
