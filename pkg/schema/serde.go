@@ -13,6 +13,11 @@ var (
 	ErrTooFewOpts = errors.New("too few options")
 )
 
+type Serde interface {
+	Encode(v any) ([]byte, error)
+	Decode(data []byte, v any) error
+}
+
 type serde struct {
 	avroSchema avro.Schema
 	srSerde    *sr.Serde
@@ -61,7 +66,7 @@ func SchemaIdentifierOpt(sc SchemaIdentifier) Opt {
 	}
 }
 
-func NewSerdeProductV1(ctx context.Context, opts ...Opt) (serde, error) {
+func NewSerdeProductV1(ctx context.Context, opts ...Opt) (Serde, error) {
 	const op = "NewSerdeProductV1"
 	return serdeConstructor(
 		ctx,
@@ -72,7 +77,7 @@ func NewSerdeProductV1(ctx context.Context, opts ...Opt) (serde, error) {
 	)
 }
 
-func NewSerdeProducFiltertV1(ctx context.Context, opts ...Opt) (serde, error) {
+func NewSerdeProducFiltertV1(ctx context.Context, opts ...Opt) (Serde, error) {
 	const op = "NewSerdeProductFilterV1"
 	return serdeConstructor(
 		ctx,
@@ -93,7 +98,7 @@ func serdeConstructor(
 	example any,
 	op string,
 	opts ...Opt,
-) (serde, error) {
+) (Serde, error) {
 	if !allRequiredOpts(opts) {
 		return serde{}, fmt.Errorf("%s: %w", op, ErrTooFewOpts)
 	}

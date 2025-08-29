@@ -2,161 +2,36 @@ package main
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"log/slog"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/niksmo/e-commerce/config"
-	"github.com/niksmo/e-commerce/internal/adapter/httphandler"
-	"github.com/niksmo/e-commerce/internal/adapter/kafka"
-	"github.com/niksmo/e-commerce/internal/core/service"
-	"github.com/twmb/franz-go/pkg/sr"
+	"github.com/niksmo/e-commerce/internal/app"
 )
 
+const closeTimeout = 5 * time.Second
+
+var signals = []os.Signal{
+	syscall.SIGINT,
+	syscall.SIGTERM,
+	syscall.SIGQUIT,
+}
+
 func main() {
-	sigCtx, closeApp := signalContext()
+	sigCtx, closeApp := signal.NotifyContext(context.Background(), signals...)
 	defer closeApp()
 
 	cfg := config.Load()
 
-	initLogger(cfg.LogLevel)
-	slog.Info("application is running")
+	service := app.New(sigCtx, cfg)
 
-	schemaRegistry := createSRClient(cfg.Broker.SchemaRegistryURLs)
-
-	productsProducer := createProductsProducer(
-		sigCtx,
-		cfg.Broker.SeedBrokers,
-		cfg.Broker.ShopProductsTopic,
-		schemaRegistry,
-	)
-
-	productFilterProducer := createProductFilterProducer(
-		sigCtx,
-		cfg.Broker.SeedBrokers,
-		cfg.Broker.FilterProductStream,
-		schemaRegistry,
-	)
-
-	service := service.New(
-		productsProducer,
-		productFilterProducer,
-		nil,
-	)
-
-	mux := http.NewServeMux()
-	httphandler.RegisterProducts(mux, service)
-	httphandler.RegisterFilter(mux, service)
-
-	httpHandler := httphandler.AllowJSON(mux)
-
-	httpServer := createHTTPServer(cfg.HTTPServerAddr, httpHandler)
-
-	go runHTTPServer(httpServer)
+	service.Run(closeApp)
 
 	<-sigCtx.Done()
-	slog.Info("application is closing...")
+	ctx, cancel := context.WithTimeout(context.Background(), closeTimeout)
+	defer cancel()
 
-	shutdownCtx, cancelTimeout := context.WithTimeout(
-		context.Background(), 10*time.Second,
-	)
-	defer cancelTimeout()
-
-	if err := httpServer.Shutdown(shutdownCtx); err != nil {
-		slog.Error("failed to shutdown http server gracefully")
-	}
-
-	productsProducer.Close()
-	productFilterProducer.Close()
-
-	slog.Info("application is closed")
-}
-
-func signalContext() (context.Context, context.CancelFunc) {
-	return signal.NotifyContext(
-		context.Background(),
-		syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT,
-	)
-}
-
-func initLogger(level slog.Leveler) {
-	opts := &slog.HandlerOptions{Level: level}
-	logger := slog.New(slog.NewJSONHandler(os.Stderr, opts))
-	slog.SetDefault(logger)
-}
-
-func createHTTPServer(addr string, h http.Handler) *http.Server {
-	h = http.TimeoutHandler(h, 5*time.Second, "unavailable")
-	return &http.Server{
-		Addr:              addr,
-		Handler:           h,
-		ReadHeaderTimeout: 5 * time.Second,
-		IdleTimeout:       2 * time.Second,
-	}
-}
-
-func runHTTPServer(s *http.Server) {
-	const op = "main.runHTTPServer"
-
-	if err := s.ListenAndServe(); err != nil {
-		if errors.Is(err, http.ErrServerClosed) {
-			return
-		}
-		fallDown(op, err)
-	}
-}
-
-func createSRClient(URLs []string) *sr.Client {
-	const op = "main.createSRClient"
-
-	cl, err := sr.NewClient(
-		sr.URLs(URLs...),
-	)
-	if err != nil {
-		fallDown(op, err)
-	}
-	return cl
-}
-
-func createProductsProducer(
-	ctx context.Context,
-	seedBrokers []string,
-	topic string,
-	sc kafka.SchemaCreater,
-) kafka.ProductsProducer {
-	const op = "main.createProductsProducer"
-	p, err := kafka.NewProductsProducer(
-		kafka.ProductsProducerClientOpt(ctx, seedBrokers, topic),
-		kafka.ProductsProducerEncoderOpt(ctx, sc, topic+"-value"),
-	)
-	if err != nil {
-		fallDown(op, err)
-	}
-	return p
-}
-
-func createProductFilterProducer(
-	ctx context.Context,
-	seedBrokers []string,
-	topic string,
-	sc kafka.SchemaCreater,
-) kafka.ProductFilterProducer {
-	const op = "main.createProductFilterProducer"
-	p, err := kafka.NewProductFilterProducer(
-		kafka.ProductFilterProducerClientOpt(ctx, seedBrokers, topic),
-		kafka.ProductFilterProducerEncoderOpt(ctx, sc, topic+"-value"),
-	)
-	if err != nil {
-		fallDown(op, err)
-	}
-	return p
-}
-
-func fallDown(op string, err error) {
-	panic(fmt.Errorf("%s: %w", op, err))
+	service.Close(ctx)
 }
