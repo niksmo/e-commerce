@@ -13,29 +13,24 @@ var (
 	ErrTooFewOpts = errors.New("too few options")
 )
 
-type Serde interface {
-	Encode(v any) ([]byte, error)
-	Decode(data []byte, v any) error
-}
-
-type serde struct {
+type Serde struct {
 	avroSchema avro.Schema
 	srSerde    *sr.Serde
 }
 
-func (s serde) Encode(v any) ([]byte, error) {
+func (s Serde) Encode(v any) ([]byte, error) {
 	return s.srSerde.Encode(v)
 }
 
-func (s serde) Decode(data []byte, v any) error {
+func (s Serde) Decode(data []byte, v any) error {
 	return s.srSerde.Decode(data, v)
 }
 
-func (s serde) encodeFn(v any) ([]byte, error) {
+func (s Serde) encodeFn(v any) ([]byte, error) {
 	return avro.Marshal(s.avroSchema, v)
 }
 
-func (s serde) decodeFn(data []byte, v any) error {
+func (s Serde) decodeFn(data []byte, v any) error {
 	return avro.Unmarshal(s.avroSchema, data, &v)
 }
 
@@ -100,28 +95,28 @@ func serdeConstructor(
 	opts ...Opt,
 ) (Serde, error) {
 	if !allRequiredOpts(opts) {
-		return serde{}, fmt.Errorf("%s: %w", op, ErrTooFewOpts)
+		return Serde{}, fmt.Errorf("%s: %w", op, ErrTooFewOpts)
 	}
 
 	var serdeOpts serdeOpts
 	for _, o := range opts {
 		if err := o(&serdeOpts); err != nil {
-			return serde{}, fmt.Errorf("%s: %w", op, err)
+			return Serde{}, fmt.Errorf("%s: %w", op, err)
 		}
 	}
 
 	avroSchema, err := avro.Parse(schemaText)
 	if err != nil {
-		return serde{}, fmt.Errorf("%s: %w", op, err)
+		return Serde{}, fmt.Errorf("%s: %w", op, err)
 	}
 
-	s := serde{avroSchema: avroSchema}
+	s := Serde{avroSchema: avroSchema}
 
 	srID, err := serdeOpts.si.DetermineID(
 		ctx, serdeOpts.subject, schemaText,
 	)
 	if err != nil {
-		return serde{}, fmt.Errorf("%s: %w", op, err)
+		return Serde{}, fmt.Errorf("%s: %w", op, err)
 	}
 
 	srSerde := new(sr.Serde)

@@ -58,6 +58,11 @@ type ConsumerClient interface {
 	Close()
 }
 
+type Serde interface {
+	Encoder
+	Decoder
+}
+
 type Encoder interface {
 	Encode(v any) ([]byte, error)
 }

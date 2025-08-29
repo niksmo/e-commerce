@@ -4,47 +4,59 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"strconv"
 
 	"github.com/lovoo/goka"
 	"github.com/niksmo/e-commerce/pkg/schema"
-	"github.com/twmb/franz-go/pkg/sr"
 )
 
 type FilterEventCodec struct {
-	serde *sr.Serde
+	serde Serde
 }
 
-func NewFilterEventCodec(
-	ctx context.Context, sl SchemaLookuperer, stream string,
-) (FilterEventCodec, error) {
-	const op = "NewFilterEventCodec"
-
-	ss, err := sl.LookupSchema(ctx, stream+"-value", sr.Schema{
-		Type:   sr.TypeAvro,
-		Schema: schema.ProductFilterSchemaTextV1,
-	})
-	if err != nil {
-		return FilterEventCodec{}, fmt.Errorf("%s: %w", op, err)
-	}
-
-	serde := new(sr.Serde)
-	serde.Register(
-		ss.ID,
-		schema.ProductFilterV1{},
-		sr.EncodeFn(schema.AvroEncodeFn(schema.ProductFilterV1Avro())),
-		sr.DecodeFn(schema.AvroDecodeFn(schema.ProductFilterV1Avro())),
-	)
-	return FilterEventCodec{serde}, nil
+func NewFilterEventCodec(s Serde) FilterEventCodec {
+	return FilterEventCodec{s}
 }
 
 func (c FilterEventCodec) Encode(v any) ([]byte, error) {
+	const op = "FilterEventCodec.Encode"
+	if _, ok := v.(schema.ProductFilterV1); !ok {
+		return nil, fmt.Errorf("%s: invalid value type", op)
+	}
 	return c.serde.Encode(v)
 }
 
 func (c FilterEventCodec) Decode(data []byte) (any, error) {
+	const op = "FilterEventCodec.Decode"
 	var s schema.ProductFilterV1
 	err := c.serde.Decode(data, &s)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
 	return s, err
+}
+
+type FilterValue bool
+
+type FilterValueCodec struct{}
+
+func (FilterValueCodec) Encode(v any) ([]byte, error) {
+	const op = "FilterValueCodec.Encode"
+	fv, ok := v.(FilterValue)
+	if !ok {
+		return nil, fmt.Errorf("%s: invalid value type", op)
+	}
+	data := strconv.AppendBool([]byte(nil), bool(fv))
+	return data, nil
+}
+
+func (FilterValueCodec) Decode(data []byte) (any, error) {
+	const op = "FilterValueCodec.Decode"
+	bv, err := strconv.ParseBool(string(data))
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	return FilterValue(bv), nil
 }
 
 type ProductFilterProcessor struct {
@@ -52,14 +64,14 @@ type ProductFilterProcessor struct {
 }
 
 func NewProductFilterProcessor(
-	seedBrokers []string, stream string, group string,
+	seedBrokers []string, stream string, group string, productFilterSerde Serde,
 ) (ProductFilterProcessor, error) {
 	const op = "NewProductFilterProcessor"
 	p := ProductFilterProcessor{}
 
 	gg := goka.DefineGroup(goka.Group(group),
-		goka.Input(goka.Stream(stream), new(BlockEventCodec), p.processFn),
-		goka.Persist(new(BlockValueCodec)),
+		goka.Input(goka.Stream(stream), NewFilterEventCodec(productFilterSerde), p.processFn),
+		goka.Persist(FilterValueCodec{}),
 	)
 
 	var opt goka.ProcessorOption

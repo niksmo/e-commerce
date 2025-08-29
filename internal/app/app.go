@@ -33,48 +33,54 @@ type coreService struct {
 }
 
 type App struct {
-	ctx        context.Context
-	cfg        config.Config
-	serdes     serdes
-	producers  producers
-	service    coreService
-	httpServer httphandler.HTTPServer
+	ctx         context.Context
+	cfg         config.Config
+	serdes      serdes
+	producers   producers
+	coreService service.Service
+	httpServer  httphandler.HTTPServer
 }
 
-func New(context context.Context, config config.Config) App {
+func New(context context.Context, config config.Config) *App {
 	app := App{ctx: context, cfg: config}
 
 	app.initLogger()
 	app.initSerdes()
 	app.initOutboundAdapters()
+	app.initCoreService()
 	app.initInboundAdapters()
 
-	return app
+	return &app
 }
 
-func (app App) Run(stopFn context.CancelFunc) {
+func (app *App) Run(stopFn context.CancelFunc) {
+	const op = "App.Run"
+	log := slog.With("op", op)
+
 	go app.httpServer.Run(stopFn)
 
-	slog.Info("application is running")
+	log.Info("application is running")
 }
 
-func (app App) Close(ctx context.Context) {
-	slog.Info("application is closing...")
+func (app *App) Close(ctx context.Context) {
+	const op = "App.Close"
+	log := slog.With("op", op)
+	log.Info("application is closing...")
 
 	app.httpServer.Close(ctx)
 	app.producers.products.Close()
 	app.producers.productFilter.Close()
 
-	slog.Info("application is closed")
+	log.Info("application is closed")
 }
 
-func (app App) initLogger() {
+func (app *App) initLogger() {
 	opts := &slog.HandlerOptions{Level: app.cfg.LogLevel}
 	logger := slog.New(slog.NewJSONHandler(os.Stderr, opts))
 	slog.SetDefault(logger)
 }
 
-func (app App) initSerdes() {
+func (app *App) initSerdes() {
 	const op = "App.initSerdes"
 	urls := app.cfg.Broker.SchemaRegistryURLs
 	ctx := app.ctx
@@ -107,7 +113,7 @@ func (app App) initSerdes() {
 	app.serdes.productFilter = productFilterSerde
 }
 
-func (app App) initOutboundAdapters() {
+func (app *App) initOutboundAdapters() {
 	const op = "App.initOutboundAdapters"
 
 	ctx := app.ctx
@@ -135,28 +141,25 @@ func (app App) initOutboundAdapters() {
 	app.producers.productFilter = productFilterProducer
 }
 
-func (app App) initCoreService() {
-	s := service.New(
+func (app *App) initCoreService() {
+	app.coreService = service.New(
 		app.producers.products,
 		app.producers.productFilter,
 		nil,
 	)
-	app.service.productsSender = s
-	app.service.productFilterSetter = s
-	app.service.productsSaver = s
 }
 
-func (app App) initInboundAdapters() {
+func (app *App) initInboundAdapters() {
 	addr := app.cfg.HTTPServerAddr
 	mux := http.NewServeMux()
-	httphandler.RegisterProducts(mux, app.service.productsSender)
-	httphandler.RegisterFilter(mux, app.service.productFilterSetter)
+	httphandler.RegisterProducts(mux, app.coreService)
+	httphandler.RegisterFilter(mux, app.coreService)
 
 	handler := httphandler.AllowJSON(mux)
 	httpServer := httphandler.NewHTTPServer(addr, handler)
 	app.httpServer = httpServer
 }
 
-func (app App) fallDown(op string, err error) {
+func (app *App) fallDown(op string, err error) {
 	panic(fmt.Errorf("%s: %w", op, err))
 }

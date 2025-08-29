@@ -40,6 +40,12 @@ func (s HTTPServer) Run(stopFn context.CancelFunc) {
 func (s HTTPServer) Close(ctx context.Context) {
 	const op = "HTTPServer.Close"
 	log := slog.With("op", op)
+
+	log.Info("closing http server...")
+
 	err := s.httpServer.Shutdown(ctx)
-	log.Error("failed to shutdown gracefully", "err", err)
+	if err != nil {
+		log.Error("failed to shutdown gracefully", "err", err)
+	}
+	log.Info("http server is closed")
 }
