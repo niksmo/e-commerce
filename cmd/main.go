@@ -107,7 +107,7 @@ func runHTTPServer(s *http.Server) {
 		if errors.Is(err, http.ErrServerClosed) {
 			return
 		}
-		die(op, err)
+		fallDown(op, err)
 	}
 }
 
@@ -118,7 +118,7 @@ func createSRClient(URLs []string) *sr.Client {
 		sr.URLs(URLs...),
 	)
 	if err != nil {
-		die(op, err)
+		fallDown(op, err)
 	}
 	return cl
 }
@@ -135,7 +135,7 @@ func createProductsProducer(
 		kafka.ProductsProducerEncoderOpt(ctx, sc, topic+"-value"),
 	)
 	if err != nil {
-		die(op, err)
+		fallDown(op, err)
 	}
 	return p
 }
@@ -152,11 +152,11 @@ func createProductFilterProducer(
 		kafka.ProductFilterProducerEncoderOpt(ctx, sc, topic+"-value"),
 	)
 	if err != nil {
-		die(op, err)
+		fallDown(op, err)
 	}
 	return p
 }
 
-func die(op string, err error) {
+func fallDown(op string, err error) {
 	panic(fmt.Errorf("%s: %w", op, err))
 }

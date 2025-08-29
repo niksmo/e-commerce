@@ -1,0 +1,90 @@
+{
+    "type": "record",
+    "namespace": "products",
+    "name": "product",
+    "fields": [
+        {
+            "name": "product_id",
+            "type": "string"
+        },
+        {
+            "name": "name",
+            "type": "string"
+        },
+        {
+            "name": "sku",
+            "type": "string"
+        },
+        {
+            "name": "brand",
+            "type": "string"
+        },
+        {
+            "name": "category",
+            "type": "string"
+        },
+        {
+            "name": "description",
+            "type": "string"
+        },
+        {
+            "name": "price",
+            "type": {
+                "type": "record",
+                "name": "product_price",
+                "fields": [
+                    {
+                        "name": "amount",
+                        "type": "double"
+                    },
+                    {
+                        "name": "currency",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "available_stock",
+            "type": "long"
+        },
+        {
+            "name": "tags",
+            "type": {
+                "type": "array",
+                "items": "string"
+            }
+        },
+        {
+            "name": "images",
+            "type": {
+                "type": "array",
+                "items": {
+                    "type": "record",
+                    "name": "product_image",
+                    "fields": [
+                        {
+                            "name": "url",
+                            "type": "string"
+                        },
+                        {
+                            "name": "alt",
+                            "type": "string"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "specifications",
+            "type": {
+                "type": "map",
+                "values": "string"
+            }
+        },
+        {
+            "name": "store_id",
+            "type": "string"
+        }
+    ]
+}

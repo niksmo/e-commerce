@@ -2,10 +2,50 @@ package kafka
 
 import (
 	"context"
+	"errors"
 
 	"github.com/twmb/franz-go/pkg/kgo"
-	"github.com/twmb/franz-go/pkg/sr"
 )
+
+type ProducerOpt func(*producerOpts) error
+
+type producerOpts struct {
+	cl      ProducerClient
+	encoder Encoder
+}
+
+func ProducerClientOpt(
+	ctx context.Context, seedBrokers []string, topic string,
+) ProducerOpt {
+	return func(opts *producerOpts) error {
+		cl, err := kgo.NewClient(
+			kgo.SeedBrokers(seedBrokers...),
+			kgo.DefaultProduceTopicAlways(),
+			kgo.DefaultProduceTopic(topic),
+			kgo.RequiredAcks(kgo.AllISRAcks()),
+			kgo.AllowAutoTopicCreation(),
+		)
+		if err != nil {
+			return err
+		}
+
+		if err := cl.Ping(ctx); err != nil {
+			return err
+		}
+		opts.cl = cl
+		return nil
+	}
+}
+
+func ProducerEncoderOpt(encoder Encoder) ProducerOpt {
+	return func(opts *producerOpts) error {
+		if encoder == nil {
+			return errors.New("encoder is nil")
+		}
+		opts.encoder = encoder
+		return nil
+	}
+}
 
 type ProducerClient interface {
 	ProduceSync(ctx context.Context, rs ...*kgo.Record) kgo.ProduceResults
@@ -16,18 +56,6 @@ type ConsumerClient interface {
 	PollFetches(context.Context) kgo.Fetches
 	CommitUncommittedOffsets(context.Context) error
 	Close()
-}
-
-type SchemaCreater interface {
-	CreateSchema(
-		ctx context.Context, subject string, s sr.Schema,
-	) (sr.SubjectSchema, error)
-}
-
-type SchemaLookuperer interface {
-	LookupSchema(
-		ctx context.Context, subject string, s sr.Schema,
-	) (sr.SubjectSchema, error)
 }
 
 type Encoder interface {

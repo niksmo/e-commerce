@@ -2,7 +2,6 @@ package kafka
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 
@@ -10,68 +9,9 @@ import (
 	"github.com/niksmo/e-commerce/internal/core/port"
 	"github.com/niksmo/e-commerce/pkg/schema"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"github.com/twmb/franz-go/pkg/sr"
 )
 
 var _ port.ProductFilterProducer = (*ProductFilterProducer)(nil)
-
-type ProductFilterProducerOpt func(*productFilterProducerOpts) error
-
-func ProductFilterProducerClientOpt(
-	ctx context.Context, seedBrokers []string, topic string,
-) ProductFilterProducerOpt {
-	return func(opts *productFilterProducerOpts) error {
-		cl, err := kgo.NewClient(
-			kgo.SeedBrokers(seedBrokers...),
-			kgo.DefaultProduceTopicAlways(),
-			kgo.DefaultProduceTopic(topic),
-			kgo.RequiredAcks(kgo.AllISRAcks()),
-			kgo.AllowAutoTopicCreation(),
-		)
-		if err != nil {
-			return err
-		}
-
-		if err := cl.Ping(ctx); err != nil {
-			return err
-		}
-		opts.cl = cl
-		return nil
-	}
-}
-
-func ProductFilterProducerEncoderOpt(
-	ctx context.Context, sc SchemaCreater, subject string,
-) ProductFilterProducerOpt {
-	return func(opts *productFilterProducerOpts) error {
-		if sc == nil {
-			return errors.New("schema creater is nil")
-		}
-		ss, err := sc.CreateSchema(
-			ctx, subject, sr.Schema{
-				Type:   sr.TypeAvro,
-				Schema: schema.ProductFilterSchemaTextV1,
-			},
-		)
-		if err != nil {
-			return err
-		}
-
-		serde := new(sr.Serde)
-		serde.Register(
-			ss.ID,
-			schema.ProductFilterV1{},
-			sr.EncodeFn(schema.AvroEncodeFn(schema.ProductFilterV1Avro())),
-		)
-		opts.encoder = serde
-		return nil
-	}
-}
-
-type productFilterProducerOpts struct {
-	cl      ProducerClient
-	encoder Encoder
-}
 
 type ProductFilterProducer struct {
 	cl      ProducerClient
@@ -79,7 +19,7 @@ type ProductFilterProducer struct {
 }
 
 func NewProductFilterProducer(
-	opts ...ProductFilterProducerOpt,
+	opts ...ProducerOpt,
 ) (ProductFilterProducer, error) {
 	const op = "NewProductFilterProducer"
 
@@ -87,7 +27,7 @@ func NewProductFilterProducer(
 		panic(fmt.Errorf("%s: too few options", op)) // develop mistake
 	}
 
-	var options productFilterProducerOpts
+	var options producerOpts
 	for _, opt := range opts {
 		if err := opt(&options); err != nil {
 			return ProductFilterProducer{}, fmt.Errorf("%s: %w", op, err)

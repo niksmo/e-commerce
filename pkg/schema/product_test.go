@@ -34,11 +34,8 @@ func TestProductV1(t *testing.T) {
 			StoreID: "testStoreID",
 		}
 
-		var productSchema avro.Schema
-
-		require.NotPanics(t, func() {
-			productSchema = ProductV1Avro()
-		})
+		productSchema, err := avro.Parse(ProductSchemaTextV1)
+		require.NoError(t, err)
 
 		data, err := avro.Marshal(productSchema, vMarshal)
 		require.NoError(t, err)
@@ -92,11 +89,8 @@ func TestProductV1(t *testing.T) {
 			StoreID:        "testStoreID",
 		}
 
-		var pSchema avro.Schema
-
-		require.NotPanics(t, func() {
-			pSchema = ProductV1Avro()
-		})
+		pSchema, err := avro.Parse(ProductSchemaTextV1)
+		require.NoError(t, err)
 
 		data, err := avro.Marshal(pSchema, vMarshal)
 		require.NoError(t, err)
@@ -140,11 +134,8 @@ func TestProductFilterV1(t *testing.T) {
 		Blocked:     true,
 	}
 
-	var fSchema avro.Schema
-
-	require.NotPanics(t, func() {
-		fSchema = ProductFilterV1Avro()
-	})
+	fSchema, err := avro.Parse(ProductFilterSchemaTextV1)
+	require.NoError(t, err)
 
 	data, err := avro.Marshal(fSchema, vMarshal)
 	require.NoError(t, err)

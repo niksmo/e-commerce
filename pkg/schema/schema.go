@@ -1,15 +1,49 @@
 package schema
 
-import "github.com/hamba/avro/v2"
+import (
+	"context"
 
-func AvroEncodeFn(s avro.Schema) func(v any) ([]byte, error) {
-	return func(v any) ([]byte, error) {
-		return avro.Marshal(s, v)
-	}
+	"github.com/twmb/franz-go/pkg/sr"
+)
+
+type SchemaIdentifier interface {
+	DetermineID(
+		ctx context.Context, subject string, avroSchemaText string,
+	) (id int, err error)
 }
 
-func AvroDecodeFn(s avro.Schema) func([]byte, any) error {
-	return func(data []byte, v any) error {
-		return avro.Unmarshal(s, data, v)
-	}
+type lookuperer struct {
+	srcl *sr.Client
+}
+
+func (i lookuperer) DetermineID(
+	ctx context.Context, subject string, avroSchemaText string,
+) (id int, err error) {
+	ss, err := i.srcl.LookupSchema(ctx, subject, sr.Schema{
+		Type:   sr.TypeAvro,
+		Schema: avroSchemaText,
+	})
+	return ss.ID, err
+}
+
+type creater struct {
+	srcl *sr.Client
+}
+
+func (c creater) DetermineID(
+	ctx context.Context, subject string, avroSchemaText string,
+) (id int, err error) {
+	ss, err := c.srcl.CreateSchema(ctx, subject, sr.Schema{
+		Type:   sr.TypeAvro,
+		Schema: avroSchemaText,
+	})
+	return ss.ID, err
+}
+
+func NewSchemaCreater(srcl *sr.Client) SchemaIdentifier {
+	return creater{srcl}
+}
+
+func NewSchemaLookuperer(srcl *sr.Client) SchemaIdentifier {
+	return lookuperer{srcl}
 }

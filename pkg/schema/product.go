@@ -1,52 +1,11 @@
 package schema
 
 import (
-	"fmt"
-
-	"github.com/hamba/avro/v2"
+	_ "embed"
 )
 
-const ProductSchemaTextV1 = `{
-	"type": "record",
-	"namespace": "products",
-	"name": "product",
-	"fields" : [
-		{"name": "product_id", "type": "string"},
-		{"name": "name", "type": "string"},
-		{"name": "sku", "type": "string"},
-		{"name": "brand", "type": "string"},
-		{"name": "category", "type": "string"},
-		{"name": "description", "type": "string"},
-		{"name": "price", "type": {
-			"type": "record",
-			"name": "product_price",
-			"fields": [
-		    	{"name": "amount", "type": "double"},
-				{"name": "currency", "type": "string"}
-			]
-		}},
-		{"name": "available_stock", "type": "long"},
-		{"name": "tags", "type": {
-			"type": "array",
-			"items": "string"
-		}},
-		{"name": "images", "type": {
-			"type": "array",
-			"items": {
-				"type": "record",
-		    	"name": "product_image",
-				"fields": [
-			  		{"name": "url", "type": "string"},
-			  		{"name": "alt", "type": "string"}
-			]}
-		}},
-		{"name": "specifications", "type": {
-		  "type": "map",
-		  "values": "string"
-		}},
-		{"name": "store_id", "type": "string"}
-	]
-}`
+//go:embed product_v1.avsc
+var ProductSchemaTextV1 string
 
 type (
 	ProductV1 struct {
@@ -75,43 +34,10 @@ type (
 	}
 )
 
-func ProductV1Avro() avro.Schema {
-	s, err := avro.Parse(ProductSchemaTextV1)
-	if err != nil {
-		err = fmt.Errorf(
-			"failed to parse ProductSchemaTextV1,"+
-				" contact with package dev team: %w",
-			err,
-		)
-		panic(err)
-	}
-	return s
-}
-
-const ProductFilterSchemaTextV1 = `{
-	"type": "record",
-	"namespace": "products",
-	"name": "product_filter",
-	"fields" : [
-		{"name": "product_name", "type": "string"},
-		{"name": "blocked", "type": "boolean"}
-	]
-}`
+//go:embed product_filter_v1.avsc
+var ProductFilterSchemaTextV1 string
 
 type ProductFilterV1 struct {
 	ProductName string `avro:"product_name"`
 	Blocked     bool   `avro:"blocked"`
-}
-
-func ProductFilterV1Avro() avro.Schema {
-	s, err := avro.Parse(ProductFilterSchemaTextV1)
-	if err != nil {
-		err = fmt.Errorf(
-			"failed to parse ProductFilterSchemaTextV1,"+
-				" contact with package dev team: %w",
-			err,
-		)
-		panic(err)
-	}
-	return s
 }

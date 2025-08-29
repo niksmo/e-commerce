@@ -1,0 +1,15 @@
+{
+	"type": "record",
+	"namespace": "products",
+	"name": "product_filter",
+	"fields": [
+		{
+			"name": "product_name",
+			"type": "string"
+		},
+		{
+			"name": "blocked",
+			"type": "boolean"
+		}
+	]
+}

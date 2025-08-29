@@ -2,7 +2,6 @@ package kafka
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 
@@ -10,68 +9,9 @@ import (
 	"github.com/niksmo/e-commerce/internal/core/port"
 	"github.com/niksmo/e-commerce/pkg/schema"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"github.com/twmb/franz-go/pkg/sr"
 )
 
 var _ port.ProductsProducer = (*ProductsProducer)(nil)
-
-type ProductsProducerOpt func(*productsProducerOpts) error
-
-func ProductsProducerClientOpt(
-	ctx context.Context, seedBrokers []string, topic string,
-) ProductsProducerOpt {
-	return func(opts *productsProducerOpts) error {
-		cl, err := kgo.NewClient(
-			kgo.SeedBrokers(seedBrokers...),
-			kgo.DefaultProduceTopicAlways(),
-			kgo.DefaultProduceTopic(topic),
-			kgo.RequiredAcks(kgo.AllISRAcks()),
-			kgo.AllowAutoTopicCreation(),
-		)
-		if err != nil {
-			return err
-		}
-
-		if err := cl.Ping(ctx); err != nil {
-			return err
-		}
-		opts.cl = cl
-		return nil
-	}
-}
-
-func ProductsProducerEncoderOpt(
-	ctx context.Context, sc SchemaCreater, subject string,
-) ProductsProducerOpt {
-	return func(opts *productsProducerOpts) error {
-		if sc == nil {
-			return errors.New("schema creater is nil")
-		}
-		ss, err := sc.CreateSchema(
-			ctx, subject, sr.Schema{
-				Type:   sr.TypeAvro,
-				Schema: schema.ProductSchemaTextV1,
-			},
-		)
-		if err != nil {
-			return err
-		}
-
-		serde := new(sr.Serde)
-		serde.Register(
-			ss.ID,
-			schema.ProductV1{},
-			sr.EncodeFn(schema.AvroEncodeFn(schema.ProductV1Avro())),
-		)
-		opts.encoder = serde
-		return nil
-	}
-}
-
-type productsProducerOpts struct {
-	cl      ProducerClient
-	encoder Encoder
-}
 
 type ProductsProducer struct {
 	cl      ProducerClient
@@ -79,7 +19,7 @@ type ProductsProducer struct {
 }
 
 func NewProductsProducer(
-	opts ...ProductsProducerOpt,
+	opts ...ProducerOpt,
 ) (ProductsProducer, error) {
 	const op = "NewProductsProducer"
 
@@ -87,7 +27,7 @@ func NewProductsProducer(
 		panic(fmt.Errorf("%s: too few options", op)) // develop mistake
 	}
 
-	var options productsProducerOpts
+	var options producerOpts
 	for _, opt := range opts {
 		if err := opt(&options); err != nil {
 			return ProductsProducer{}, fmt.Errorf("%s: %w", op, err)
