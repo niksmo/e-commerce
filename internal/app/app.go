@@ -52,6 +52,22 @@ func New(context context.Context, config config.Config) App {
 	return app
 }
 
+func (app App) Run(stopFn context.CancelFunc) {
+	go app.httpServer.Run(stopFn)
+
+	slog.Info("application is running")
+}
+
+func (app App) Close(ctx context.Context) {
+	slog.Info("application is closing...")
+
+	app.httpServer.Close(ctx)
+	app.producers.products.Close()
+	app.producers.productFilter.Close()
+
+	slog.Info("application is closed")
+}
+
 func (app App) initLogger() {
 	opts := &slog.HandlerOptions{Level: app.cfg.LogLevel}
 	logger := slog.New(slog.NewJSONHandler(os.Stderr, opts))
@@ -139,22 +155,6 @@ func (app App) initInboundAdapters() {
 	handler := httphandler.AllowJSON(mux)
 	httpServer := httphandler.NewHTTPServer(addr, handler)
 	app.httpServer = httpServer
-}
-
-func (app App) Run(stopFn context.CancelFunc) {
-	go app.httpServer.Run(stopFn)
-
-	slog.Info("application is running")
-}
-
-func (app App) Close(ctx context.Context) {
-	slog.Info("application is closing...")
-
-	app.httpServer.Close(ctx)
-	app.producers.products.Close()
-	app.producers.productFilter.Close()
-
-	slog.Info("application is closed")
 }
 
 func (app App) fallDown(op string, err error) {
