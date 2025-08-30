@@ -10,4 +10,5 @@ broker:
   shop_products_topic: shop-products
   filter_product_stream: filter-product
   filter_product_group_table: filter-product-group
+  save_products_topic: save-products
   client_events_topic: client-events

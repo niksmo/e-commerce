@@ -84,7 +84,7 @@ func NewProductFilterProc(
 		goka.Persist(blockValueCodec{}),
 	)
 
-	gp, err := goka.NewProcessor(seedBrokers, gg)
+	gp, err := goka.NewProcessor(seedBrokers, gg, WithNoLogProcOpt())
 	if err != nil {
 		return ProductFilterProcessor{}, fmt.Errorf("%s: %w", op, err)
 	}
@@ -98,23 +98,11 @@ func (p ProductFilterProcessor) Run(ctx context.Context, wg *sync.WaitGroup) {
 
 	defer wg.Done()
 
-	// err := p.gp.Run(ctx)
-	// if err != nil {
-	// 	log.Error("stopped", "err", err)
-	// 	return
-	// }
-	// log.Info("stopped")
-
 	go p.run(ctx)
-	err := p.gp.WaitForReadyContext(ctx)
-	if err != nil {
-		if errors.Is(err, context.Canceled) {
-			return
-		}
-		log.Error("fall down while prepare", "err", err)
-		return
-	}
-	log.Info("processor is ready")
+
+	log.Info("preparing...")
+	p.waitForReady(ctx)
+	log.Info("running")
 }
 
 func (p ProductFilterProcessor) Close() {
@@ -136,6 +124,20 @@ func (p ProductFilterProcessor) run(ctx context.Context) {
 		return
 	}
 	log.Info("stopped")
+}
+
+func (p ProductFilterProcessor) waitForReady(ctx context.Context) {
+	const op = "ProductFilterProcessor.waitForReady"
+	log := slog.With("op", op)
+
+	err := p.gp.WaitForReadyContext(ctx)
+	if err != nil {
+		if errors.Is(err, context.Canceled) {
+			return
+		}
+		log.Error("fall down while preparing", "err", err)
+		return
+	}
 }
 
 func (ProductFilterProcessor) processFn(ctx goka.Context, msg any) {

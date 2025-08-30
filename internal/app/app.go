@@ -49,14 +49,22 @@ type App struct {
 }
 
 func New(context context.Context, config config.Config) *App {
+	const op = "App.New"
+
 	app := App{ctx: context, cfg: config}
 
 	app.initLogger()
+
+	log := slog.With("op", op)
+	log.Info("initialize application components...")
+
 	app.initSerdes()
 	app.initStreamProcessors()
 	app.initOutboundAdapters()
 	app.initCoreService()
 	app.initInboundAdapters()
+
+	log.Info("application is ready")
 
 	return &app
 }
@@ -68,7 +76,7 @@ func (app *App) Run(stopFn context.CancelFunc) {
 	ctx := app.ctx
 
 	var wg sync.WaitGroup
-	wg.Add(1)
+	wg.Add(2)
 	go app.streamProcs.productFilter.Run(ctx, &wg)
 	go app.streamProcs.productBlocker.Run(ctx, &wg)
 	wg.Wait()
@@ -81,6 +89,7 @@ func (app *App) Run(stopFn context.CancelFunc) {
 func (app *App) Close(ctx context.Context) {
 	const op = "App.Close"
 	log := slog.With("op", op)
+
 	log.Info("application is closing...")
 
 	app.httpServer.Close(ctx)

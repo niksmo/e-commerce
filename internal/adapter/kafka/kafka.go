@@ -3,7 +3,10 @@ package kafka
 import (
 	"context"
 	"errors"
+	"io"
+	"log"
 
+	"github.com/lovoo/goka"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
@@ -69,4 +72,8 @@ type Encoder interface {
 
 type Decoder interface {
 	Decode(b []byte, v any) error
+}
+
+func WithNoLogProcOpt() goka.ProcessorOption {
+	return goka.WithLogger(log.New(io.Discard, "", 0))
 }

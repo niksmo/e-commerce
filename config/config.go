@@ -71,7 +71,6 @@ func (c Config) Print() {
 	SaveProductsTopic=%q
 	ClientEventsTopic=%q
 
-
 `
 	fmt.Println("Loaded config:")
 	fmt.Printf(
