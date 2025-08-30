@@ -14,17 +14,17 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
-type ConsumerOpt func(*consumerOpts) error
+type ConsumerOpt func(*productsConsumerOpts) error
 
-type consumerOpts struct {
+type productsConsumerOpts struct {
 	cl      ConsumerClient
-	saver   port.Saver[[]domain.Product]
 	decoder Decoder
+	saver   port.ProductsSaver
 }
 
 type ProductsConsumer struct {
 	cl            ConsumerClient
-	saver         port.Saver[[]domain.Product]
+	saver         port.ProductsSaver
 	decoder       Decoder
 	slowDownTimer *time.Timer
 }
@@ -33,10 +33,10 @@ func NewProductsConsumer(opts ...ConsumerOpt) ProductsConsumer {
 	const op = "NewProductsConsumer"
 
 	if len(opts) != 3 {
-		panic(fmt.Errorf("%s: %w", op, ErrToFewOpts)) // develop mistake
+		panic(fmt.Errorf("%s: %w", op, ErrTooFewOpts)) // develop mistake
 	}
 
-	var options consumerOpts
+	var options productsConsumerOpts
 	for _, opt := range opts {
 		if err := opt(&options); err != nil {
 			panic(err) // develop mistake
@@ -117,7 +117,7 @@ func (c ProductsConsumer) consume(ctx context.Context) error {
 	}
 
 	ps := c.toProducts(fetches)
-	c.saver.Save(ctx, ps)
+	c.saver.SaveProducts(ctx, ps)
 	return nil
 }
 

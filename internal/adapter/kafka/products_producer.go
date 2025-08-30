@@ -24,7 +24,7 @@ func NewProductsProducer(
 	const op = "NewProductsProducer"
 
 	if len(opts) != 2 {
-		panic(fmt.Errorf("%s: %w", op, ErrToFewOpts)) // develop mistake
+		panic(fmt.Errorf("%s: %w", op, ErrTooFewOpts)) // develop mistake
 	}
 
 	var options producerOpts

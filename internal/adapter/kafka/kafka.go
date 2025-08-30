@@ -10,7 +10,7 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
-var ErrToFewOpts = errors.New("too few options")
+var ErrTooFewOpts = errors.New("too few options")
 
 type ProducerOpt func(*producerOpts) error
 
