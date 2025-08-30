@@ -3,7 +3,6 @@ package kafka
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"sync"
 
@@ -22,7 +21,7 @@ func newProductEventCodec(s Serde) productEventCodec {
 func (c productEventCodec) Encode(v any) ([]byte, error) {
 	const op = "productEventCodec.Encode"
 	if _, ok := v.(schema.ProductV1); !ok {
-		return nil, fmt.Errorf("%s: invalid value type", op)
+		return nil, opErr(ErrInvalidValueType, op)
 	}
 	return c.serde.Encode(v)
 }
@@ -32,7 +31,7 @@ func (c productEventCodec) Decode(data []byte) (any, error) {
 	var s schema.ProductV1
 	err := c.serde.Decode(data, &s)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, opErr(err, op)
 	}
 	return s, err
 }
@@ -65,9 +64,9 @@ func NewProductBlockerProc(
 		goka.Output(outputStream, productEventCodec),
 	)
 
-	gp, err := goka.NewProcessor(seedBrokers, gg, WithNoLogProcOpt())
+	gp, err := goka.NewProcessor(seedBrokers, gg, withNoLogProcOpt())
 	if err != nil {
-		return ProductBlockerProcessor{}, fmt.Errorf("%s: %w", op, err)
+		return ProductBlockerProcessor{}, opErr(err, op)
 	}
 
 	p.gp = gp

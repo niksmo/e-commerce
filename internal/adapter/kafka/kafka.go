@@ -3,14 +3,21 @@ package kafka
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"log"
+	"strings"
 
 	"github.com/lovoo/goka"
+	"github.com/niksmo/e-commerce/internal/core/domain"
+	"github.com/niksmo/e-commerce/pkg/schema"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
-var ErrTooFewOpts = errors.New("too few options")
+var (
+	ErrTooFewOpts       = errors.New("too few options")
+	ErrInvalidValueType = errors.New("invalid value type")
+)
 
 type ProducerOpt func(*producerOpts) error
 
@@ -63,11 +70,6 @@ type ConsumerClient interface {
 	Close()
 }
 
-type Serde interface {
-	Encoder
-	Decoder
-}
-
 type Encoder interface {
 	Encode(v any) ([]byte, error)
 }
@@ -76,6 +78,49 @@ type Decoder interface {
 	Decode(b []byte, v any) error
 }
 
-func WithNoLogProcOpt() goka.ProcessorOption {
+type Serde interface {
+	Encoder
+	Decoder
+}
+
+func withNoLogProcOpt() goka.ProcessorOption {
 	return goka.WithLogger(log.New(io.Discard, "", 0))
+}
+
+func makeOp(s ...string) string {
+	return strings.Join(s, ".")
+}
+
+func opErr(err error, op ...string) error {
+	return fmt.Errorf("%s: %w", makeOp(op...), err)
+}
+
+func productToSchemaV1(v domain.Product) (s schema.ProductV1) {
+	s.ProductID = v.ProductID
+	s.Name = v.Name
+	s.SKU = v.SKU
+	s.Brand = v.Brand
+	s.Category = v.Category
+	s.Description = v.Description
+	s.Price.Amount = v.Price.Amount
+	s.Price.Currency = v.Price.Currency
+	s.AvailableStock = v.AvailableStock
+	s.Tags = v.Tags
+	s.Specifications = v.Specifications
+	s.StoreID = v.StoreID
+
+	s.Images = make([]schema.ProductImageV1, len(v.Images))
+	for i := range v.Images {
+		s.Images[i].URL = v.Images[i].URL
+		s.Images[i].Alt = v.Images[i].Alt
+	}
+	return
+}
+
+func productFilterToSchemaV1(
+	v domain.ProductFilter,
+) (s schema.ProductFilterV1) {
+	s.ProductName = v.ProductName
+	s.Blocked = v.Blocked
+	return
 }

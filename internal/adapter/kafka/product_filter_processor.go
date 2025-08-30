@@ -3,7 +3,6 @@ package kafka
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"strconv"
 	"sync"
@@ -23,7 +22,7 @@ func newFilterEventCodec(s Serde) filterEventCodec {
 func (c filterEventCodec) Encode(v any) ([]byte, error) {
 	const op = "filterEventCodec.Encode"
 	if _, ok := v.(schema.ProductFilterV1); !ok {
-		return nil, fmt.Errorf("%s: invalid value type", op)
+		return nil, opErr(ErrInvalidValueType, op)
 	}
 	return c.serde.Encode(v)
 }
@@ -33,7 +32,7 @@ func (c filterEventCodec) Decode(data []byte) (any, error) {
 	var s schema.ProductFilterV1
 	err := c.serde.Decode(data, &s)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, opErr(err, op)
 	}
 	return s, err
 }
@@ -46,7 +45,7 @@ func (blockValueCodec) Encode(v any) ([]byte, error) {
 	const op = "blockValueCodec.Encode"
 	fv, ok := v.(BlockValue)
 	if !ok {
-		return nil, fmt.Errorf("%s: invalid value type", op)
+		return nil, opErr(ErrInvalidValueType, op)
 	}
 	data := strconv.AppendBool([]byte(nil), bool(fv))
 	return data, nil
@@ -56,7 +55,7 @@ func (blockValueCodec) Decode(data []byte) (any, error) {
 	const op = "blockValueCodec.Decode"
 	bv, err := strconv.ParseBool(string(data))
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, opErr(err, op)
 	}
 	return BlockValue(bv), nil
 }
@@ -84,9 +83,9 @@ func NewProductFilterProc(
 		goka.Persist(blockValueCodec{}),
 	)
 
-	gp, err := goka.NewProcessor(seedBrokers, gg, WithNoLogProcOpt())
+	gp, err := goka.NewProcessor(seedBrokers, gg, withNoLogProcOpt())
 	if err != nil {
-		return ProductFilterProcessor{}, fmt.Errorf("%s: %w", op, err)
+		return ProductFilterProcessor{}, opErr(err, op)
 	}
 
 	return ProductFilterProcessor{gp}, nil
@@ -147,5 +146,9 @@ func (ProductFilterProcessor) processFn(ctx goka.Context, msg any) {
 	event, _ := msg.(schema.ProductFilterV1)
 	v := BlockValue(event.Blocked)
 	ctx.SetValue(v)
-	log.Info("set filter value", "productName", event.ProductName, "isBlocked", v)
+	log.Info(
+		"set filter value",
+		"productName", event.ProductName,
+		"isBlocked", v,
+	)
 }
