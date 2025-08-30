@@ -16,54 +16,24 @@ import (
 
 type ConsumerOpt func(*consumerOpts) error
 
-func ConsumerClientOpt(cl ConsumerClient) ConsumerOpt {
-	return func(opts *consumerOpts) error {
-		if cl != nil {
-			opts.cl = cl
-			return nil
-		}
-		return errors.New("consumer client is nil")
-	}
-}
-
-func ConsumerProductsSaverOpt(s port.ProductsSaver) ConsumerOpt {
-	return func(opts *consumerOpts) error {
-		if s != nil {
-			opts.pSaver = s
-			return nil
-		}
-		return errors.New("consumer products saver is nil")
-	}
-}
-
-func ConsumerDecodeFnOpt(decodeFn func([]byte, any) error) ConsumerOpt {
-	return func(opts *consumerOpts) error {
-		if decodeFn != nil {
-			opts.decodeFn = decodeFn
-			return nil
-		}
-		return errors.New("consumer decode func is nil")
-	}
-}
-
 type consumerOpts struct {
-	cl       ConsumerClient
-	pSaver   port.ProductsSaver
-	decodeFn func([]byte, any) error
+	cl      ConsumerClient
+	saver   port.Saver[[]domain.Product]
+	decoder Decoder
 }
 
-type Consumer struct {
-	cl       ConsumerClient
-	pSaver   port.ProductsSaver
-	decodeFn func([]byte, any) error
-	errTimer *time.Timer
+type ProductsConsumer struct {
+	cl            ConsumerClient
+	saver         port.Saver[[]domain.Product]
+	decoder       Decoder
+	slowDownTimer *time.Timer
 }
 
-func NewConsumer(opts ...ConsumerOpt) Consumer {
-	const op = "NewConsumer"
+func NewProductsConsumer(opts ...ConsumerOpt) ProductsConsumer {
+	const op = "NewProductsConsumer"
 
-	if len(opts) == 0 {
-		panic(fmt.Errorf("%s: options not set", op)) // develop mistake
+	if len(opts) != 3 {
+		panic(fmt.Errorf("%s: %w", op, ErrToFewOpts)) // develop mistake
 	}
 
 	var options consumerOpts
@@ -73,26 +43,26 @@ func NewConsumer(opts ...ConsumerOpt) Consumer {
 		}
 	}
 
-	return Consumer{
-		cl:       options.cl,
-		pSaver:   options.pSaver,
-		decodeFn: options.decodeFn,
-		errTimer: time.NewTimer(0),
+	return ProductsConsumer{
+		cl:            options.cl,
+		saver:         options.saver,
+		decoder:       options.decoder,
+		slowDownTimer: time.NewTimer(0),
 	}
 }
 
-func (c Consumer) Close() {
-	const op = "Consumer.Close"
+func (c ProductsConsumer) Close() {
+	const op = "ProductsConsumer.Close"
 	log := slog.With("op", op)
 
 	log.Info("closing consumer...")
-	c.errTimer.Stop()
+	c.slowDownTimer.Stop()
 	c.cl.Close()
 	log.Info("consumer is closed")
 }
 
-func (c Consumer) Run(ctx context.Context) {
-	const op = "Consumer.Run"
+func (c ProductsConsumer) Run(ctx context.Context) {
+	const op = "ProductsConsumer.Run"
 	log := slog.With("op", op)
 
 	for {
@@ -102,14 +72,10 @@ func (c Consumer) Run(ctx context.Context) {
 		default:
 			err := c.consume(ctx)
 			if err != nil {
-				if errors.Is(err, context.Canceled) {
-					log.Info("context cancaled")
-					continue
-				}
-				err = fmt.Errorf("%s: %w", op, err)
-				log.Error("failed to consume messages", "err", err)
-				c.slowDown()
+				c.handleConsumeErr(err)
+				continue
 			}
+
 			err = c.commit(ctx)
 			if err != nil {
 				log.Error("failed to commit offset", "err", err)
@@ -118,8 +84,9 @@ func (c Consumer) Run(ctx context.Context) {
 	}
 }
 
-func (c Consumer) commit(ctx context.Context) error {
-	const op = "Consumer.commit"
+func (c ProductsConsumer) commit(ctx context.Context) error {
+	const op = "ProductsConsumer.commit"
+
 	err := ctx.Err()
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
@@ -132,8 +99,13 @@ func (c Consumer) commit(ctx context.Context) error {
 	return nil
 }
 
-func (c Consumer) consume(ctx context.Context) error {
-	const op = "Consumer.consume"
+func (c ProductsConsumer) consume(ctx context.Context) error {
+	const op = "ProductsConsumer.consume"
+
+	err := ctx.Err()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
 
 	fetches, err := c.pollFetches(ctx)
 	if err != nil {
@@ -145,19 +117,32 @@ func (c Consumer) consume(ctx context.Context) error {
 	}
 
 	ps := c.toProducts(fetches)
-	c.pSaver.SaveProducts(ctx, ps)
+	c.saver.Save(ctx, ps)
 	return nil
 }
 
-func (c Consumer) pollFetches(ctx context.Context) (kgo.Fetches, error) {
-	const op = "Consumer.pollFetches"
+func (c ProductsConsumer) handleConsumeErr(err error) {
+	const op = "ProductsConsumer.handleConsumeErr"
+	log := slog.With("op", op)
+
+	if errors.Is(err, context.Canceled) {
+		log.Info("context cancaled")
+		return
+	}
+
+	log.Error("failed to consume messages", "err", err)
+	c.slowDown()
+}
+
+func (c ProductsConsumer) pollFetches(ctx context.Context) (kgo.Fetches, error) {
+	const op = "ProductsConsumer.pollFetches"
 
 	fetches := c.cl.PollFetches(ctx)
 	if err := fetches.Err0(); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	err := c.handleErrs(fetches)
+	err := c.handleFetchesErrs(fetches)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -165,7 +150,7 @@ func (c Consumer) pollFetches(ctx context.Context) (kgo.Fetches, error) {
 	return fetches, nil
 }
 
-func (c Consumer) handleErrs(fetches kgo.Fetches) error {
+func (c ProductsConsumer) handleFetchesErrs(fetches kgo.Fetches) error {
 	var errsData []string
 	fetches.EachError(func(t string, p int32, err error) {
 		if err != nil {
@@ -182,34 +167,25 @@ func (c Consumer) handleErrs(fetches kgo.Fetches) error {
 	return nil
 }
 
-func (c Consumer) toProducts(fetches kgo.Fetches) (ps []domain.Product) {
-	const op = "Consumer.toProducts"
+func (c ProductsConsumer) toProducts(fetches kgo.Fetches) (ps []domain.Product) {
+	const op = "ProductsConsumer.toProducts"
 	log := slog.With("op", op)
 
 	fetches.EachRecord(func(r *kgo.Record) {
-		schema, err := c.unmarshal(r.Value)
+		var s schema.ProductV1
+		err := c.decoder.Decode(r.Value, &s)
 		if err != nil {
 			err = fmt.Errorf("%s: %w", op, err)
-			log.Error("failed to unmarshal value", "err", err)
+			log.Error("failed to decode value", "err", err)
 			return
 		}
-		p := c.toDomain(schema)
+		p := c.toDomain(s)
 		ps = append(ps, p)
 	})
 	return ps
 }
 
-func (c Consumer) unmarshal(v []byte) (s schema.ProductV1, err error) {
-	const op = "Consumer.unmarshal"
-
-	if err := c.decodeFn(v, &s); err != nil {
-		return s, fmt.Errorf("%s: %w", op, err)
-	}
-
-	return s, nil
-}
-
-func (c Consumer) toDomain(s schema.ProductV1) (p domain.Product) {
+func (c ProductsConsumer) toDomain(s schema.ProductV1) (p domain.Product) {
 	p.ProductID = s.ProductID
 	p.Name = s.Name
 	p.SKU = s.SKU
@@ -231,8 +207,8 @@ func (c Consumer) toDomain(s schema.ProductV1) (p domain.Product) {
 	return p
 }
 
-func (c Consumer) slowDown() {
+func (c ProductsConsumer) slowDown() {
 	const timeout = 1 * time.Second
-	c.errTimer.Reset(timeout)
-	<-c.errTimer.C
+	c.slowDownTimer.Reset(timeout)
+	<-c.slowDownTimer.C
 }

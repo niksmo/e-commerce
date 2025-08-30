@@ -10,6 +10,8 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
+var ErrToFewOpts = errors.New("too few options")
+
 type ProducerOpt func(*producerOpts) error
 
 type producerOpts struct {

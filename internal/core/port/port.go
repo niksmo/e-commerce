@@ -29,3 +29,7 @@ type ProductFilterProducer interface {
 type ProductsStorage interface {
 	StoreProducts(context.Context, []domain.Product) error
 }
+
+type Saver[T any] interface {
+	Save(context.Context, T)
+}
