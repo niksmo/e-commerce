@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"sync"
 
 	"github.com/niksmo/e-commerce/config"
 	"github.com/niksmo/e-commerce/internal/adapter/httphandler"
@@ -66,8 +67,12 @@ func (app *App) Run(stopFn context.CancelFunc) {
 
 	ctx := app.ctx
 
-	go app.streamProcs.productFilter.Run(ctx)
-	go app.streamProcs.productBlocker.Run(ctx)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go app.streamProcs.productFilter.Run(ctx, &wg)
+	go app.streamProcs.productBlocker.Run(ctx, &wg)
+	wg.Wait()
+
 	go app.httpServer.Run(stopFn)
 
 	log.Info("application is running")

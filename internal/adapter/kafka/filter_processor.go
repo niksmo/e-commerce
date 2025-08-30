@@ -2,9 +2,11 @@ package kafka
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"strconv"
+	"sync"
 
 	"github.com/lovoo/goka"
 	"github.com/niksmo/e-commerce/pkg/schema"
@@ -90,16 +92,29 @@ func NewProductFilterProc(
 	return ProductFilterProcessor{gp}, nil
 }
 
-func (p ProductFilterProcessor) Run(ctx context.Context) {
+func (p ProductFilterProcessor) Run(ctx context.Context, wg *sync.WaitGroup) {
 	const op = "ProductFilterProcessor.Run"
 	log := slog.With("op", op)
 
-	err := p.gp.Run(ctx)
+	defer wg.Done()
+
+	// err := p.gp.Run(ctx)
+	// if err != nil {
+	// 	log.Error("stopped", "err", err)
+	// 	return
+	// }
+	// log.Info("stopped")
+
+	go p.run(ctx)
+	err := p.gp.WaitForReadyContext(ctx)
 	if err != nil {
-		log.Error("stopped", "err", err)
+		if errors.Is(err, context.Canceled) {
+			return
+		}
+		log.Error("fall down while prepare", "err", err)
 		return
 	}
-	log.Info("stopped")
+	log.Info("processor is ready")
 }
 
 func (p ProductFilterProcessor) Close() {
@@ -109,6 +124,18 @@ func (p ProductFilterProcessor) Close() {
 	log.Info("closing processor...")
 	p.gp.Stop()
 	log.Info("processor is closed")
+}
+
+func (p ProductFilterProcessor) run(ctx context.Context) {
+	const op = "ProductFilterProcessor.run"
+	log := slog.With("op", op)
+
+	err := p.gp.Run(ctx)
+	if err != nil {
+		log.Error("stopped", "err", err)
+		return
+	}
+	log.Info("stopped")
 }
 
 func (ProductFilterProcessor) processFn(ctx goka.Context, msg any) {
