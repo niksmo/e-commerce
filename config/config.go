@@ -39,8 +39,6 @@ func Load() Config {
 		die(err)
 	}
 
-	print(cfg)
-
 	return cfg
 }
 
@@ -60,7 +58,7 @@ func die(err error) {
 	os.Exit(2)
 }
 
-func print(c Config) {
+func (c Config) Print() {
 	tamplate := `
 	LogLevel=%q
 	HTTPServerAddr=%q

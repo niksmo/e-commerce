@@ -2,28 +2,21 @@ package main
 
 import (
 	"context"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/niksmo/e-commerce/config"
 	"github.com/niksmo/e-commerce/internal/app"
+	"github.com/niksmo/e-commerce/pkg/sigctx"
 )
 
 const closeTimeout = 5 * time.Second
 
-var signals = []os.Signal{
-	syscall.SIGINT,
-	syscall.SIGTERM,
-	syscall.SIGQUIT,
-}
-
 func main() {
-	sigCtx, closeApp := signal.NotifyContext(context.Background(), signals...)
+	sigCtx, closeApp := sigctx.NotifyContext()
 	defer closeApp()
 
 	cfg := config.Load()
+	cfg.Print()
 
 	service := app.New(sigCtx, cfg)
 

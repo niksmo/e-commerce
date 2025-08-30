@@ -10,15 +10,15 @@ import (
 	"github.com/niksmo/e-commerce/pkg/schema"
 )
 
-type FilterEventCodec struct {
+type filterEventCodec struct {
 	serde Serde
 }
 
-func NewFilterEventCodec(s Serde) FilterEventCodec {
-	return FilterEventCodec{s}
+func newFilterEventCodec(s Serde) filterEventCodec {
+	return filterEventCodec{s}
 }
 
-func (c FilterEventCodec) Encode(v any) ([]byte, error) {
+func (c filterEventCodec) Encode(v any) ([]byte, error) {
 	const op = "FilterEventCodec.Encode"
 	if _, ok := v.(schema.ProductFilterV1); !ok {
 		return nil, fmt.Errorf("%s: invalid value type", op)
@@ -26,7 +26,7 @@ func (c FilterEventCodec) Encode(v any) ([]byte, error) {
 	return c.serde.Encode(v)
 }
 
-func (c FilterEventCodec) Decode(data []byte) (any, error) {
+func (c filterEventCodec) Decode(data []byte) (any, error) {
 	const op = "FilterEventCodec.Decode"
 	var s schema.ProductFilterV1
 	err := c.serde.Decode(data, &s)
@@ -38,9 +38,9 @@ func (c FilterEventCodec) Decode(data []byte) (any, error) {
 
 type FilterValue bool
 
-type FilterValueCodec struct{}
+type filterValueCodec struct{}
 
-func (FilterValueCodec) Encode(v any) ([]byte, error) {
+func (filterValueCodec) Encode(v any) ([]byte, error) {
 	const op = "FilterValueCodec.Encode"
 	fv, ok := v.(FilterValue)
 	if !ok {
@@ -50,7 +50,7 @@ func (FilterValueCodec) Encode(v any) ([]byte, error) {
 	return data, nil
 }
 
-func (FilterValueCodec) Decode(data []byte) (any, error) {
+func (filterValueCodec) Decode(data []byte) (any, error) {
 	const op = "FilterValueCodec.Decode"
 	bv, err := strconv.ParseBool(string(data))
 	if err != nil {
@@ -70,8 +70,8 @@ func NewProductFilterProcessor(
 	p := ProductFilterProcessor{}
 
 	gg := goka.DefineGroup(goka.Group(group),
-		goka.Input(goka.Stream(stream), NewFilterEventCodec(productFilterSerde), p.processFn),
-		goka.Persist(FilterValueCodec{}),
+		goka.Input(goka.Stream(stream), newFilterEventCodec(productFilterSerde), p.processFn),
+		goka.Persist(filterValueCodec{}),
 	)
 
 	var opt goka.ProcessorOption
@@ -102,7 +102,10 @@ func (p ProductFilterProcessor) Close() {
 	log.Info("closing processor...")
 	p.gp.Stop()
 	log.Info("processor is closed")
-
 }
 
-func (ProductFilterProcessor) processFn(ctx goka.Context, msg any) {}
+func (ProductFilterProcessor) processFn(ctx goka.Context, msg any) {
+	event, _ := msg.(schema.ProductFilterV1)
+	v := FilterValue(event.Blocked)
+	ctx.SetValue(v)
+}
