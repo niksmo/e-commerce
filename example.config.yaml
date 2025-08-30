@@ -8,5 +8,6 @@ broker:
   schema_registry_urls:
     - http://127.0.0.1:8081
   shop_products_topic: shop-products
-  products_filter_topic: products-filter
+  filter_product_stream: filter-product
+  filter_product_group: filter-product-group
   client_events_topic: client-events
