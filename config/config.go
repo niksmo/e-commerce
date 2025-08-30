@@ -11,12 +11,12 @@ import (
 )
 
 type brokerConfig struct {
-	SeedBrokers         []string `mapstructure:"seed_brokers"`
-	SchemaRegistryURLs  []string `mapstructure:"schema_registry_urls"`
-	ShopProductsTopic   string   `mapstructure:"shop_products_topic"`
-	FilterProductStream string   `mapstructure:"filter_product_stream"`
-	FilterProductGroup  string   `mapstructure:"filter_product_group"`
-	ClientEventsTopic   string   `mapstructure:"client_events_topic"`
+	SeedBrokers             []string `mapstructure:"seed_brokers"`
+	SchemaRegistryURLs      []string `mapstructure:"schema_registry_urls"`
+	ShopProductsTopic       string   `mapstructure:"shop_products_topic"`
+	FilterProductStream     string   `mapstructure:"filter_product_stream"`
+	FilterProductGroupTable string   `mapstructure:"filter_product_group_table"`
+	ClientEventsTopic       string   `mapstructure:"client_events_topic"`
 }
 
 type Config struct {
@@ -66,7 +66,7 @@ func (c Config) Print() {
 	SchemaRegistryURLs=%q
 	ShopProductsTopic=%q
 	FilterProductStream=%q
-	FilterProductGroup=%q
+	FilterProductGroupTable=%q
 	ClientEventsTopic=%q
 
 
@@ -80,7 +80,7 @@ func (c Config) Print() {
 		c.Broker.SchemaRegistryURLs,
 		c.Broker.ShopProductsTopic,
 		c.Broker.FilterProductStream,
-		c.Broker.FilterProductGroup,
+		c.Broker.FilterProductGroupTable,
 		c.Broker.ClientEventsTopic,
 	)
 }

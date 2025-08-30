@@ -128,7 +128,7 @@ func (app *App) initStreamProcessors() {
 
 	seedBrokers := app.cfg.Broker.SeedBrokers
 	filterProductStream := app.cfg.Broker.FilterProductStream
-	filterProductGroup := app.cfg.Broker.FilterProductGroup
+	filterProductGroup := app.cfg.Broker.FilterProductGroupTable
 
 	productFilterProcessor, err := kafka.NewProductFilterProcessor(
 		seedBrokers, filterProductStream, filterProductGroup,

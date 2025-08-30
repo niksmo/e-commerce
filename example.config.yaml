@@ -9,5 +9,5 @@ broker:
     - http://127.0.0.1:8081
   shop_products_topic: shop-products
   filter_product_stream: filter-product
-  filter_product_group: filter-product-group
+  filter_product_group_table: filter-product-group
   client_events_topic: client-events

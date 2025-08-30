@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lovoo/goka"
 	"github.com/niksmo/e-commerce/config"
 	"github.com/niksmo/e-commerce/pkg/sigctx"
 	"github.com/twmb/franz-go/pkg/kadm"
@@ -46,7 +47,7 @@ func main() {
 	// group table topics
 	err = makeTopics(
 		sigCtx, cl, compact,
-		cfg.Broker.FilterProductGroup,
+		toGroupTable(cfg.Broker.FilterProductGroupTable),
 	)
 	if err != nil {
 		printFail(err)
@@ -114,7 +115,7 @@ func printStart(cfg config.Config) {
 `,
 		cfg.Broker.ShopProductsTopic,
 		cfg.Broker.FilterProductStream,
-		cfg.Broker.FilterProductGroup,
+		cfg.Broker.FilterProductGroupTable,
 	)
 }
 
@@ -124,4 +125,8 @@ func printComplete(start time.Time) {
 
 func printFail(err error) {
 	fmt.Printf("failed to create topics: \n%s\n", err)
+}
+
+func toGroupTable(topic string) string {
+	return string(goka.GroupTable(goka.Group(topic)))
 }

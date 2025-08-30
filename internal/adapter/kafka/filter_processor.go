@@ -67,15 +67,15 @@ func NewProductFilterProcessor(
 	seedBrokers []string, stream string, group string, productFilterSerde Serde,
 ) (ProductFilterProcessor, error) {
 	const op = "NewProductFilterProcessor"
-	p := ProductFilterProcessor{}
+
+	var p ProductFilterProcessor
 
 	gg := goka.DefineGroup(goka.Group(group),
 		goka.Input(goka.Stream(stream), newFilterEventCodec(productFilterSerde), p.processFn),
 		goka.Persist(filterValueCodec{}),
 	)
 
-	var opt goka.ProcessorOption
-	gp, err := goka.NewProcessor(seedBrokers, gg, opt)
+	gp, err := goka.NewProcessor(seedBrokers, gg)
 	if err != nil {
 		return ProductFilterProcessor{}, fmt.Errorf("%s: %w", op, err)
 	}
