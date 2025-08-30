@@ -42,7 +42,7 @@ func (h ProductsHandler) PostProducts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusAccepted)
-	_, err = w.Write([]byte("Accepted"))
+	_, err = w.Write([]byte("Products list accepted"))
 	if err != nil {
 		log.Error("failed to write response body", "err", err)
 		return
@@ -119,9 +119,12 @@ func (h FilterHandler) PostProductsRule(
 	}
 
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write([]byte("Rule applied"))
+	_, err = w.Write([]byte("Rule accepted"))
 
-	log.Info("rule applied", "productName", pf.ProductName, "blocked", pf.Blocked)
+	log.Info(
+		"product filter rule accepted",
+		"productName", pf.ProductName, "blocked", pf.Blocked,
+	)
 }
 
 func (h FilterHandler) toProductFilter(

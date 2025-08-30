@@ -19,7 +19,7 @@ func newFilterEventCodec(s Serde) filterEventCodec {
 }
 
 func (c filterEventCodec) Encode(v any) ([]byte, error) {
-	const op = "FilterEventCodec.Encode"
+	const op = "filterEventCodec.Encode"
 	if _, ok := v.(schema.ProductFilterV1); !ok {
 		return nil, fmt.Errorf("%s: invalid value type", op)
 	}
@@ -27,7 +27,7 @@ func (c filterEventCodec) Encode(v any) ([]byte, error) {
 }
 
 func (c filterEventCodec) Decode(data []byte) (any, error) {
-	const op = "FilterEventCodec.Decode"
+	const op = "filterEventCodec.Decode"
 	var s schema.ProductFilterV1
 	err := c.serde.Decode(data, &s)
 	if err != nil {
@@ -36,13 +36,13 @@ func (c filterEventCodec) Decode(data []byte) (any, error) {
 	return s, err
 }
 
-type FilterValue bool
+type BlockValue bool
 
-type filterValueCodec struct{}
+type blockValueCodec struct{}
 
-func (filterValueCodec) Encode(v any) ([]byte, error) {
-	const op = "FilterValueCodec.Encode"
-	fv, ok := v.(FilterValue)
+func (blockValueCodec) Encode(v any) ([]byte, error) {
+	const op = "blockValueCodec.Encode"
+	fv, ok := v.(BlockValue)
 	if !ok {
 		return nil, fmt.Errorf("%s: invalid value type", op)
 	}
@@ -50,29 +50,36 @@ func (filterValueCodec) Encode(v any) ([]byte, error) {
 	return data, nil
 }
 
-func (filterValueCodec) Decode(data []byte) (any, error) {
-	const op = "FilterValueCodec.Decode"
+func (blockValueCodec) Decode(data []byte) (any, error) {
+	const op = "blockValueCodec.Decode"
 	bv, err := strconv.ParseBool(string(data))
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	return FilterValue(bv), nil
+	return BlockValue(bv), nil
 }
 
 type ProductFilterProcessor struct {
 	gp *goka.Processor
 }
 
-func NewProductFilterProcessor(
-	seedBrokers []string, stream string, group string, productFilterSerde Serde,
+func NewProductFilterProc(
+	seedBrokers []string,
+	intputStream string,
+	groupTable string,
+	productFilterSerde Serde,
 ) (ProductFilterProcessor, error) {
 	const op = "NewProductFilterProcessor"
 
 	var p ProductFilterProcessor
 
-	gg := goka.DefineGroup(goka.Group(group),
-		goka.Input(goka.Stream(stream), newFilterEventCodec(productFilterSerde), p.processFn),
-		goka.Persist(filterValueCodec{}),
+	gg := goka.DefineGroup(goka.Group(groupTable),
+		goka.Input(
+			goka.Stream(intputStream),
+			newFilterEventCodec(productFilterSerde),
+			p.processFn,
+		),
+		goka.Persist(blockValueCodec{}),
 	)
 
 	gp, err := goka.NewProcessor(seedBrokers, gg)
@@ -105,7 +112,11 @@ func (p ProductFilterProcessor) Close() {
 }
 
 func (ProductFilterProcessor) processFn(ctx goka.Context, msg any) {
+	const op = "ProductFilterProcessor.processFn"
+	log := slog.With("op", op)
+
 	event, _ := msg.(schema.ProductFilterV1)
-	v := FilterValue(event.Blocked)
+	v := BlockValue(event.Blocked)
 	ctx.SetValue(v)
+	log.Info("set filter value", "productName", event.ProductName, "isBlocked", v)
 }

@@ -22,7 +22,8 @@ type serdes struct {
 }
 
 type streamProcessors struct {
-	productFilter kafka.ProductFilterProcessor
+	productFilter  kafka.ProductFilterProcessor
+	productBlocker kafka.ProductBlockerProcessor
 }
 
 type producers struct {
@@ -37,13 +38,13 @@ type coreService struct {
 }
 
 type App struct {
-	ctx              context.Context
-	cfg              config.Config
-	serdes           serdes
-	streamProcessors streamProcessors
-	producers        producers
-	coreService      service.Service
-	httpServer       httphandler.HTTPServer
+	ctx         context.Context
+	cfg         config.Config
+	serdes      serdes
+	streamProcs streamProcessors
+	producers   producers
+	coreService service.Service
+	httpServer  httphandler.HTTPServer
 }
 
 func New(context context.Context, config config.Config) *App {
@@ -65,8 +66,9 @@ func (app *App) Run(stopFn context.CancelFunc) {
 
 	ctx := app.ctx
 
+	go app.streamProcs.productFilter.Run(ctx)
+	go app.streamProcs.productBlocker.Run(ctx)
 	go app.httpServer.Run(stopFn)
-	go app.streamProcessors.productFilter.Run(ctx)
 
 	log.Info("application is running")
 }
@@ -79,7 +81,8 @@ func (app *App) Close(ctx context.Context) {
 	app.httpServer.Close(ctx)
 	app.producers.products.Close()
 	app.producers.productFilter.Close()
-	app.streamProcessors.productFilter.Close()
+	app.streamProcs.productFilter.Close()
+	app.streamProcs.productBlocker.Close()
 
 	log.Info("application is closed")
 }
@@ -130,7 +133,7 @@ func (app *App) initStreamProcessors() {
 	filterProductStream := app.cfg.Broker.FilterProductStream
 	filterProductGroup := app.cfg.Broker.FilterProductGroupTable
 
-	productFilterProcessor, err := kafka.NewProductFilterProcessor(
+	productFilterProc, err := kafka.NewProductFilterProc(
 		seedBrokers, filterProductStream, filterProductGroup,
 		app.serdes.productFilter,
 	)
@@ -138,7 +141,21 @@ func (app *App) initStreamProcessors() {
 		app.fallDown(op, err)
 	}
 
-	app.streamProcessors.productFilter = productFilterProcessor
+	productsStream := app.cfg.Broker.ShopProductsTopic
+	saveProductsTopic := app.cfg.Broker.SaveProductsTopic
+	productBlockerProc, err := kafka.NewProductBlockerProc(
+		seedBrokers,
+		productsStream,
+		filterProductGroup,
+		saveProductsTopic,
+		app.serdes.product,
+	)
+	if err != nil {
+		app.fallDown(op, err)
+	}
+
+	app.streamProcs.productFilter = productFilterProc
+	app.streamProcs.productBlocker = productBlockerProc
 }
 
 func (app *App) initOutboundAdapters() {

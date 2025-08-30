@@ -16,6 +16,7 @@ type brokerConfig struct {
 	ShopProductsTopic       string   `mapstructure:"shop_products_topic"`
 	FilterProductStream     string   `mapstructure:"filter_product_stream"`
 	FilterProductGroupTable string   `mapstructure:"filter_product_group_table"`
+	SaveProductsTopic       string   `mapstructure:"save_products_topic"`
 	ClientEventsTopic       string   `mapstructure:"client_events_topic"`
 }
 
@@ -67,6 +68,7 @@ func (c Config) Print() {
 	ShopProductsTopic=%q
 	FilterProductStream=%q
 	FilterProductGroupTable=%q
+	SaveProductsTopic=%q
 	ClientEventsTopic=%q
 
 
@@ -81,6 +83,7 @@ func (c Config) Print() {
 		c.Broker.ShopProductsTopic,
 		c.Broker.FilterProductStream,
 		c.Broker.FilterProductGroupTable,
+		c.Broker.SaveProductsTopic,
 		c.Broker.ClientEventsTopic,
 	)
 }

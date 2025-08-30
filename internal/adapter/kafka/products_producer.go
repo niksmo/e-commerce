@@ -76,7 +76,7 @@ func (p ProductsProducer) createRecords(
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
-		r := &kgo.Record{Value: v}
+		r := &kgo.Record{Key: []byte(s.Name), Value: v}
 		rs = append(rs, r)
 	}
 

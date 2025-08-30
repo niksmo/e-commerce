@@ -38,6 +38,7 @@ func main() {
 		sigCtx, cl, delete,
 		cfg.Broker.ShopProductsTopic,
 		cfg.Broker.FilterProductStream,
+		cfg.Broker.SaveProductsTopic,
 	)
 	if err != nil {
 		printFail(err)
