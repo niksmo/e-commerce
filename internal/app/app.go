@@ -21,8 +21,8 @@ type serdes struct {
 }
 
 type streamProcessors struct {
-	productFilter  kafka.ProductFilterProcessor
-	productBlocker kafka.ProductBlockerProcessor
+	productFilter  *kafka.ProductFilterProcessor
+	productBlocker *kafka.ProductBlockerProcessor
 }
 
 type producers struct {
@@ -67,7 +67,7 @@ func (app *App) Run(stopFn context.CancelFunc) {
 
 	ctx := app.ctx
 
-	app.coreService.Run(ctx)
+	app.coreService.Run(ctx, stopFn)
 	go app.httpServer.Run(stopFn)
 
 	log.Info("application is running")
@@ -196,7 +196,7 @@ func (app *App) initCoreService() {
 		app.producers.productFilter,
 		nil,
 		app.streamProcs.productFilter,
-		&app.streamProcs.productBlocker,
+		app.streamProcs.productBlocker,
 	)
 }
 

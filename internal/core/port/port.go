@@ -9,7 +9,7 @@ import (
 
 type (
 	runnerContextWg interface {
-		Run(context.Context, *sync.WaitGroup)
+		Run(context.Context, context.CancelFunc, *sync.WaitGroup)
 	}
 
 	closer interface {

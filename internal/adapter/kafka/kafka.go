@@ -83,7 +83,7 @@ type Serde interface {
 	Decoder
 }
 
-func withNoLogProcOpt() goka.ProcessorOption {
+func withNonlogProcOpt() goka.ProcessorOption {
 	return goka.WithLogger(log.New(io.Discard, "", 0))
 }
 

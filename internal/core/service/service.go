@@ -40,11 +40,11 @@ func New(
 // Run runs the services components in separate goroutines.
 //
 // Blocks current goroutine while components is preparing to ready state.
-func (s Service) Run(ctx context.Context) {
+func (s Service) Run(ctx context.Context, stopFn context.CancelFunc) {
 	var wg sync.WaitGroup
 	wg.Add(2)
-	go s.productFilterProc.Run(ctx, &wg)
-	go s.productBlockerProc.Run(ctx, &wg)
+	go s.productFilterProc.Run(ctx, stopFn, &wg)
+	go s.productBlockerProc.Run(ctx, stopFn, &wg)
 	wg.Wait()
 }
 
