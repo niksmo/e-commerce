@@ -11,6 +11,93 @@ import (
 	"github.com/niksmo/e-commerce/pkg/schema"
 )
 
+////////////////////////////////////////////////////////
+//////////////           CODECS            /////////////
+////////////////////////////////////////////////////////
+
+// A productEventCodec used for serde [schema.ProductV1]
+type productEventCodec struct {
+	serde Serde
+}
+
+func newProductEventCodec(s Serde) productEventCodec {
+	return productEventCodec{s}
+}
+
+func (c productEventCodec) Encode(v any) ([]byte, error) {
+	const op = "productEventCodec.Encode"
+	if _, ok := v.(schema.ProductV1); !ok {
+		return nil, opErr(ErrInvalidValueType, op)
+	}
+	return c.serde.Encode(v)
+}
+
+func (c productEventCodec) Decode(data []byte) (any, error) {
+	const op = "productEventCodec.Decode"
+	var s schema.ProductV1
+	err := c.serde.Decode(data, &s)
+	if err != nil {
+		return nil, opErr(err, op)
+	}
+	return s, err
+}
+
+// A filterEventCodec used for serde [schema.ProductFilterV1]
+type filterEventCodec struct {
+	serde Serde
+}
+
+func newFilterEventCodec(s Serde) filterEventCodec {
+	return filterEventCodec{s}
+}
+
+func (c filterEventCodec) Encode(v any) ([]byte, error) {
+	const op = "filterEventCodec.Encode"
+	if _, ok := v.(schema.ProductFilterV1); !ok {
+		return nil, opErr(ErrInvalidValueType, op)
+	}
+	return c.serde.Encode(v)
+}
+
+func (c filterEventCodec) Decode(data []byte) (any, error) {
+	const op = "filterEventCodec.Decode"
+	var s schema.ProductFilterV1
+	err := c.serde.Decode(data, &s)
+	if err != nil {
+		return nil, opErr(err, op)
+	}
+	return s, err
+}
+
+// A blockValue is represents blocking value for particular product name
+type blockValue bool
+
+// A blockValueCodec used for serde [blockValue]
+type blockValueCodec struct{}
+
+func (blockValueCodec) Encode(v any) ([]byte, error) {
+	const op = "blockValueCodec.Encode"
+	fv, ok := v.(blockValue)
+	if !ok {
+		return nil, opErr(ErrInvalidValueType, op)
+	}
+	data := strconv.AppendBool([]byte(nil), bool(fv))
+	return data, nil
+}
+
+func (blockValueCodec) Decode(data []byte) (any, error) {
+	const op = "blockValueCodec.Decode"
+	bv, err := strconv.ParseBool(string(data))
+	if err != nil {
+		return nil, opErr(err, op)
+	}
+	return blockValue(bv), nil
+}
+
+////////////////////////////////////////////////////////
+//////////////         PROCESSORS          /////////////
+////////////////////////////////////////////////////////
+
 // A processor is used for composition.
 //
 // Running and closing the underlying [goka.Processor]
@@ -69,58 +156,6 @@ func (p *processor) close() {
 	log.Info("closing processor...")
 	p.gp.Stop()
 	log.Info("processor is closed")
-}
-
-// A filterEventCodec used for serde [schema.ProductFilterV1]
-type filterEventCodec struct {
-	serde Serde
-}
-
-func newFilterEventCodec(s Serde) filterEventCodec {
-	return filterEventCodec{s}
-}
-
-func (c filterEventCodec) Encode(v any) ([]byte, error) {
-	const op = "filterEventCodec.Encode"
-	if _, ok := v.(schema.ProductFilterV1); !ok {
-		return nil, opErr(ErrInvalidValueType, op)
-	}
-	return c.serde.Encode(v)
-}
-
-func (c filterEventCodec) Decode(data []byte) (any, error) {
-	const op = "filterEventCodec.Decode"
-	var s schema.ProductFilterV1
-	err := c.serde.Decode(data, &s)
-	if err != nil {
-		return nil, opErr(err, op)
-	}
-	return s, err
-}
-
-// A blockValue is represents blocking value for particular product name
-type blockValue bool
-
-// A blockValueCodec used for serde [blockValue]
-type blockValueCodec struct{}
-
-func (blockValueCodec) Encode(v any) ([]byte, error) {
-	const op = "blockValueCodec.Encode"
-	fv, ok := v.(blockValue)
-	if !ok {
-		return nil, opErr(ErrInvalidValueType, op)
-	}
-	data := strconv.AppendBool([]byte(nil), bool(fv))
-	return data, nil
-}
-
-func (blockValueCodec) Decode(data []byte) (any, error) {
-	const op = "blockValueCodec.Decode"
-	bv, err := strconv.ParseBool(string(data))
-	if err != nil {
-		return nil, opErr(err, op)
-	}
-	return blockValue(bv), nil
 }
 
 // A ProductFilterProcessor proccess filter events
@@ -184,33 +219,6 @@ func (p *ProductFilterProcessor) processFn(ctx goka.Context, msg any) {
 		"productName", event.ProductName,
 		"isBlocked", v,
 	)
-}
-
-// A productEventCodec used for serde [schema.ProductV1]
-type productEventCodec struct {
-	serde Serde
-}
-
-func newProductEventCodec(s Serde) productEventCodec {
-	return productEventCodec{s}
-}
-
-func (c productEventCodec) Encode(v any) ([]byte, error) {
-	const op = "productEventCodec.Encode"
-	if _, ok := v.(schema.ProductV1); !ok {
-		return nil, opErr(ErrInvalidValueType, op)
-	}
-	return c.serde.Encode(v)
-}
-
-func (c productEventCodec) Decode(data []byte) (any, error) {
-	const op = "productEventCodec.Decode"
-	var s schema.ProductV1
-	err := c.serde.Decode(data, &s)
-	if err != nil {
-		return nil, opErr(err, op)
-	}
-	return s, err
 }
 
 // A ProductBlockerProcessor proccess products from input stream,

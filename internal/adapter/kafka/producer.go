@@ -11,7 +11,7 @@ import (
 
 // A producer is used for composition.
 //
-// Producing records to kafka broker and closing underlying kgo client.
+// Producing records to kafka broker and closing underlying [kgo.Client].
 type producer struct {
 	opPrefix string
 	cl       ProducerClient
