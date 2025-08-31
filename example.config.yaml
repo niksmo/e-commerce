@@ -7,8 +7,12 @@ broker:
     - 127.0.0.1:39094
   schema_registry_urls:
     - http://127.0.0.1:8081
-  shop_products_topic: shop-products
-  filter_product_stream: filter-product
-  filter_product_group_table: filter-product-group
-  save_products_topic: save-products
-  client_events_topic: client-events
+  topics:
+    products_from_shop: products-from-shop
+    products_to_store: products-to-store
+    filter_product_stream: filter-product-stream
+    filter_product_table: filter-product-group-table # <prefix>-table derived from consumers.filter_product_group
+    client_events: client-events
+  consumers:
+    filter_product_group: filter-product-group
+    product_blocker_group: product-blocker-group

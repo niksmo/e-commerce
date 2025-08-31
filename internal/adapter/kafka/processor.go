@@ -171,7 +171,7 @@ func NewProductFilterProc(
 	intputTopic string,
 	productFilterSerde Serde,
 ) (*ProductFilterProcessor, error) {
-	const op = "NewProductFilterProcessor"
+	const op = "NewProductFilterProc"
 
 	var p ProductFilterProcessor
 
@@ -192,10 +192,12 @@ func NewProductFilterProc(
 		return nil, opErr(err, op)
 	}
 
+	opPrefix := "ProductFilterProcessor"
 	p.proc = processor{
-		opPrefix: "ProductFilterProcessor",
+		opPrefix: opPrefix,
 		gp:       gp,
 	}
+	p.opPrefix = opPrefix
 
 	return &p, nil
 }
@@ -242,14 +244,14 @@ func NewProductBlockerProc(
 	outputTopic string,
 	productSerde Serde,
 ) (*ProductBlockerProcessor, error) {
-	const op = "NewProductFilterProcessor"
+	const op = "NewProductBlockerProc"
 
 	var p ProductBlockerProcessor
 
 	group := goka.Group(consumerGroup)
 	productEventCodec := newProductEventCodec(productSerde)
 	intputStream := goka.Stream(inputTopic)
-	joinedTable := goka.GroupTable(goka.Group(filterProductTable))
+	joinedTable := goka.Table(filterProductTable)
 	outputStream := goka.Stream(outputTopic)
 
 	gg := goka.DefineGroup(group,
@@ -263,10 +265,12 @@ func NewProductBlockerProc(
 		return nil, opErr(err, op)
 	}
 
+	opPrefix := "ProductBlockerProcessor"
 	p.proc = processor{
-		opPrefix: "ProductBlockerProcessor",
+		opPrefix: opPrefix,
 		gp:       gp,
 	}
+	p.opPrefix = opPrefix
 	p.joinedTable = joinedTable
 	p.outputStream = outputStream
 	return &p, nil

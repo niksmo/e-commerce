@@ -10,6 +10,7 @@ import (
 	"github.com/niksmo/e-commerce/config"
 	"github.com/niksmo/e-commerce/internal/adapter/httphandler"
 	"github.com/niksmo/e-commerce/internal/adapter/kafka"
+	"github.com/niksmo/e-commerce/internal/core/port"
 	"github.com/niksmo/e-commerce/internal/core/service"
 	"github.com/niksmo/e-commerce/pkg/schema"
 	"github.com/twmb/franz-go/pkg/sr"
@@ -198,10 +199,12 @@ func (app *App) initOutboundAdapters() {
 }
 
 func (app *App) initCoreService() {
+	var nilProductsStorage port.ProductsStorage
+
 	app.coreService = service.New(
 		app.producers.products,
 		app.producers.productFilter,
-		nil,
+		nilProductsStorage,
 		app.streamProcs.productFilter,
 		app.streamProcs.productBlocker,
 	)
