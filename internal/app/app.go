@@ -96,8 +96,10 @@ func (app *App) initLogger() {
 
 func (app *App) initSerdes() {
 	const op = "App.initSerdes"
-	urls := app.cfg.Broker.SchemaRegistryURLs
 	ctx := app.ctx
+	urls := app.cfg.Broker.SchemaRegistryURLs
+	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
+	filterProductsStream := app.cfg.Broker.Topics.FilterProductStream
 
 	srClient, err := sr.NewClient(sr.URLs(urls...))
 	if err != nil {
@@ -106,7 +108,7 @@ func (app *App) initSerdes() {
 
 	schemaCreater := schema.NewSchemaCreater(srClient)
 
-	productSS := app.cfg.Broker.ShopProductsTopic + "-value"
+	productSS := schema.ValueSubject(productsFromShopTopic)
 	productSerde, err := schema.NewSerdeProductV1(
 		ctx,
 		schema.SubjectOpt(productSS),
@@ -116,7 +118,7 @@ func (app *App) initSerdes() {
 		app.fallDown(op, err)
 	}
 
-	productFilterSS := app.cfg.Broker.FilterProductStream + "-value"
+	productFilterSS := schema.ValueSubject(filterProductsStream)
 	productFilterSerde, err := schema.NewSerdeProducFiltertV1(
 		ctx,
 		schema.SubjectOpt(productFilterSS),
@@ -134,24 +136,29 @@ func (app *App) initStreamProcessors() {
 	const op = "App.initStreamProcessors"
 
 	seedBrokers := app.cfg.Broker.SeedBrokers
-	filterProductStream := app.cfg.Broker.FilterProductStream
-	filterProductGroup := app.cfg.Broker.FilterProductGroupTable
+	filterProductConsumer := app.cfg.Broker.Consumers.FilterProductGroup
+	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
+	blockerProductConsumer := app.cfg.Broker.Consumers.ProductBlockerGroup
+	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
+	filterProductTable := app.cfg.Broker.Topics.FilterProductTable
+	productsToStore := app.cfg.Broker.Topics.ProductsToStore
 
 	productFilterProc, err := kafka.NewProductFilterProc(
-		seedBrokers, filterProductStream, filterProductGroup,
+		seedBrokers,
+		filterProductConsumer,
+		filterProductStream,
 		app.serdes.productFilter,
 	)
 	if err != nil {
 		app.fallDown(op, err)
 	}
 
-	productsStream := app.cfg.Broker.ShopProductsTopic
-	saveProductsTopic := app.cfg.Broker.SaveProductsTopic
 	productBlockerProc, err := kafka.NewProductBlockerProc(
 		seedBrokers,
-		productsStream,
-		filterProductGroup,
-		saveProductsTopic,
+		blockerProductConsumer,
+		productsFromShopTopic,
+		filterProductTable,
+		productsToStore,
 		app.serdes.product,
 	)
 	if err != nil {
@@ -167,11 +174,11 @@ func (app *App) initOutboundAdapters() {
 
 	ctx := app.ctx
 	seedBrokers := app.cfg.Broker.SeedBrokers
-	shopProductsTopic := app.cfg.Broker.ShopProductsTopic
-	productFilterTopic := app.cfg.Broker.FilterProductStream
+	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
+	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
 
 	productsProducer, err := kafka.NewProductsProducer(
-		kafka.ProducerClientOpt(ctx, seedBrokers, shopProductsTopic),
+		kafka.ProducerClientOpt(ctx, seedBrokers, productsFromShopTopic),
 		kafka.ProducerEncoderOpt(app.serdes.product),
 	)
 	if err != nil {
@@ -179,7 +186,7 @@ func (app *App) initOutboundAdapters() {
 	}
 
 	productFilterProducer, err := kafka.NewProductFilterProducer(
-		kafka.ProducerClientOpt(ctx, seedBrokers, productFilterTopic),
+		kafka.ProducerClientOpt(ctx, seedBrokers, filterProductStream),
 		kafka.ProducerEncoderOpt(app.serdes.productFilter),
 	)
 	if err != nil {

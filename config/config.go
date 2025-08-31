@@ -12,20 +12,30 @@ import (
 
 const configFileEnvName = "ECOM_CONFIG_FILE"
 
-type brokerConfig struct {
-	SeedBrokers             []string `mapstructure:"seed_brokers"`
-	SchemaRegistryURLs      []string `mapstructure:"schema_registry_urls"`
-	ShopProductsTopic       string   `mapstructure:"shop_products_topic"`
-	FilterProductStream     string   `mapstructure:"filter_product_stream"`
-	FilterProductGroupTable string   `mapstructure:"filter_product_group_table"`
-	SaveProductsTopic       string   `mapstructure:"save_products_topic"`
-	ClientEventsTopic       string   `mapstructure:"client_events_topic"`
+type consumers struct {
+	FilterProductGroup  string `mapstructure:"filter_product_group"`
+	ProductBlockerGroup string `mapstructure:"product_blocker_group"`
+}
+
+type topics struct {
+	ProductsFromShop    string `mapstructure:"products_from_shop"`
+	ProductsToStore     string `mapstructure:"products_to_store"`
+	FilterProductStream string `mapstructure:"filter_product_stream"`
+	FilterProductTable  string `mapstructure:"filter_product_table"`
+	ClientEvents        string `mapstructure:"client_events"`
+}
+
+type broker struct {
+	SeedBrokers        []string  `mapstructure:"seed_brokers"`
+	SchemaRegistryURLs []string  `mapstructure:"schema_registry_urls"`
+	Topics             topics    `mapstructure:"topics"`
+	Consumers          consumers `mapstructure:"consumers"`
 }
 
 type Config struct {
-	LogLevel       slog.Level   `mapstructure:"log_level"`
-	HTTPServerAddr string       `mapstructure:"http_server_addr"`
-	Broker         brokerConfig `mapstructure:"broker"`
+	LogLevel       slog.Level `mapstructure:"log_level"`
+	HTTPServerAddr string     `mapstructure:"http_server_addr"`
+	Broker         broker     `mapstructure:"broker"`
 }
 
 func Load() Config {
@@ -63,15 +73,22 @@ func die(err error) {
 
 func (c Config) Print() {
 	tamplate := `
+	General:
 	LogLevel=%q
 	HTTPServerAddr=%q
+
+	BrokerConfig:
 	SeedBrokers=%q
 	SchemaRegistryURLs=%q
-	ShopProductsTopic=%q
-	FilterProductStream=%q
-	FilterProductGroupTable=%q
-	SaveProductsTopic=%q
-	ClientEventsTopic=%q
+	Topics:
+		ProductsFromShop=%q
+		ProductsToStore=%q
+		FilterProductStream=%q
+		FilterProductTable=%q
+		ClientEvents=%q
+	Consumers:
+		FilterProductGroup=%q
+		ProductBlockerGroup=%q
 
 `
 	fmt.Println("Loaded config:")
@@ -81,10 +98,12 @@ func (c Config) Print() {
 		c.HTTPServerAddr,
 		c.Broker.SeedBrokers,
 		c.Broker.SchemaRegistryURLs,
-		c.Broker.ShopProductsTopic,
-		c.Broker.FilterProductStream,
-		c.Broker.FilterProductGroupTable,
-		c.Broker.SaveProductsTopic,
-		c.Broker.ClientEventsTopic,
+		c.Broker.Topics.ProductsFromShop,
+		c.Broker.Topics.ProductsToStore,
+		c.Broker.Topics.FilterProductStream,
+		c.Broker.Topics.FilterProductTable,
+		c.Broker.Topics.ClientEvents,
+		c.Broker.Consumers.FilterProductGroup,
+		c.Broker.Consumers.ProductBlockerGroup,
 	)
 }

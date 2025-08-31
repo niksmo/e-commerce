@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lovoo/goka"
 	"github.com/niksmo/e-commerce/config"
 	"github.com/niksmo/e-commerce/pkg/sigctx"
 	"github.com/twmb/franz-go/pkg/kadm"
@@ -15,10 +14,11 @@ import (
 )
 
 const (
-	partitions        = 3
-	replicationFactor = 3
-	delete            = "delete"
-	compact           = "compact"
+	partitions           = 3
+	replicationFactor    = 3
+	deleteCleanupPolicy  = "delete"
+	compactCleanupPolicy = "compact"
+	minISR               = "1"
 )
 
 func main() {
@@ -33,22 +33,23 @@ func main() {
 	printStart(cfg)
 	defer printComplete(time.Now())
 
-	// regular topics
+	// with delete cleanup policy
 	err := makeTopics(
-		sigCtx, cl, delete,
-		cfg.Broker.ShopProductsTopic,
-		cfg.Broker.FilterProductStream,
-		cfg.Broker.SaveProductsTopic,
+		sigCtx, cl, deleteCleanupPolicy,
+		cfg.Broker.Topics.ProductsFromShop,
+		cfg.Broker.Topics.ProductsToStore,
+		cfg.Broker.Topics.FilterProductStream,
+		cfg.Broker.Topics.ClientEvents,
 	)
 	if err != nil {
 		printFail(err)
 		return
 	}
 
-	// group table topics
+	// with compact cleanup policy
 	err = makeTopics(
-		sigCtx, cl, compact,
-		toGroupTable(cfg.Broker.FilterProductGroupTable),
+		sigCtx, cl, compactCleanupPolicy,
+		cfg.Broker.Topics.FilterProductTable,
 	)
 	if err != nil {
 		printFail(err)
@@ -70,12 +71,12 @@ func makeTopics(
 	ctx context.Context, cl *kadm.Client, cleanupPolicy string, topics ...string,
 ) error {
 	var (
-		minISR = "1"
+		isr = minISR
 	)
 
 	config := map[string]*string{
 		"cleanup.policy":      &cleanupPolicy,
-		"min.insync.replicas": &minISR,
+		"min.insync.replicas": &isr,
 	}
 
 	responses, err := cl.CreateTopics(
@@ -112,11 +113,15 @@ func printStart(cfg config.Config) {
 	- %q
 	- %q
 	- %q
+	- %q
+	- %q
 
 `,
-		cfg.Broker.ShopProductsTopic,
-		cfg.Broker.FilterProductStream,
-		cfg.Broker.FilterProductGroupTable,
+		cfg.Broker.Topics.ProductsFromShop,
+		cfg.Broker.Topics.ProductsToStore,
+		cfg.Broker.Topics.FilterProductStream,
+		cfg.Broker.Topics.FilterProductTable,
+		cfg.Broker.Topics.ClientEvents,
 	)
 }
 
@@ -126,8 +131,4 @@ func printComplete(start time.Time) {
 
 func printFail(err error) {
 	fmt.Printf("failed to create topics: \n%s\n", err)
-}
-
-func toGroupTable(topic string) string {
-	return string(goka.GroupTable(goka.Group(topic)))
 }

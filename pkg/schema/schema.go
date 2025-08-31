@@ -47,3 +47,7 @@ func NewSchemaCreater(srcl *sr.Client) SchemaIdentifier {
 func NewSchemaLookuperer(srcl *sr.Client) SchemaIdentifier {
 	return lookuperer{srcl}
 }
+
+func ValueSubject(topic string) string {
+	return topic + "-value"
+}

@@ -167,17 +167,20 @@ type ProductFilterProcessor struct {
 
 func NewProductFilterProc(
 	seedBrokers []string,
-	intputStream string,
-	groupTable string,
+	consumerGroup string,
+	intputTopic string,
 	productFilterSerde Serde,
 ) (*ProductFilterProcessor, error) {
 	const op = "NewProductFilterProcessor"
 
 	var p ProductFilterProcessor
 
-	gg := goka.DefineGroup(goka.Group(groupTable),
+	group := goka.Group(consumerGroup)
+	inputStream := goka.Stream(intputTopic)
+
+	gg := goka.DefineGroup(group,
 		goka.Input(
-			goka.Stream(intputStream),
+			inputStream,
 			newFilterEventCodec(productFilterSerde),
 			p.processFn,
 		),
@@ -233,8 +236,9 @@ type ProductBlockerProcessor struct {
 
 func NewProductBlockerProc(
 	seedBrokers []string,
-	inputStream string,
-	filterGroupTable string,
+	consumerGroup string,
+	inputTopic string,
+	filterProductTable string,
 	outputTopic string,
 	productSerde Serde,
 ) (*ProductBlockerProcessor, error) {
@@ -242,12 +246,13 @@ func NewProductBlockerProc(
 
 	var p ProductBlockerProcessor
 
+	group := goka.Group(consumerGroup)
 	productEventCodec := newProductEventCodec(productSerde)
-	intputStream := goka.Stream(inputStream)
-	joinedTable := goka.GroupTable(goka.Group(filterGroupTable))
+	intputStream := goka.Stream(inputTopic)
+	joinedTable := goka.GroupTable(goka.Group(filterProductTable))
 	outputStream := goka.Stream(outputTopic)
 
-	gg := goka.DefineGroup(goka.Group("product-blocker-group"),
+	gg := goka.DefineGroup(group,
 		goka.Input(intputStream, productEventCodec, p.processFn),
 		goka.Join(joinedTable, blockValueCodec{}),
 		goka.Output(outputStream, productEventCodec),
