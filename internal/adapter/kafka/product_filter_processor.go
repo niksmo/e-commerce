@@ -11,6 +11,7 @@ import (
 	"github.com/niksmo/e-commerce/pkg/schema"
 )
 
+// A filterEventCodec used for serde [schema.ProductFilterV1]
 type filterEventCodec struct {
 	serde Serde
 }
@@ -37,13 +38,15 @@ func (c filterEventCodec) Decode(data []byte) (any, error) {
 	return s, err
 }
 
-type BlockValue bool
+// A blockValue is represents blocking value for particular product name
+type blockValue bool
 
+// A blockValueCodec used for serde [blockValue]
 type blockValueCodec struct{}
 
 func (blockValueCodec) Encode(v any) ([]byte, error) {
 	const op = "blockValueCodec.Encode"
-	fv, ok := v.(BlockValue)
+	fv, ok := v.(blockValue)
 	if !ok {
 		return nil, opErr(ErrInvalidValueType, op)
 	}
@@ -57,9 +60,11 @@ func (blockValueCodec) Decode(data []byte) (any, error) {
 	if err != nil {
 		return nil, opErr(err, op)
 	}
-	return BlockValue(bv), nil
+	return blockValue(bv), nil
 }
 
+// A ProductFilterProcessor proccess filter events
+// from stream topic to group table.
 type ProductFilterProcessor struct {
 	gp *goka.Processor
 }
@@ -144,7 +149,7 @@ func (ProductFilterProcessor) processFn(ctx goka.Context, msg any) {
 	log := slog.With("op", op)
 
 	event, _ := msg.(schema.ProductFilterV1)
-	v := BlockValue(event.Blocked)
+	v := blockValue(event.Blocked)
 	ctx.SetValue(v)
 	log.Info(
 		"set filter value",

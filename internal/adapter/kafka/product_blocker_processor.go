@@ -10,6 +10,7 @@ import (
 	"github.com/niksmo/e-commerce/pkg/schema"
 )
 
+// A productEventCodec used for serde [schema.ProductV1]
 type productEventCodec struct {
 	serde Serde
 }
@@ -36,6 +37,9 @@ func (c productEventCodec) Decode(data []byte) (any, error) {
 	return s, err
 }
 
+// A ProductBlockerProcessor proccess products from input stream,
+//
+// applying filter from group table and send product to output topic.
 type ProductBlockerProcessor struct {
 	gp           *goka.Processor
 	joinedTable  goka.Table
@@ -75,7 +79,9 @@ func NewProductBlockerProc(
 	return p, nil
 }
 
-func (p *ProductBlockerProcessor) Run(ctx context.Context, wg *sync.WaitGroup) {
+func (p *ProductBlockerProcessor) Run(
+	ctx context.Context, wg *sync.WaitGroup,
+) {
 	const op = "ProductBlockerProcessor.Run"
 	log := slog.With("op", op)
 
@@ -129,7 +135,7 @@ func (p *ProductBlockerProcessor) processFn(ctx goka.Context, msg any) {
 	productV, _ := msg.(schema.ProductV1)
 	log := slog.With("op", op, "productName", productV.Name)
 
-	v, ok := ctx.Join(p.joinedTable).(BlockValue)
+	v, ok := ctx.Join(p.joinedTable).(blockValue)
 	if ok && bool(v) {
 		log.Warn("product is blocked")
 		return
