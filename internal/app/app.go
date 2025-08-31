@@ -11,7 +11,6 @@ import (
 	"github.com/niksmo/e-commerce/config"
 	"github.com/niksmo/e-commerce/internal/adapter/httphandler"
 	"github.com/niksmo/e-commerce/internal/adapter/kafka"
-	"github.com/niksmo/e-commerce/internal/core/port"
 	"github.com/niksmo/e-commerce/internal/core/service"
 	"github.com/niksmo/e-commerce/pkg/schema"
 	"github.com/twmb/franz-go/pkg/sr"
@@ -30,12 +29,6 @@ type streamProcessors struct {
 type producers struct {
 	products      kafka.ProductsProducer
 	productFilter kafka.ProductFilterProducer
-}
-
-type coreService struct {
-	productsSender      port.ProductsSender
-	productFilterSetter port.ProductFilterSetter
-	productsSaver       port.ProductsSaver
 }
 
 type App struct {
@@ -135,6 +128,9 @@ func (app *App) initSerdes() {
 		schema.SubjectOpt(productFilterSS),
 		schema.SchemaIdentifierOpt(schemaCreater),
 	)
+	if err != nil {
+		app.fallDown(op, err)
+	}
 
 	app.serdes.product = productSerde
 	app.serdes.productFilter = productFilterSerde
