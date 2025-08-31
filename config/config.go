@@ -19,7 +19,7 @@ type consumers struct {
 
 type topics struct {
 	ProductsFromShop    string `mapstructure:"products_from_shop"`
-	ProductsToStore     string `mapstructure:"products_to_store"`
+	ProductsToStorage   string `mapstructure:"products_to_storage"`
 	FilterProductStream string `mapstructure:"filter_product_stream"`
 	FilterProductTable  string `mapstructure:"filter_product_table"`
 	ClientEvents        string `mapstructure:"client_events"`
@@ -82,7 +82,7 @@ func (c Config) Print() {
 	SchemaRegistryURLs=%q
 	Topics:
 		ProductsFromShop=%q
-		ProductsToStore=%q
+		ProductsToStorage=%q
 		FilterProductStream=%q
 		FilterProductTable=%q
 		ClientEvents=%q
@@ -99,7 +99,7 @@ func (c Config) Print() {
 		c.Broker.SeedBrokers,
 		c.Broker.SchemaRegistryURLs,
 		c.Broker.Topics.ProductsFromShop,
-		c.Broker.Topics.ProductsToStore,
+		c.Broker.Topics.ProductsToStorage,
 		c.Broker.Topics.FilterProductStream,
 		c.Broker.Topics.FilterProductTable,
 		c.Broker.Topics.ClientEvents,

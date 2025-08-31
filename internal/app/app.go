@@ -17,8 +17,9 @@ import (
 )
 
 type serdes struct {
-	product       schema.Serde
-	productFilter schema.Serde
+	productFromShop  schema.Serde
+	productToStorage schema.Serde
+	productFilter    schema.Serde
 }
 
 type streamProcessors struct {
@@ -100,6 +101,7 @@ func (app *App) initSerdes() {
 	ctx := app.ctx
 	urls := app.cfg.Broker.SchemaRegistryURLs
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
+	productsToStorageTopic := app.cfg.Broker.Topics.ProductsToStorage
 	filterProductsStream := app.cfg.Broker.Topics.FilterProductStream
 
 	srClient, err := sr.NewClient(sr.URLs(urls...))
@@ -109,10 +111,10 @@ func (app *App) initSerdes() {
 
 	schemaCreater := schema.NewSchemaCreater(srClient)
 
-	productSS := schema.ValueSubject(productsFromShopTopic)
-	productSerde, err := schema.NewSerdeProductV1(
+	productFromShopSS := schema.ValueSubject(productsFromShopTopic)
+	productFromShopSerde, err := schema.NewSerdeProductV1(
 		ctx,
-		schema.SubjectOpt(productSS),
+		schema.SubjectOpt(productFromShopSS),
 		schema.SchemaIdentifierOpt(schemaCreater),
 	)
 	if err != nil {
@@ -129,8 +131,16 @@ func (app *App) initSerdes() {
 		app.fallDown(op, err)
 	}
 
-	app.serdes.product = productSerde
+	productToStorageSS := schema.ValueSubject(productsToStorageTopic)
+	productToStorageSerde, err := schema.NewSerdeProductV1(
+		ctx,
+		schema.SubjectOpt(productToStorageSS),
+		schema.SchemaIdentifierOpt(schemaCreater),
+	)
+
+	app.serdes.productFromShop = productFromShopSerde
 	app.serdes.productFilter = productFilterSerde
+	app.serdes.productToStorage = productToStorageSerde
 }
 
 func (app *App) initStreamProcessors() {
@@ -142,7 +152,7 @@ func (app *App) initStreamProcessors() {
 	blockerProductConsumer := app.cfg.Broker.Consumers.ProductBlockerGroup
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductTable := app.cfg.Broker.Topics.FilterProductTable
-	productsToStore := app.cfg.Broker.Topics.ProductsToStore
+	productsToStorage := app.cfg.Broker.Topics.ProductsToStorage
 
 	productFilterProc, err := kafka.NewProductFilterProc(
 		kafka.WithSeedBrokersProcOpt(seedBrokers...),
@@ -150,7 +160,10 @@ func (app *App) initStreamProcessors() {
 			&filterProductConsumer,
 			&filterProductStream, nil, nil,
 		),
-		kafka.WithSerdeProcOpt(app.serdes.productFilter),
+		kafka.WithSerdeProcOpt(
+			app.serdes.productFilter,
+			app.serdes.productFilter,
+		),
 	)
 	if err != nil {
 		app.fallDown(op, err)
@@ -161,10 +174,13 @@ func (app *App) initStreamProcessors() {
 		kafka.WithGroupProcOpt(
 			&blockerProductConsumer,
 			&productsFromShopTopic,
-			&productsToStore,
+			&productsToStorage,
 			&filterProductTable,
 		),
-		kafka.WithSerdeProcOpt(app.serdes.product),
+		kafka.WithSerdeProcOpt(
+			app.serdes.productToStorage,
+			app.serdes.productFromShop,
+		),
 	)
 	if err != nil {
 		app.fallDown(op, err)
@@ -184,7 +200,7 @@ func (app *App) initOutboundAdapters() {
 
 	productsProducer, err := kafka.NewProductsProducer(
 		kafka.ProducerClientOpt(ctx, seedBrokers, productsFromShopTopic),
-		kafka.ProducerEncoderOpt(app.serdes.product),
+		kafka.ProducerEncoderOpt(app.serdes.productFromShop),
 	)
 	if err != nil {
 		app.fallDown(op, err)

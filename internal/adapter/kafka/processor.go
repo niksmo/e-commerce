@@ -46,12 +46,13 @@ func WithGroupProcOpt(
 	}
 }
 
-func WithSerdeProcOpt(s Serde) ProcessorOpt {
+func WithSerdeProcOpt(sEncode, sDecode Serde) ProcessorOpt {
 	return func(po *processorOpts) error {
-		if s == nil {
-			return errors.New("serde is not set")
+		if sEncode == nil || sDecode == nil {
+			return errors.New("serdes is not set")
 		}
-		po.serde = s
+		po.serdeEncode = sEncode
+		po.serdeDecode = sDecode
 		return nil
 	}
 }
@@ -62,7 +63,8 @@ type processorOpts struct {
 	inputStream   *goka.Stream
 	joinTable     *goka.Table
 	outputStream  *goka.Stream
-	serde         Serde
+	serdeEncode   Serde
+	serdeDecode   Serde
 }
 
 func (po *processorOpts) apply(opts ...ProcessorOpt) error {
@@ -124,7 +126,7 @@ func (po *processorOpts) verifyOutputStream() error {
 
 func (po *processorOpts) verifySerde() error {
 	const op = "processorOpts.verifySerde"
-	if po.serde == nil {
+	if po.serdeEncode == nil || po.serdeDecode == nil {
 		return opErr(ErrRequiredOpt, op)
 	}
 	return nil
@@ -136,11 +138,15 @@ func (po *processorOpts) verifySerde() error {
 
 // A productEventCodec used for serde [schema.ProductV1]
 type productEventCodec struct {
-	serde Serde
+	serdeEncode Serde
+	serdeDecode Serde
 }
 
-func newProductEventCodec(s Serde) productEventCodec {
-	return productEventCodec{s}
+func newProductEventCodec(sEncode, sDecode Serde) productEventCodec {
+	return productEventCodec{
+		serdeEncode: sEncode,
+		serdeDecode: sDecode,
+	}
 }
 
 func (c productEventCodec) Encode(v any) ([]byte, error) {
@@ -148,13 +154,13 @@ func (c productEventCodec) Encode(v any) ([]byte, error) {
 	if _, ok := v.(schema.ProductV1); !ok {
 		return nil, opErr(ErrInvalidValueType, op)
 	}
-	return c.serde.Encode(v)
+	return c.serdeEncode.Encode(v)
 }
 
 func (c productEventCodec) Decode(data []byte) (any, error) {
 	const op = "productEventCodec.Decode"
 	var s schema.ProductV1
-	err := c.serde.Decode(data, &s)
+	err := c.serdeDecode.Decode(data, &s)
 	if err != nil {
 		return nil, opErr(err, op)
 	}
@@ -163,11 +169,15 @@ func (c productEventCodec) Decode(data []byte) (any, error) {
 
 // A filterEventCodec used for serde [schema.ProductFilterV1]
 type filterEventCodec struct {
-	serde Serde
+	serdeEncode Serde
+	serdeDecode Serde
 }
 
-func newFilterEventCodec(s Serde) filterEventCodec {
-	return filterEventCodec{s}
+func newFilterEventCodec(sEncode, sDecode Serde) filterEventCodec {
+	return filterEventCodec{
+		serdeEncode: sEncode,
+		serdeDecode: sDecode,
+	}
 }
 
 func (c filterEventCodec) Encode(v any) ([]byte, error) {
@@ -175,13 +185,13 @@ func (c filterEventCodec) Encode(v any) ([]byte, error) {
 	if _, ok := v.(schema.ProductFilterV1); !ok {
 		return nil, opErr(ErrInvalidValueType, op)
 	}
-	return c.serde.Encode(v)
+	return c.serdeEncode.Encode(v)
 }
 
 func (c filterEventCodec) Decode(data []byte) (any, error) {
 	const op = "filterEventCodec.Decode"
 	var s schema.ProductFilterV1
-	err := c.serde.Decode(data, &s)
+	err := c.serdeDecode.Decode(data, &s)
 	if err != nil {
 		return nil, opErr(err, op)
 	}
@@ -309,7 +319,7 @@ func NewProductFilterProc(
 	gg := goka.DefineGroup(*options.consumerGroup,
 		goka.Input(
 			*options.inputStream,
-			newFilterEventCodec(options.serde),
+			newFilterEventCodec(options.serdeEncode, options.serdeDecode),
 			p.processFn,
 		),
 		goka.Persist(blockValueCodec{}),
@@ -388,7 +398,7 @@ func NewProductBlockerProc(
 
 	var p ProductBlockerProcessor
 
-	productEventCodec := newProductEventCodec(options.serde)
+	productEventCodec := newProductEventCodec(options.serdeEncode, options.serdeDecode)
 
 	gg := goka.DefineGroup(*options.consumerGroup,
 		goka.Input(*options.inputStream, productEventCodec, p.processFn),

@@ -9,7 +9,7 @@ broker:
     - http://127.0.0.1:8081
   topics:
     products_from_shop: products-from-shop
-    products_to_store: products-to-store
+    products_to_storage: products-to-storage
     filter_product_stream: filter-product-stream
     filter_product_table: filter-product-group-table # <prefix>-table derived from consumers.filter_product_group
     client_events: client-events

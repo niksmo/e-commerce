@@ -37,7 +37,7 @@ func main() {
 	err := makeTopics(
 		sigCtx, cl, deleteCleanupPolicy,
 		cfg.Broker.Topics.ProductsFromShop,
-		cfg.Broker.Topics.ProductsToStore,
+		cfg.Broker.Topics.ProductsToStorage,
 		cfg.Broker.Topics.FilterProductStream,
 		cfg.Broker.Topics.ClientEvents,
 	)
@@ -118,7 +118,7 @@ func printStart(cfg config.Config) {
 
 `,
 		cfg.Broker.Topics.ProductsFromShop,
-		cfg.Broker.Topics.ProductsToStore,
+		cfg.Broker.Topics.ProductsToStorage,
 		cfg.Broker.Topics.FilterProductStream,
 		cfg.Broker.Topics.FilterProductTable,
 		cfg.Broker.Topics.ClientEvents,
