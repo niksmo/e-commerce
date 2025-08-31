@@ -24,207 +24,263 @@ type ConsumerClient interface {
 ///////////////           OPTS            //////////////
 ////////////////////////////////////////////////////////
 
-type ConsumerOpt func(*productsConsumerOpts) error
+type ConsumerOpt func(*consumerOpts) error
 
-type productsConsumerOpts struct {
-	cl      ConsumerClient
-	decoder Decoder
-	saver   port.ProductsSaver
+func ProductsConsumerClientOpt(
+	seedBrokers []string, topic, group string,
+) ConsumerOpt {
+	return func(co *consumerOpts) error {
+		cl, err := kgo.NewClient(
+			kgo.SeedBrokers(seedBrokers...),
+			kgo.ConsumeTopics(topic),
+			kgo.ConsumerGroup(group),
+			kgo.DisableAutoCommit(),
+			// adds opts for batching consume
+		)
+		if err != nil {
+			return err
+		}
+		co.cl = cl
+		return nil
+	}
+}
+
+func ConsumerDecoderOpt(decoder Decoder) ConsumerOpt {
+	return func(co *consumerOpts) error {
+		if decoder == nil {
+			return errors.New("decoder is nil")
+		}
+		co.decoder = decoder
+		return nil
+	}
+}
+
+func ProductsConsumerSaverOpt(ps port.ProductsSaver) ConsumerOpt {
+	return func(co *consumerOpts) error {
+		if ps == nil {
+			return errors.New("products saver is nil")
+		}
+		co.productsSaver = ps
+		return nil
+	}
+}
+
+type consumerOpts struct {
+	cl            ConsumerClient
+	decoder       Decoder
+	productsSaver port.ProductsSaver
+}
+
+func (co *consumerOpts) apply(opts ...ConsumerOpt) error {
+	for _, opt := range opts {
+		if err := opt(co); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 ////////////////////////////////////////////////////////
 ////////////           CONSUMERS            ////////////
 ////////////////////////////////////////////////////////
 
-// A ProductsConsumer consumes filtered products
-// then sends to the core service for save.
-type ProductsConsumer struct {
+// A consumer is used for composition.
+//
+// Fetching records from kafka broker and closing underlying [kgo.Client].
+type consumer struct {
+	opPrefix      string
 	cl            ConsumerClient
-	saver         port.ProductsSaver
-	decoder       Decoder
 	slowDownTimer *time.Timer
 }
 
-func NewProductsConsumer(opts ...ConsumerOpt) ProductsConsumer {
-	const op = "NewProductsConsumer"
+func (c consumer) pollFetches(ctx context.Context) (kgo.Fetches, error) {
+	const op = "pollFetches"
 
-	if len(opts) != 3 {
-		panic(fmt.Errorf("%s: %w", op, ErrTooFewOpts)) // develop mistake
+	fetches := c.cl.PollFetches(ctx)
+	if err := fetches.Err0(); err != nil {
+		return nil, opErr(err, c.opPrefix, op)
 	}
 
-	var options productsConsumerOpts
-	for _, opt := range opts {
-		if err := opt(&options); err != nil {
-			panic(err) // develop mistake
-		}
+	err := c.handleFetchesErrs(fetches)
+	if err != nil {
+		return nil, opErr(err, c.opPrefix, op)
 	}
 
-	return ProductsConsumer{
-		cl:            options.cl,
-		saver:         options.saver,
-		decoder:       options.decoder,
-		slowDownTimer: time.NewTimer(0),
-	}
+	return fetches, nil
 }
 
-func (c ProductsConsumer) Close() {
-	const op = "ProductsConsumer.Close"
-	log := slog.With("op", op)
+func (c consumer) handleFetchesErrs(fetches kgo.Fetches) error {
+	var errsMessages []string
+	fetches.EachError(func(t string, p int32, err error) {
+		if err != nil {
+			errMsg := fmt.Sprintf(
+				"topic %q partition %d: %q", t, p, err,
+			)
+			errsMessages = append(errsMessages, errMsg)
+		}
+	})
+
+	if len(errsMessages) != 0 {
+		return errors.New(strings.Join(errsMessages, "; "))
+	}
+	return nil
+}
+
+func (c consumer) slowDown() {
+	c.slowDownTimer.Reset(1 * time.Second)
+	<-c.slowDownTimer.C
+}
+
+func (c consumer) commit(ctx context.Context) error {
+	const op = "commit"
+
+	err := ctx.Err()
+	if err != nil {
+		return opErr(err, c.opPrefix, op)
+	}
+
+	err = c.cl.CommitUncommittedOffsets(ctx)
+	if err != nil {
+		return opErr(err, c.opPrefix, op)
+	}
+	return nil
+}
+
+func (c consumer) close() {
+	const op = "close"
+	log := slog.With("op", makeOp(c.opPrefix, op))
+
+	c.slowDownTimer.Stop()
 
 	log.Info("closing consumer...")
-	c.slowDownTimer.Stop()
 	c.cl.Close()
 	log.Info("consumer is closed")
 }
 
+// A ProductsConsumer consumes filtered products
+// then sends to the core service for save.
+type ProductsConsumer struct {
+	opPrefix string
+	consumer consumer
+	saver    port.ProductsSaver
+	decoder  Decoder
+}
+
+func NewProductsConsumer(opts ...ConsumerOpt) (ProductsConsumer, error) {
+	const op = "NewProductsConsumer"
+
+	var options consumerOpts
+	if err := options.apply(opts...); err != nil {
+		return ProductsConsumer{}, opErr(err, op)
+	}
+
+	opPrefix := "ProductsConsumer"
+	c := consumer{
+		opPrefix:      opPrefix,
+		cl:            options.cl,
+		slowDownTimer: time.NewTimer(0),
+	}
+
+	return ProductsConsumer{
+		opPrefix: opPrefix,
+		consumer: c,
+		saver:    options.productsSaver,
+		decoder:  options.decoder,
+	}, nil
+}
+
+func (c ProductsConsumer) Close() {
+	c.consumer.close()
+}
+
 func (c ProductsConsumer) Run(ctx context.Context) {
-	const op = "ProductsConsumer.Run"
-	log := slog.With("op", op)
+	const op = "Run"
+	log := slog.With("op", makeOp(c.opPrefix, op))
 
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		default:
-			err := c.consume(ctx)
+			fetches, err := c.consumer.pollFetches(ctx)
 			if err != nil {
-				c.handleConsumeErr(err)
+				if errors.Is(err, context.Canceled) {
+					continue
+				}
+				log.Error("failed to poll fetches", "err", err)
+				c.consumer.slowDown()
 				continue
 			}
 
-			err = c.commit(ctx)
+			if fetches.Empty() {
+				continue
+			}
+
+			err = c.processFetches(ctx, fetches)
 			if err != nil {
+				if errors.Is(err, context.Canceled) {
+					continue
+				}
+				log.Error("failed to processFetches", "err", err)
+				c.consumer.slowDown()
+				continue
+			}
+
+			err = c.consumer.commit(ctx)
+			if err != nil {
+				if errors.Is(err, context.Canceled) {
+					continue
+				}
 				log.Error("failed to commit offset", "err", err)
+				c.consumer.slowDown()
 			}
 		}
 	}
 }
 
-func (c ProductsConsumer) commit(ctx context.Context) error {
-	const op = "ProductsConsumer.commit"
+func (c ProductsConsumer) processFetches(
+	ctx context.Context, fetches kgo.Fetches,
+) error {
+	const op = "processFetches"
 
-	err := ctx.Err()
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	err = c.cl.CommitUncommittedOffsets(ctx)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-	return nil
-}
-
-func (c ProductsConsumer) consume(ctx context.Context) error {
-	const op = "ProductsConsumer.consume"
-
-	err := ctx.Err()
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	fetches, err := c.pollFetches(ctx)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	if fetches.Empty() {
+	values := c.toDomain(fetches)
+	if len(values) == 0 {
 		return nil
 	}
 
-	ps := c.toProducts(fetches)
-	c.saver.SaveProducts(ctx, ps)
-	return nil
-}
-
-func (c ProductsConsumer) handleConsumeErr(err error) {
-	const op = "ProductsConsumer.handleConsumeErr"
-	log := slog.With("op", op)
-
-	if errors.Is(err, context.Canceled) {
-		log.Info("context cancaled")
-		return
-	}
-
-	log.Error("failed to consume messages", "err", err)
-	c.slowDown()
-}
-
-func (c ProductsConsumer) pollFetches(ctx context.Context) (kgo.Fetches, error) {
-	const op = "ProductsConsumer.pollFetches"
-
-	fetches := c.cl.PollFetches(ctx)
-	if err := fetches.Err0(); err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	err := c.handleFetchesErrs(fetches)
+	err := c.saver.SaveProducts(ctx, values)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	return fetches, nil
-}
-
-func (c ProductsConsumer) handleFetchesErrs(fetches kgo.Fetches) error {
-	var errsData []string
-	fetches.EachError(func(t string, p int32, err error) {
-		if err != nil {
-			errData := fmt.Sprintf(
-				"topic %q partition %d: %q", t, p, err,
-			)
-			errsData = append(errsData, errData)
-		}
-	})
-
-	if len(errsData) != 0 {
-		return errors.New(strings.Join(errsData, "; "))
+		return opErr(err, c.opPrefix, op)
 	}
 	return nil
 }
 
-func (c ProductsConsumer) toProducts(fetches kgo.Fetches) (ps []domain.Product) {
-	const op = "ProductsConsumer.toProducts"
-	log := slog.With("op", op)
+func (c ProductsConsumer) toDomain(fetches kgo.Fetches) (vs []domain.Product) {
+	const op = "toDomain"
+	log := slog.With("op", makeOp(c.opPrefix, op))
 
 	fetches.EachRecord(func(r *kgo.Record) {
-		var s schema.ProductV1
-		err := c.decoder.Decode(r.Value, &s)
+		v, err := c.decodeRecValue(r)
 		if err != nil {
-			err = fmt.Errorf("%s: %w", op, err)
-			log.Error("failed to decode value", "err", err)
+			log.Error(
+				"failed to decode value",
+				"err", opErr(err, c.opPrefix, op),
+			)
 			return
 		}
-		p := c.toDomain(s)
-		ps = append(ps, p)
+		vs = append(vs, v)
 	})
-	return ps
+	return
 }
 
-func (c ProductsConsumer) toDomain(s schema.ProductV1) (p domain.Product) {
-	p.ProductID = s.ProductID
-	p.Name = s.Name
-	p.SKU = s.SKU
-	p.Brand = s.Brand
-	p.Category = s.Category
-	p.Description = s.Description
-	p.Price.Amount = s.Price.Amount
-	p.Price.Currency = s.Price.Currency
-	p.AvailableStock = s.AvailableStock
-	p.Tags = s.Tags
-	p.Specifications = s.Specifications
-	p.StoreID = s.StoreID
-
-	p.Images = make([]domain.ProductImage, len(s.Images))
-	for i := range s.Images {
-		p.Images[i].URL = s.Images[i].URL
-		p.Images[i].Alt = s.Images[i].Alt
+func (c ProductsConsumer) decodeRecValue(
+	r *kgo.Record,
+) (domain.Product, error) {
+	var s schema.ProductV1
+	err := c.decoder.Decode(r.Value, &s)
+	if err != nil {
+		return domain.Product{}, err
 	}
-	return p
-}
-
-func (c ProductsConsumer) slowDown() {
-	const timeout = 1 * time.Second
-	c.slowDownTimer.Reset(timeout)
-	<-c.slowDownTimer.C
+	v := schemaV1ToProduct(s)
+	return v, nil
 }

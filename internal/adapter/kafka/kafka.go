@@ -65,3 +65,25 @@ func productFilterToSchemaV1(
 	s.Blocked = v.Blocked
 	return
 }
+
+func schemaV1ToProduct(s schema.ProductV1) (p domain.Product) {
+	p.ProductID = s.ProductID
+	p.Name = s.Name
+	p.SKU = s.SKU
+	p.Brand = s.Brand
+	p.Category = s.Category
+	p.Description = s.Description
+	p.Price.Amount = s.Price.Amount
+	p.Price.Currency = s.Price.Currency
+	p.AvailableStock = s.AvailableStock
+	p.Tags = s.Tags
+	p.Specifications = s.Specifications
+	p.StoreID = s.StoreID
+
+	p.Images = make([]domain.ProductImage, len(s.Images))
+	for i := range s.Images {
+		p.Images[i].URL = s.Images[i].URL
+		p.Images[i].Alt = s.Images[i].Alt
+	}
+	return p
+}

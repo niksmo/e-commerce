@@ -15,6 +15,7 @@ const configFileEnvName = "ECOM_CONFIG_FILE"
 type consumers struct {
 	FilterProductGroup  string `mapstructure:"filter_product_group"`
 	ProductBlockerGroup string `mapstructure:"product_blocker_group"`
+	ProductSaverGroup   string `mapstructure:"product_saver_group"`
 }
 
 type topics struct {
@@ -89,6 +90,7 @@ func (c Config) Print() {
 	Consumers:
 		FilterProductGroup=%q
 		ProductBlockerGroup=%q
+		ProductSaverGroup=%q
 
 `
 	fmt.Println("Loaded config:")
@@ -105,5 +107,6 @@ func (c Config) Print() {
 		c.Broker.Topics.ClientEvents,
 		c.Broker.Consumers.FilterProductGroup,
 		c.Broker.Consumers.ProductBlockerGroup,
+		c.Broker.Consumers.ProductSaverGroup,
 	)
 }

@@ -16,3 +16,4 @@ broker:
   consumers:
     filter_product_group: filter-product-group
     product_blocker_group: product-blocker-group
+    product_saver_group: product-saver-group
