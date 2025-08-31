@@ -155,12 +155,10 @@ func (app *App) initStreamProcessors() {
 	productsToStorage := app.cfg.Broker.Topics.ProductsToStorage
 
 	productFilterProc, err := kafka.NewProductFilterProc(
-		kafka.WithSeedBrokersProcOpt(seedBrokers...),
-		kafka.WithGroupProcOpt(
-			&filterProductConsumer,
-			&filterProductStream, nil, nil,
-		),
-		kafka.WithSerdeProcOpt(
+		kafka.SeedBrokersProcOpt(seedBrokers...),
+		kafka.GroupProcOpt(&filterProductConsumer),
+		kafka.InputTopicProcOpt(&filterProductStream),
+		kafka.SerdeProcOpt(
 			app.serdes.productFilter,
 			app.serdes.productFilter,
 		),
@@ -170,14 +168,12 @@ func (app *App) initStreamProcessors() {
 	}
 
 	productBlockerProc, err := kafka.NewProductBlockerProc(
-		kafka.WithSeedBrokersProcOpt(seedBrokers...),
-		kafka.WithGroupProcOpt(
-			&blockerProductConsumer,
-			&productsFromShopTopic,
-			&productsToStorage,
-			&filterProductTable,
-		),
-		kafka.WithSerdeProcOpt(
+		kafka.SeedBrokersProcOpt(seedBrokers...),
+		kafka.GroupProcOpt(&blockerProductConsumer),
+		kafka.InputTopicProcOpt(&productsFromShopTopic),
+		kafka.JoinTopicProcOpt(&filterProductTable),
+		kafka.OutputTopicProcOpt(&productsToStorage),
+		kafka.SerdeProcOpt(
 			app.serdes.productToStorage,
 			app.serdes.productFromShop,
 		),

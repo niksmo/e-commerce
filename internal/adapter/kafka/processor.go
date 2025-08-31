@@ -24,7 +24,7 @@ var (
 
 type ProcessorOpt func(*processorOpts) error
 
-func WithSeedBrokersProcOpt(seedBrokers ...string) ProcessorOpt {
+func SeedBrokersProcOpt(seedBrokers ...string) ProcessorOpt {
 	return func(po *processorOpts) error {
 		if len(seedBrokers) == 0 {
 			return errors.New("seed brokers is not set")
@@ -34,22 +34,36 @@ func WithSeedBrokersProcOpt(seedBrokers ...string) ProcessorOpt {
 	}
 }
 
-func WithGroupProcOpt(
-	consumerGroup, inputTopic, outputTopic, joinTopic *string,
-) ProcessorOpt {
+func GroupProcOpt(consumerGroup *string) ProcessorOpt {
 	return func(po *processorOpts) error {
 		po.consumerGroup = (*goka.Group)(consumerGroup)
-		po.inputStream = (*goka.Stream)(inputTopic)
-		po.outputStream = (*goka.Stream)(outputTopic)
-		po.joinTable = (*goka.Table)(joinTopic)
 		return nil
 	}
 }
 
-func WithSerdeProcOpt(sEncode, sDecode Serde) ProcessorOpt {
+func InputTopicProcOpt(topic *string) ProcessorOpt {
+	return func(po *processorOpts) error {
+		po.inputStream = (*goka.Stream)(topic)
+		return nil
+	}
+}
+func OutputTopicProcOpt(topic *string) ProcessorOpt {
+	return func(po *processorOpts) error {
+		po.outputStream = (*goka.Stream)(topic)
+		return nil
+	}
+}
+func JoinTopicProcOpt(topic *string) ProcessorOpt {
+	return func(po *processorOpts) error {
+		po.joinTable = (*goka.Table)(topic)
+		return nil
+	}
+}
+
+func SerdeProcOpt(sEncode, sDecode Serde) ProcessorOpt {
 	return func(po *processorOpts) error {
 		if sEncode == nil || sDecode == nil {
-			return errors.New("serdes is not set")
+			return errors.New("not all serdes is set")
 		}
 		po.serdeEncode = sEncode
 		po.serdeDecode = sDecode
@@ -124,8 +138,8 @@ func (po *processorOpts) verifyOutputStream() error {
 	return nil
 }
 
-func (po *processorOpts) verifySerde() error {
-	const op = "processorOpts.verifySerde"
+func (po *processorOpts) verifySerdes() error {
+	const op = "processorOpts.verifySerdes"
 	if po.serdeEncode == nil || po.serdeDecode == nil {
 		return opErr(ErrRequiredOpt, op)
 	}
@@ -308,7 +322,7 @@ func NewProductFilterProc(
 		options.verifyConsumerGroup,
 		options.verifySeedBrokers,
 		options.verifyInputStream,
-		options.verifySerde,
+		options.verifySerdes,
 	)
 	if err != nil {
 		return nil, opErr(err, op)
@@ -390,7 +404,7 @@ func NewProductBlockerProc(
 		options.verifyInputStream,
 		options.verifyJoinTable,
 		options.verifyOutputStream,
-		options.verifySerde,
+		options.verifySerdes,
 	)
 	if err != nil {
 		return nil, opErr(err, op)
