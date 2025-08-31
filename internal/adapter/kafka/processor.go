@@ -3,6 +3,8 @@ package kafka
 import (
 	"context"
 	"errors"
+	"io"
+	"log"
 	"log/slog"
 	"strconv"
 	"sync"
@@ -12,10 +14,8 @@ import (
 )
 
 var (
-	ErrRequiredOpt         = errors.New("option is required")
-	ErrRequiredInputStream = errors.New("input stream is required")
-	ErrRequiredSerde       = errors.New("serde is required")
-	ErrRequiredSeedBrokers = errors.New("seed brokers is required")
+	ErrRequiredOpt      = errors.New("option is required")
+	ErrInvalidValueType = errors.New("invalid value type")
 )
 
 ////////////////////////////////////////////////////////
@@ -437,4 +437,8 @@ func (p *ProductBlockerProcessor) processFn(ctx goka.Context, msg any) {
 	}
 	ctx.Emit(p.outputStream, productV.Name, productV)
 	log.Info("product is allowed")
+}
+
+func withNonlogProcOpt() goka.ProcessorOption {
+	return goka.WithLogger(log.New(io.Discard, "", 0))
 }

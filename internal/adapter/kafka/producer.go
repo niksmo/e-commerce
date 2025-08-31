@@ -2,12 +2,80 @@ package kafka
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 
 	"github.com/niksmo/e-commerce/internal/core/domain"
 	"github.com/niksmo/e-commerce/pkg/schema"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
+
+type ProducerClient interface {
+	ProduceSync(ctx context.Context, rs ...*kgo.Record) kgo.ProduceResults
+	Close()
+}
+
+////////////////////////////////////////////////////////
+///////////////           OPTS            //////////////
+////////////////////////////////////////////////////////
+
+type ProducerOpt func(*producerOpts) error
+
+type producerOpts struct {
+	cl      ProducerClient
+	encoder Encoder
+}
+
+func (po *producerOpts) apply(opts ...ProducerOpt) error {
+	if len(opts) != 2 {
+		return ErrTooFewOpts
+	}
+
+	for _, opt := range opts {
+		if err := opt(po); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func ProducerClientOpt(
+	ctx context.Context, seedBrokers []string, topic string,
+) ProducerOpt {
+	return func(opts *producerOpts) error {
+		cl, err := kgo.NewClient(
+			kgo.SeedBrokers(seedBrokers...),
+			kgo.DefaultProduceTopicAlways(),
+			kgo.DefaultProduceTopic(topic),
+			kgo.RequiredAcks(kgo.AllISRAcks()),
+			kgo.AllowAutoTopicCreation(),
+		)
+		if err != nil {
+			return err
+		}
+
+		if err := cl.Ping(ctx); err != nil {
+			return err
+		}
+		opts.cl = cl
+		return nil
+	}
+}
+
+func ProducerEncoderOpt(encoder Encoder) ProducerOpt {
+	return func(opts *producerOpts) error {
+		if encoder == nil {
+			return errors.New("encoder is nil")
+		}
+		opts.encoder = encoder
+		return nil
+	}
+}
+
+////////////////////////////////////////////////////////
+//////////////         PRODUCERS          //////////////
+////////////////////////////////////////////////////////
 
 // A producer is used for composition.
 //
@@ -48,15 +116,9 @@ func NewProductsProducer(
 ) (ProductsProducer, error) {
 	const op = "NewProductsProducer"
 
-	if len(opts) != 2 {
-		panic(opErr(ErrTooFewOpts, op)) // develop mistake
-	}
-
 	var options producerOpts
-	for _, opt := range opts {
-		if err := opt(&options); err != nil {
-			return ProductsProducer{}, opErr(err, op)
-		}
+	if err := options.apply(opts...); err != nil {
+		return ProductsProducer{}, opErr(err, op)
 	}
 
 	opPrefix := "ProductsProducer"
@@ -132,15 +194,9 @@ func NewProductFilterProducer(
 ) (ProductFilterProducer, error) {
 	const op = "NewProductFilterProducer"
 
-	if len(opts) != 2 {
-		panic(opErr(ErrTooFewOpts, op)) // develop mistake
-	}
-
 	var options producerOpts
-	for _, opt := range opts {
-		if err := opt(&options); err != nil {
-			return ProductFilterProducer{}, opErr(err, op)
-		}
+	if err := options.apply(opts...); err != nil {
+		return ProductFilterProducer{}, opErr(err, op)
 	}
 
 	opPrefix := "ProductFilterProducer"

@@ -14,6 +14,16 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
+type ConsumerClient interface {
+	PollFetches(context.Context) kgo.Fetches
+	CommitUncommittedOffsets(context.Context) error
+	Close()
+}
+
+////////////////////////////////////////////////////////
+///////////////           OPTS            //////////////
+////////////////////////////////////////////////////////
+
 type ConsumerOpt func(*productsConsumerOpts) error
 
 type productsConsumerOpts struct {
@@ -22,6 +32,12 @@ type productsConsumerOpts struct {
 	saver   port.ProductsSaver
 }
 
+////////////////////////////////////////////////////////
+////////////           CONSUMERS            ////////////
+////////////////////////////////////////////////////////
+
+// A ProductsConsumer consumes filtered products
+// then sends to the core service for save.
 type ProductsConsumer struct {
 	cl            ConsumerClient
 	saver         port.ProductsSaver
