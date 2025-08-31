@@ -26,7 +26,7 @@ type ConsumerClient interface {
 
 type ConsumerOpt func(*consumerOpts) error
 
-func ProductsConsumerClientOpt(
+func ConsumerClientOpt(
 	seedBrokers []string, topic, group string,
 ) ConsumerOpt {
 	return func(co *consumerOpts) error {
@@ -35,7 +35,6 @@ func ProductsConsumerClientOpt(
 			kgo.ConsumeTopics(topic),
 			kgo.ConsumerGroup(group),
 			kgo.DisableAutoCommit(),
-			// adds opts for batching consume
 		)
 		if err != nil {
 			return err

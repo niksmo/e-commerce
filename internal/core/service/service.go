@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"sync"
 
 	"github.com/niksmo/e-commerce/internal/core/domain"
@@ -53,28 +54,28 @@ func (s Service) Close() {
 	s.productBlockerProc.Close()
 }
 
-func (s Service) SendProducts(ctx context.Context, ps []domain.Product) error {
+func (s Service) SendProducts(ctx context.Context, vs []domain.Product) error {
 	const op = "Service.SendProducts"
 
 	if err := ctx.Err(); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	err := s.productsProducer.ProduceProducts(ctx, ps)
+	err := s.productsProducer.ProduceProducts(ctx, vs)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 	return nil
 }
 
-func (s Service) SetRule(ctx context.Context, pf domain.ProductFilter) error {
+func (s Service) SetRule(ctx context.Context, v domain.ProductFilter) error {
 	const op = "Service.SetRule"
 
 	if err := ctx.Err(); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	err := s.productFilterProducer.ProduceFilter(ctx, pf)
+	err := s.productFilterProducer.ProduceFilter(ctx, v)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -82,16 +83,24 @@ func (s Service) SetRule(ctx context.Context, pf domain.ProductFilter) error {
 	return nil
 }
 
-func (s Service) SaveProducts(ctx context.Context, ps []domain.Product) error {
+func (s Service) SaveProducts(ctx context.Context, vs []domain.Product) error {
 	const op = "Service.SaveProducts"
+	log := slog.With("op", op)
 
-	if err := ctx.Err(); err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+	var products []string
+	for _, v := range vs {
+		products = append(products, v.Name)
 	}
 
-	err := s.productsStorage.StoreProducts(ctx, ps)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
+	log.Info("SAVE PRODUCTS", "nProducts", len(products))
+
+	// if err := ctx.Err(); err != nil {
+	// 	return fmt.Errorf("%s: %w", op, err)
+	// }
+
+	// err := s.productsStorage.StoreProducts(ctx, vs)
+	// if err != nil {
+	// 	return fmt.Errorf("%s: %w", op, err)
+	// }
 	return nil
 }

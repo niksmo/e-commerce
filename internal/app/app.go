@@ -32,12 +32,17 @@ type producers struct {
 	productFilter kafka.ProductFilterProducer
 }
 
+type consumers struct {
+	products kafka.ProductsConsumer
+}
+
 type App struct {
 	ctx         context.Context
 	cfg         config.Config
 	serdes      serdes
 	streamProcs streamProcessors
 	producers   producers
+	consumers   consumers
 	coreService service.Service
 	httpServer  httphandler.HTTPServer
 }
@@ -70,6 +75,7 @@ func (app *App) Run(stopFn context.CancelFunc) {
 	ctx := app.ctx
 
 	app.coreService.Run(ctx, stopFn)
+	go app.consumers.products.Run(ctx)
 	go app.httpServer.Run(stopFn)
 
 	log.Info("application is running")
@@ -137,6 +143,9 @@ func (app *App) initSerdes() {
 		schema.SubjectOpt(productToStorageSS),
 		schema.SchemaIdentifierOpt(schemaCreater),
 	)
+	if err != nil {
+		app.fallDown(op, err)
+	}
 
 	app.serdes.productFromShop = productFromShopSerde
 	app.serdes.productFilter = productFilterSerde
@@ -227,13 +236,35 @@ func (app *App) initCoreService() {
 }
 
 func (app *App) initInboundAdapters() {
+	const op = "App.initInboundAdapters"
+
+	seedBrokers := app.cfg.Broker.SeedBrokers
+	productsToStorageTopic := app.cfg.Broker.Topics.ProductsToStorage
+	productsSaverGroup := app.cfg.Broker.Consumers.ProductSaverGroup
+
 	addr := app.cfg.HTTPServerAddr
+
+	productsConsumer, err := kafka.NewProductsConsumer(
+		kafka.ConsumerClientOpt(
+			seedBrokers,
+			productsToStorageTopic,
+			productsSaverGroup,
+		),
+		kafka.ConsumerDecoderOpt(app.serdes.productToStorage),
+		kafka.ProductsConsumerSaverOpt(app.coreService),
+	)
+	if err != nil {
+		app.fallDown(op, err)
+	}
+
 	mux := http.NewServeMux()
 	httphandler.RegisterProducts(mux, app.coreService)
 	httphandler.RegisterFilter(mux, app.coreService)
 
 	handler := httphandler.AllowJSON(mux)
 	httpServer := httphandler.NewHTTPServer(addr, handler)
+
+	app.consumers.products = productsConsumer
 	app.httpServer = httpServer
 }
 
