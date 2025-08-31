@@ -2,8 +2,19 @@ package port
 
 import (
 	"context"
+	"sync"
 
 	"github.com/niksmo/e-commerce/internal/core/domain"
+)
+
+type (
+	runnerContextWg interface {
+		Run(context.Context, *sync.WaitGroup)
+	}
+
+	closer interface {
+		Close()
+	}
 )
 
 type ProductsSender interface {
@@ -24,6 +35,16 @@ type ProductsProducer interface {
 
 type ProductFilterProducer interface {
 	ProduceFilter(context.Context, domain.ProductFilter) error
+}
+
+type ProductFilterProcessor interface {
+	runnerContextWg
+	closer
+}
+
+type ProductBlockerProcessor interface {
+	runnerContextWg
+	closer
 }
 
 type ProductsStorage interface {

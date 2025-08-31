@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/niksmo/e-commerce/internal/core/domain"
 	"github.com/niksmo/e-commerce/internal/core/port"
@@ -16,18 +17,40 @@ type Service struct {
 	productsProducer      port.ProductsProducer
 	productFilterProducer port.ProductFilterProducer
 	productsStorage       port.ProductsStorage
+	productFilterProc     port.ProductFilterProcessor
+	productBlockerProc    port.ProductBlockerProcessor
 }
 
 func New(
 	productsProducer port.ProductsProducer,
 	productsFilterProducer port.ProductFilterProducer,
 	productsStorage port.ProductsStorage,
+	productFilterProc port.ProductFilterProcessor,
+	productBlockerProc port.ProductBlockerProcessor,
 ) Service {
 	return Service{
 		productsProducer,
 		productsFilterProducer,
 		productsStorage,
+		productFilterProc,
+		productBlockerProc,
 	}
+}
+
+// Run runs the services components in separate goroutines.
+//
+// Blocks current goroutine while components is preparing to ready state.
+func (s Service) Run(ctx context.Context) {
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go s.productFilterProc.Run(ctx, &wg)
+	go s.productBlockerProc.Run(ctx, &wg)
+	wg.Wait()
+}
+
+func (s Service) Close() {
+	s.productFilterProc.Close()
+	s.productBlockerProc.Close()
 }
 
 func (s Service) SendProducts(ctx context.Context, ps []domain.Product) error {

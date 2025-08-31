@@ -10,6 +10,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const configFileEnvName = "ECOM_CONFIG_FILE"
+
 type brokerConfig struct {
 	SeedBrokers             []string `mapstructure:"seed_brokers"`
 	SchemaRegistryURLs      []string `mapstructure:"schema_registry_urls"`
@@ -47,7 +49,7 @@ func getConfigFilepath() string {
 	cmdLine := pflag.NewFlagSet(os.Args[0], pflag.ExitOnError)
 	arg := cmdLine.String("config", "/config.yaml", "config file")
 	_ = cmdLine.Parse(os.Args[1:])
-	env, ok := os.LookupEnv("ECOM_CONFIG_FILE")
+	env, ok := os.LookupEnv(configFileEnvName)
 	if ok {
 		return env
 	}

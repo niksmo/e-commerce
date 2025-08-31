@@ -5,18 +5,20 @@ import (
 	"log/slog"
 
 	"github.com/niksmo/e-commerce/internal/core/domain"
-	"github.com/niksmo/e-commerce/internal/core/port"
 	"github.com/niksmo/e-commerce/pkg/schema"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
+// A producer is used for composition.
+//
+// Producing records to kafka broker and closing underlying kgo client.
 type producer struct {
 	opPrefix string
 	cl       ProducerClient
 }
 
-func (p producer) Close() {
-	const op = "Close"
+func (p producer) close() {
+	const op = "close"
 	log := slog.With("op", makeOp(p.opPrefix, op))
 	log.Info("closing producer...")
 	p.cl.Close()
@@ -34,10 +36,9 @@ func (p producer) produce(
 	return nil
 }
 
-var _ port.ProductsProducer = (*ProductsProducer)(nil)
-
+// A ProductsProducer used for produce [domain.Product]
 type ProductsProducer struct {
-	producer
+	producer producer
 	encoder  Encoder
 	opPrefix string
 }
@@ -71,6 +72,10 @@ func NewProductsProducer(
 	}, nil
 }
 
+func (p ProductsProducer) Close() {
+	p.producer.close()
+}
+
 func (p ProductsProducer) ProduceProducts(
 	ctx context.Context, vs []domain.Product,
 ) error {
@@ -85,7 +90,7 @@ func (p ProductsProducer) ProduceProducts(
 		return opErr(err, p.opPrefix, op)
 	}
 
-	if err := p.produce(ctx, rs...); err != nil {
+	if err := p.producer.produce(ctx, rs...); err != nil {
 		return opErr(err, p.opPrefix, op)
 	}
 
@@ -111,14 +116,13 @@ func (p ProductsProducer) createRecords(
 	return rs, nil
 }
 
-func (p ProductsProducer) toSchema(v domain.Product) schema.ProductV1 {
+func (ProductsProducer) toSchema(v domain.Product) schema.ProductV1 {
 	return productToSchemaV1(v)
 }
 
-var _ port.ProductFilterProducer = (*ProductFilterProducer)(nil)
-
+// A ProductFilterProducer used for produce [domain.ProductFilter]
 type ProductFilterProducer struct {
-	producer
+	producer producer
 	encoder  Encoder
 	opPrefix string
 }
@@ -152,6 +156,10 @@ func NewProductFilterProducer(
 	}, nil
 }
 
+func (p ProductFilterProducer) Close() {
+	p.producer.close()
+}
+
 func (p ProductFilterProducer) ProduceFilter(
 	ctx context.Context, fv domain.ProductFilter,
 ) error {
@@ -166,7 +174,7 @@ func (p ProductFilterProducer) ProduceFilter(
 		return opErr(err, p.opPrefix, op)
 	}
 
-	if err := p.produce(ctx, &rs); err != nil {
+	if err := p.producer.produce(ctx, &rs); err != nil {
 		return opErr(err, p.opPrefix, op)
 	}
 
@@ -189,7 +197,7 @@ func (p ProductFilterProducer) createRecord(
 	return r, nil
 }
 
-func (p ProductFilterProducer) toSchema(
+func (ProductFilterProducer) toSchema(
 	v domain.ProductFilter,
 ) schema.ProductFilterV1 {
 	return productFilterToSchemaV1(v)
