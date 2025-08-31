@@ -11,6 +11,125 @@ import (
 	"github.com/niksmo/e-commerce/pkg/schema"
 )
 
+var (
+	ErrRequiredOpt         = errors.New("option is required")
+	ErrRequiredInputStream = errors.New("input stream is required")
+	ErrRequiredSerde       = errors.New("serde is required")
+	ErrRequiredSeedBrokers = errors.New("seed brokers is required")
+)
+
+////////////////////////////////////////////////////////
+///////////////           OPTS            //////////////
+////////////////////////////////////////////////////////
+
+type ProcessorOpt func(*processorOpts) error
+
+func WithSeedBrokersProcOpt(seedBrokers ...string) ProcessorOpt {
+	return func(po *processorOpts) error {
+		if len(seedBrokers) == 0 {
+			return errors.New("seed brokers is not set")
+		}
+		po.seedBrokers = seedBrokers
+		return nil
+	}
+}
+
+func WithGroupProcOpt(
+	consumerGroup, inputTopic, outputTopic, joinTopic *string,
+) ProcessorOpt {
+	return func(po *processorOpts) error {
+		po.consumerGroup = (*goka.Group)(consumerGroup)
+		po.inputStream = (*goka.Stream)(inputTopic)
+		po.outputStream = (*goka.Stream)(outputTopic)
+		po.joinTable = (*goka.Table)(joinTopic)
+		return nil
+	}
+}
+
+func WithSerdeProcOpt(s Serde) ProcessorOpt {
+	return func(po *processorOpts) error {
+		if s == nil {
+			return errors.New("serde is not set")
+		}
+		po.serde = s
+		return nil
+	}
+}
+
+type processorOpts struct {
+	seedBrokers   []string
+	consumerGroup *goka.Group
+	inputStream   *goka.Stream
+	joinTable     *goka.Table
+	outputStream  *goka.Stream
+	serde         Serde
+}
+
+func (po *processorOpts) apply(opts ...ProcessorOpt) error {
+	for _, opt := range opts {
+		if err := opt(po); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (po *processorOpts) validate(validations ...func() error) error {
+	var errs []error
+	for _, validateFn := range validations {
+		errs = append(errs, validateFn())
+	}
+	return errors.Join(errs...)
+}
+
+func (po *processorOpts) verifySeedBrokers() error {
+	const op = "processorOpts.verifySeedBrokers"
+	if len(po.seedBrokers) == 0 {
+		return opErr(ErrRequiredOpt, op)
+	}
+	return nil
+}
+
+func (po *processorOpts) verifyConsumerGroup() error {
+	const op = "processorOpts.verifyConsumerGroup"
+	if po.consumerGroup == nil {
+		return opErr(ErrRequiredOpt, op)
+	}
+	return nil
+}
+
+func (po *processorOpts) verifyInputStream() error {
+	const op = "processorOpts.verifyInputStream"
+	if po.inputStream == nil {
+		return opErr(ErrRequiredOpt, op)
+	}
+	return nil
+}
+
+func (po *processorOpts) verifyJoinTable() error {
+	const op = "processorOpts.verifyJoinTables"
+	if po.joinTable == nil {
+		return opErr(ErrRequiredOpt, op)
+	}
+	return nil
+}
+
+func (po *processorOpts) verifyOutputStream() error {
+	const op = "processorOpts.verifyOutputStream"
+	if po.outputStream == nil {
+		return opErr(ErrRequiredOpt, op)
+	}
+	return nil
+}
+
+func (po *processorOpts) verifySerde() error {
+	const op = "processorOpts.verifySerde"
+	if po.serde == nil {
+		return opErr(ErrRequiredOpt, op)
+	}
+	return nil
+}
+
 ////////////////////////////////////////////////////////
 //////////////           CODECS            /////////////
 ////////////////////////////////////////////////////////
@@ -166,28 +285,37 @@ type ProductFilterProcessor struct {
 }
 
 func NewProductFilterProc(
-	seedBrokers []string,
-	consumerGroup string,
-	intputTopic string,
-	productFilterSerde Serde,
+	opts ...ProcessorOpt,
 ) (*ProductFilterProcessor, error) {
 	const op = "NewProductFilterProc"
 
+	var options processorOpts
+	if err := options.apply(opts...); err != nil {
+		return nil, opErr(err, op)
+	}
+
+	err := options.validate(
+		options.verifyConsumerGroup,
+		options.verifySeedBrokers,
+		options.verifyInputStream,
+		options.verifySerde,
+	)
+	if err != nil {
+		return nil, opErr(err, op)
+	}
+
 	var p ProductFilterProcessor
 
-	group := goka.Group(consumerGroup)
-	inputStream := goka.Stream(intputTopic)
-
-	gg := goka.DefineGroup(group,
+	gg := goka.DefineGroup(*options.consumerGroup,
 		goka.Input(
-			inputStream,
-			newFilterEventCodec(productFilterSerde),
+			*options.inputStream,
+			newFilterEventCodec(options.serde),
 			p.processFn,
 		),
 		goka.Persist(blockValueCodec{}),
 	)
 
-	gp, err := goka.NewProcessor(seedBrokers, gg, withNonlogProcOpt())
+	gp, err := goka.NewProcessor(options.seedBrokers, gg, withNonlogProcOpt())
 	if err != nil {
 		return nil, opErr(err, op)
 	}
@@ -237,30 +365,38 @@ type ProductBlockerProcessor struct {
 }
 
 func NewProductBlockerProc(
-	seedBrokers []string,
-	consumerGroup string,
-	inputTopic string,
-	filterProductTable string,
-	outputTopic string,
-	productSerde Serde,
+	opts ...ProcessorOpt,
 ) (*ProductBlockerProcessor, error) {
 	const op = "NewProductBlockerProc"
 
+	var options processorOpts
+	if err := options.apply(opts...); err != nil {
+		return nil, opErr(err, op)
+	}
+
+	err := options.validate(
+		options.verifyConsumerGroup,
+		options.verifySeedBrokers,
+		options.verifyInputStream,
+		options.verifyJoinTable,
+		options.verifyOutputStream,
+		options.verifySerde,
+	)
+	if err != nil {
+		return nil, opErr(err, op)
+	}
+
 	var p ProductBlockerProcessor
 
-	group := goka.Group(consumerGroup)
-	productEventCodec := newProductEventCodec(productSerde)
-	intputStream := goka.Stream(inputTopic)
-	joinedTable := goka.Table(filterProductTable)
-	outputStream := goka.Stream(outputTopic)
+	productEventCodec := newProductEventCodec(options.serde)
 
-	gg := goka.DefineGroup(group,
-		goka.Input(intputStream, productEventCodec, p.processFn),
-		goka.Join(joinedTable, blockValueCodec{}),
-		goka.Output(outputStream, productEventCodec),
+	gg := goka.DefineGroup(*options.consumerGroup,
+		goka.Input(*options.inputStream, productEventCodec, p.processFn),
+		goka.Join(*options.joinTable, blockValueCodec{}),
+		goka.Output(*options.outputStream, productEventCodec),
 	)
 
-	gp, err := goka.NewProcessor(seedBrokers, gg, withNonlogProcOpt())
+	gp, err := goka.NewProcessor(options.seedBrokers, gg, withNonlogProcOpt())
 	if err != nil {
 		return nil, opErr(err, op)
 	}
@@ -271,8 +407,8 @@ func NewProductBlockerProc(
 		gp:       gp,
 	}
 	p.opPrefix = opPrefix
-	p.joinedTable = joinedTable
-	p.outputStream = outputStream
+	p.joinedTable = *options.joinTable
+	p.outputStream = *options.outputStream
 	return &p, nil
 }
 

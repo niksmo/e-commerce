@@ -145,22 +145,26 @@ func (app *App) initStreamProcessors() {
 	productsToStore := app.cfg.Broker.Topics.ProductsToStore
 
 	productFilterProc, err := kafka.NewProductFilterProc(
-		seedBrokers,
-		filterProductConsumer,
-		filterProductStream,
-		app.serdes.productFilter,
+		kafka.WithSeedBrokersProcOpt(seedBrokers...),
+		kafka.WithGroupProcOpt(
+			&filterProductConsumer,
+			&filterProductStream, nil, nil,
+		),
+		kafka.WithSerdeProcOpt(app.serdes.productFilter),
 	)
 	if err != nil {
 		app.fallDown(op, err)
 	}
 
 	productBlockerProc, err := kafka.NewProductBlockerProc(
-		seedBrokers,
-		blockerProductConsumer,
-		productsFromShopTopic,
-		filterProductTable,
-		productsToStore,
-		app.serdes.product,
+		kafka.WithSeedBrokersProcOpt(seedBrokers...),
+		kafka.WithGroupProcOpt(
+			&blockerProductConsumer,
+			&productsFromShopTopic,
+			&productsToStore,
+			&filterProductTable,
+		),
+		kafka.WithSerdeProcOpt(app.serdes.product),
 	)
 	if err != nil {
 		app.fallDown(op, err)
