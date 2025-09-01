@@ -4,6 +4,8 @@ volumes:
   kafka-1-data:
   kafka-2-data:
   kafka-3-data:
+  pg-data:
+  pg-admin-data:
 
 networks:
   net:
@@ -13,7 +15,7 @@ services:
   kafka-1:
     image: confluentinc/cp-kafka:7.4.10
     hostname: kafka-1
-    container_name: ecom_kafka-1
+    container_name: kafka-1
     ports:
       - 127.0.0.1:19094:9094
     volumes:
@@ -72,11 +74,13 @@ services:
     #   interval: 1s
     #   timeout: 5s
     #   retries: 60
+    depends_on:
+      - pg
 
   kafka-2:
     image: confluentinc/cp-kafka:7.4.10
     hostname: kafka-2
-    container_name: ecom_kafka-2
+    container_name: kafka-2
     ports:
       - 127.0.0.1:29094:9094
     volumes:
@@ -135,11 +139,13 @@ services:
     #   interval: 1s
     #   timeout: 5s
     #   retries: 60
+    depends_on:
+      - pg
   
   kafka-3:
     image: confluentinc/cp-kafka:7.4.10
     hostname: kafka-3
-    container_name: ecom_kafka-3
+    container_name: kafka-3
     ports:
       - 127.0.0.1:39094:9094
     volumes:
@@ -198,10 +204,13 @@ services:
     #   interval: 1s
     #   timeout: 5s
     #   retries: 60
+    depends_on:
+      - pg
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.9.2
-    
+    hostname: schema-registry
+    container_name: schema-registry
     ports:
       - 127.0.0.1:8081:8081
     networks:
@@ -222,9 +231,9 @@ services:
      - kafka-2
      - kafka-3
   
-  ui:
+  kafka-ui:
     image: provectuslabs/kafka-ui:v0.7.2
-    container_name: secure-kafka_ui
+    container_name: kafka_ui
     hostname: kafka-ui
     ports:
       - 127.0.0.1:8080:8080
@@ -254,8 +263,33 @@ services:
     # - ./certs/kafka-ui.keystore.jks:/kafka.keystore.jks:ro
     depends_on:
       - kafka-1
-        # condition: service_healthy
       - kafka-2
-        # condition: service_healthy
       - kafka-3
-        # condition: service_healthy
+  
+  pg:
+    image: postgres:17.6
+    container_name: pg
+    hostname: pg
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - net
+    environment:
+      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: user
+      POSTGRES_DB: ecom
+  
+  pg-admin:
+    image: dpage/pgadmin4:9.7
+    container_name: pg-admin
+    ports:
+      - 127.0.0.1:5433:80
+    volumes:
+      - pg-admin-data:/var/lib/pgadmin
+    networks:
+      - net
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@email.com
+      PGADMIN_DEFAULT_PASSWORD: pass

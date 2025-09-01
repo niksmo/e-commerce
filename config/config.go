@@ -36,6 +36,7 @@ type broker struct {
 type Config struct {
 	LogLevel       slog.Level `mapstructure:"log_level"`
 	HTTPServerAddr string     `mapstructure:"http_server_addr"`
+	SQLDB          string     `mapstructure:"sql_db"`
 	Broker         broker     `mapstructure:"broker"`
 }
 
@@ -77,6 +78,7 @@ func (c Config) Print() {
 	General:
 	LogLevel=%q
 	HTTPServerAddr=%q
+	SQLDB=%q
 
 	BrokerConfig:
 	SeedBrokers=%q
@@ -98,6 +100,7 @@ func (c Config) Print() {
 		strings.TrimLeft(tamplate, "\n"),
 		c.LogLevel,
 		c.HTTPServerAddr,
+		c.SQLDB,
 		c.Broker.SeedBrokers,
 		c.Broker.SchemaRegistryURLs,
 		c.Broker.Topics.ProductsFromShop,

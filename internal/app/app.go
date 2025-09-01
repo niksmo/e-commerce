@@ -10,7 +10,7 @@ import (
 	"github.com/niksmo/e-commerce/config"
 	"github.com/niksmo/e-commerce/internal/adapter/httphandler"
 	"github.com/niksmo/e-commerce/internal/adapter/kafka"
-	"github.com/niksmo/e-commerce/internal/core/port"
+	"github.com/niksmo/e-commerce/internal/adapter/storage"
 	"github.com/niksmo/e-commerce/internal/core/service"
 	"github.com/niksmo/e-commerce/pkg/schema"
 	"github.com/twmb/franz-go/pkg/sr"
@@ -27,6 +27,10 @@ type streamProcessors struct {
 	productBlocker *kafka.ProductBlockerProcessor
 }
 
+type storages struct {
+	sqldb storage.SQLStorage
+}
+
 type producers struct {
 	products      kafka.ProductsProducer
 	productFilter kafka.ProductFilterProducer
@@ -41,6 +45,7 @@ type App struct {
 	cfg         config.Config
 	serdes      serdes
 	streamProcs streamProcessors
+	storages    storages
 	producers   producers
 	consumers   consumers
 	coreService service.Service
@@ -199,9 +204,15 @@ func (app *App) initOutboundAdapters() {
 	const op = "App.initOutboundAdapters"
 
 	ctx := app.ctx
+	sqldsn := app.cfg.SQLDB
 	seedBrokers := app.cfg.Broker.SeedBrokers
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
+
+	sqldb, err := storage.NewSQLStorage(ctx, sqldsn)
+	if err != nil {
+		app.fallDown(op, err)
+	}
 
 	productsProducer, err := kafka.NewProductsProducer(
 		kafka.ProducerClientOpt(ctx, seedBrokers, productsFromShopTopic),
@@ -219,17 +230,17 @@ func (app *App) initOutboundAdapters() {
 		app.fallDown(op, err)
 	}
 
+	app.storages.sqldb = sqldb
 	app.producers.products = productsProducer
 	app.producers.productFilter = productFilterProducer
+
 }
 
 func (app *App) initCoreService() {
-	var nilProductsStorage port.ProductsStorage
-
 	app.coreService = service.New(
 		app.producers.products,
 		app.producers.productFilter,
-		nilProductsStorage,
+		app.storages.sqldb,
 		app.streamProcs.productFilter,
 		app.streamProcs.productBlocker,
 	)

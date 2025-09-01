@@ -1,5 +1,6 @@
 log_level: -4
 http_server_addr: 127.0.0.1:8000
+sql_db: postgres://user:pass@127.0.0.1:5432/ecom?sslmode=disable
 broker:
   seed_brokers:
     - 127.0.0.1:19094
