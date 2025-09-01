@@ -2,24 +2,76 @@ package httphandler
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"log/slog"
 	"net/http"
 
 	"github.com/niksmo/e-commerce/internal/core/domain"
 	"github.com/niksmo/e-commerce/internal/core/port"
+	"github.com/niksmo/e-commerce/internal/core/service"
 )
 
-// TODO: GET v1/products?product_name=name Headers Authorization Basic is opt (200 OK, 204 No content)
+// TODO: GET v1/products?name=<product_name> Headers Authorization Basic is opt (200 OK, 204 No content, 404)
 // TODO: GET v1/recomendations Headers Authorization Basic is opt (200 OK, 204 No content)
 
 type ProductsHandler struct {
 	pSender port.ProductsSender
+	pFinder port.ProductFinder
 }
 
-func RegisterProducts(mux *http.ServeMux, pSender port.ProductsSender) {
-	h := ProductsHandler{pSender}
+func RegisterProducts(
+	mux *http.ServeMux,
+	pSender port.ProductsSender,
+	pFinder port.ProductFinder,
+) {
+	h := ProductsHandler{pSender, pFinder}
+	mux.HandleFunc("GET /v1/products", h.GetProduct)
 	mux.HandleFunc("POST /v1/products", h.PostProducts)
+}
+
+func (h ProductsHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
+	const op = "ProductsHandler.GetProduct"
+	log := slog.With("op", op)
+
+	//get username from context
+	user := "USERNAME_STUB"
+
+	productName := r.FormValue("name")
+
+	if productName == "" {
+		errMsg := "product name is not provided"
+		statusCode := http.StatusBadRequest
+		http.Error(w, errMsg, statusCode)
+		log.Warn(errMsg, "statusCode", statusCode)
+		return
+	}
+
+	v, err := h.pFinder.FindProduct(r.Context(), productName, user)
+	if err != nil {
+		switch {
+		case errors.Is(err, service.ErrNotFound):
+			errMsg := err.Error()
+			statusCode := http.StatusNoContent
+			http.Error(w, errMsg, statusCode)
+			log.Info(errMsg, "statusCode", statusCode)
+		default:
+			errMsg := "failed to find product"
+			statusCode := http.StatusServiceUnavailable
+			http.Error(w, errMsg, statusCode)
+			log.Error(errMsg, "statusCode", statusCode, "err", err)
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if !encodeJSON(w, domainToProduct(v), log) {
+		return
+	}
+	log.Info("find",
+		"statusCode", http.StatusOK,
+		"productName", v.Name, "user", user,
+	)
 }
 
 func (h ProductsHandler) PostProducts(w http.ResponseWriter, r *http.Request) {
@@ -52,34 +104,12 @@ func (h ProductsHandler) PostProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h ProductsHandler) productsToDomain(
-	ps []Product,
-) (domainPs []domain.Product) {
-	for _, p := range ps {
-		dp := domain.Product{
-			ProductID:   p.ProductID,
-			Name:        p.Name,
-			SKU:         p.SKU,
-			Brand:       p.Brand,
-			Category:    p.Category,
-			Description: p.Description,
-			Price: domain.ProductPrice{
-				Amount:   p.Price.Amount,
-				Currency: p.Price.Currency,
-			},
-			AvailableStock: p.AvailableStock,
-			Tags:           p.Tags,
-			Specifications: p.Specifications,
-			StoreID:        p.StoreID,
-		}
-
-		dp.Images = make([]domain.ProductImage, len(p.Images))
-		for i := range p.Images {
-			dp.Images[i].URL = p.Images[i].URL
-			dp.Images[i].Alt = p.Images[i].Alt
-		}
-		domainPs = append(domainPs, dp)
+	vs []Product,
+) (products []domain.Product) {
+	for _, v := range vs {
+		products = append(products, productToDomain(v))
 	}
-	return domainPs
+	return products
 }
 
 type FilterHandler struct {
@@ -103,36 +133,32 @@ func (h FilterHandler) PostProductsRule(
 		return
 	}
 
-	pf := h.toProductFilter(rule)
+	fv := productFilterToDomain(rule)
 
-	err := h.pFilter.SetRule(r.Context(), pf)
+	err := h.pFilter.SetRule(r.Context(), fv)
 	if err != nil {
 		http.Error(
 			w, "failed to set filter rule", http.StatusServiceUnavailable,
 		)
 		log.Error(
 			"failed to set product filter rule",
-			"productName", pf.ProductName,
-			"blocked", pf.Blocked,
+			"productName", fv.ProductName,
+			"blocked", fv.Blocked,
 		)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write([]byte("Rule accepted"))
+	if err != nil {
+		log.Error("failed to write response body", "err", err)
+		return
+	}
 
 	log.Info(
 		"product filter rule accepted",
-		"productName", pf.ProductName, "blocked", pf.Blocked,
+		"productName", fv.ProductName, "blocked", fv.Blocked,
 	)
-}
-
-func (h FilterHandler) toProductFilter(
-	r FilterRule,
-) (pf domain.ProductFilter) {
-	pf.ProductName = r.Name
-	pf.Blocked = r.Blocked
-	return
 }
 
 func decodeJSON(
@@ -141,8 +167,71 @@ func decodeJSON(
 	err := json.NewDecoder(r).Decode(&v)
 	if err != nil {
 		http.Error(w, "invalid JSON data", http.StatusBadRequest)
-		log.Warn("failed to parse JSON", "err", err)
+		log.Warn("failed to read JSON data", "err", err)
 		return false
 	}
 	return true
+}
+
+func encodeJSON(
+	w http.ResponseWriter, v any, log *slog.Logger,
+) (ok bool) {
+	err := json.NewEncoder(w).Encode(v)
+	if err != nil {
+		http.Error(w, "service unavailable", http.StatusServiceUnavailable)
+		log.Error("failed to write JSON data", "err", err)
+		return false
+	}
+	return true
+}
+
+func productFilterToDomain(r FilterRule) domain.ProductFilter {
+	return domain.ProductFilter{
+		ProductName: r.Name,
+		Blocked:     r.Blocked,
+	}
+}
+
+func productToDomain(v Product) (p domain.Product) {
+	p.ProductID = v.ProductID
+	p.Name = v.Name
+	p.SKU = v.SKU
+	p.Brand = v.Brand
+	p.Category = v.Category
+	p.Description = v.Description
+	p.Price.Amount = v.Price.Amount
+	p.Price.Currency = v.Price.Currency
+	p.AvailableStock = v.AvailableStock
+	p.Tags = v.Tags
+	p.Specifications = v.Specifications
+	p.StoreID = v.StoreID
+
+	p.Images = make([]domain.ProductImage, len(v.Images))
+	for i := range v.Images {
+		p.Images[i].URL = v.Images[i].URL
+		p.Images[i].Alt = v.Images[i].Alt
+	}
+	return
+}
+
+func domainToProduct(p domain.Product) (v Product) {
+	v.ProductID = p.ProductID
+	v.Name = p.Name
+	v.SKU = p.SKU
+	v.Brand = p.Brand
+	v.Category = p.Category
+	v.Description = p.Description
+	v.Price.Amount = p.Price.Amount
+	v.Price.Currency = p.Price.Currency
+	v.AvailableStock = p.AvailableStock
+	v.Tags = p.Tags
+	v.Specifications = p.Specifications
+	v.StoreID = p.StoreID
+
+	v.Images = make([]ProductImage, len(p.Images))
+	for i := range p.Images {
+		v.Images[i].URL = p.Images[i].URL
+		v.Images[i].Alt = p.Images[i].Alt
+	}
+	return
 }

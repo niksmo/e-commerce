@@ -29,6 +29,12 @@ type ProductsSaver interface {
 	SaveProducts(context.Context, []domain.Product) error
 }
 
+type ProductFinder interface {
+	FindProduct(
+		ctx context.Context, productName string, user string,
+	) (domain.Product, error)
+}
+
 type ProductsProducer interface {
 	ProduceProducts(context.Context, []domain.Product) error
 }
@@ -49,4 +55,10 @@ type ProductBlockerProcessor interface {
 
 type ProductsStorage interface {
 	StoreProducts(context.Context, []domain.Product) error
+}
+
+type ProductReader interface {
+	ReadProduct(
+		ctx context.Context, productName string,
+	) (domain.Product, error)
 }

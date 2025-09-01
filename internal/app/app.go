@@ -241,11 +241,9 @@ func (app *App) initOutboundAdapters() {
 
 func (app *App) initCoreService() {
 	app.coreService = service.New(
-		app.producers.products,
-		app.producers.productFilter,
-		app.storages.products,
-		app.streamProcs.productFilter,
-		app.streamProcs.productBlocker,
+		app.streamProcs.productFilter, app.streamProcs.productBlocker,
+		app.producers.products, app.producers.productFilter,
+		app.storages.products, app.storages.products,
 	)
 }
 
@@ -272,7 +270,7 @@ func (app *App) initInboundAdapters() {
 	}
 
 	mux := http.NewServeMux()
-	httphandler.RegisterProducts(mux, app.coreService)
+	httphandler.RegisterProducts(mux, app.coreService, app.coreService)
 	httphandler.RegisterFilter(mux, app.coreService)
 
 	handler := httphandler.AllowJSON(mux)

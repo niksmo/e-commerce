@@ -2,39 +2,46 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"sync"
 
+	"github.com/niksmo/e-commerce/internal/adapter/storage"
 	"github.com/niksmo/e-commerce/internal/core/domain"
 	"github.com/niksmo/e-commerce/internal/core/port"
+)
+
+var (
+	ErrNotFound = errors.New("not found")
 )
 
 var _ port.ProductsSender = (*Service)(nil)
 var _ port.ProductFilterSetter = (*Service)(nil)
 var _ port.ProductsSaver = (*Service)(nil)
+var _ port.ProductFinder = (*Service)(nil)
 
 type Service struct {
+	productFilterProc     port.ProductFilterProcessor
+	productBlockerProc    port.ProductBlockerProcessor
 	productsProducer      port.ProductsProducer
 	productFilterProducer port.ProductFilterProducer
 	productsStorage       port.ProductsStorage
-	productFilterProc     port.ProductFilterProcessor
-	productBlockerProc    port.ProductBlockerProcessor
+	productReader         port.ProductReader
 }
 
 func New(
+	productFilterProc port.ProductFilterProcessor,
+	productBlockerProc port.ProductBlockerProcessor,
 	productsProducer port.ProductsProducer,
 	productsFilterProducer port.ProductFilterProducer,
 	productsStorage port.ProductsStorage,
-	productFilterProc port.ProductFilterProcessor,
-	productBlockerProc port.ProductBlockerProcessor,
+	productReader port.ProductReader,
 ) Service {
 	return Service{
-		productsProducer,
-		productsFilterProducer,
-		productsStorage,
-		productFilterProc,
-		productBlockerProc,
+		productFilterProc, productBlockerProc,
+		productsProducer, productsFilterProducer,
+		productsStorage, productReader,
 	}
 }
 
@@ -113,4 +120,26 @@ func (s Service) SaveProducts(ctx context.Context, vs []domain.Product) error {
 	n := len(vs)
 	log.Info("products saved", "nProducts", n, "products", names)
 	return nil
+}
+
+func (s Service) FindProduct(
+	ctx context.Context, productName string, user string,
+) (domain.Product, error) {
+	const op = "Service.FindProduct"
+
+	if err := ctx.Err(); err != nil {
+		return domain.Product{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	v, err := s.productReader.ReadProduct(ctx, productName)
+	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			return domain.Product{}, fmt.Errorf("%s: %w", op, ErrNotFound)
+		}
+		return domain.Product{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	// produce client event
+
+	return v, nil
 }
