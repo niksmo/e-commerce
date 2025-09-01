@@ -12,7 +12,6 @@ import (
 	"github.com/niksmo/e-commerce/internal/core/service"
 )
 
-// TODO: GET v1/products?name=<product_name> Headers Authorization Basic is opt (200 OK, 204 No content, 404)
 // TODO: GET v1/recomendations Headers Authorization Basic is opt (200 OK, 204 No content)
 
 type ProductsHandler struct {
@@ -30,8 +29,12 @@ func RegisterProducts(
 	mux.HandleFunc("POST /v1/products", h.PostProducts)
 }
 
+// TODO: GET v1/products?name=<product_name> Headers Authorization Basic is opt (200 OK, 204 No content, 404)
 func (h ProductsHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
-	const op = "ProductsHandler.GetProduct"
+	const (
+		op         = "ProductsHandler.GetProduct"
+		nameMaxLen = 100
+	)
 	log := slog.With("op", op)
 
 	//get username from context
@@ -47,14 +50,19 @@ func (h ProductsHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(productName) > nameMaxLen {
+		productName = productName[:nameMaxLen]
+	}
+
 	v, err := h.pFinder.FindProduct(r.Context(), productName, user)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrNotFound):
-			errMsg := err.Error()
 			statusCode := http.StatusNoContent
-			http.Error(w, errMsg, statusCode)
-			log.Info(errMsg, "statusCode", statusCode)
+			http.Error(w, "", statusCode)
+			log.Info("not found",
+				"productName", productName,
+				"statusCode", statusCode)
 		default:
 			errMsg := "failed to find product"
 			statusCode := http.StatusServiceUnavailable
@@ -70,8 +78,7 @@ func (h ProductsHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Info("find",
 		"statusCode", http.StatusOK,
-		"productName", v.Name, "user", user,
-	)
+		"productName", v.Name, "user", user)
 }
 
 func (h ProductsHandler) PostProducts(w http.ResponseWriter, r *http.Request) {
