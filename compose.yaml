@@ -276,6 +276,10 @@ services:
       - pg-data:/var/lib/postgresql/data
     networks:
       - net
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     environment:
       POSTGRES_PASSWORD: pass
       POSTGRES_USER: user
@@ -290,6 +294,10 @@ services:
       - pg-admin-data:/var/lib/pgadmin
     networks:
       - net
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     environment:
       PGADMIN_DEFAULT_EMAIL: user@email.com
       PGADMIN_DEFAULT_PASSWORD: pass
