@@ -86,10 +86,62 @@ func (co *consumerOpts) apply(opts ...ConsumerOpt) error {
 // A consumer is used for composition.
 //
 // Fetching records from kafka broker and closing underlying [kgo.Client].
+
+type consumerParent interface {
+	processFetches(context.Context, kgo.Fetches) error
+}
+
 type consumer struct {
 	opPrefix      string
+	parent        consumerParent
 	cl            ConsumerClient
 	slowDownTimer *time.Timer
+}
+
+func (c consumer) run(ctx context.Context) {
+	const op = "run"
+	log := slog.With("op", makeOp(c.opPrefix, op))
+
+	for {
+		select {
+		case <-ctx.Done():
+			log.Info("context is canceled")
+			return
+		default:
+			err := c.consume(ctx)
+			if err != nil {
+				if errors.Is(err, context.Canceled) {
+					continue
+				}
+				log.Error("failed to consume", "err", err)
+				c.slowDown()
+			}
+		}
+	}
+}
+
+func (c consumer) consume(ctx context.Context) error {
+	const op = "consume"
+
+	fetches, err := c.pollFetches(ctx)
+	if err != nil {
+		return opErr(err, c.opPrefix, op)
+	}
+
+	if fetches.Empty() {
+		return nil
+	}
+
+	err = c.parent.processFetches(ctx, fetches)
+	if err != nil {
+		return opErr(err, c.opPrefix, op)
+	}
+
+	err = c.commit(ctx)
+	if err != nil {
+		return opErr(err, c.opPrefix, op)
+	}
+	return nil
 }
 
 func (c consumer) pollFetches(ctx context.Context) (kgo.Fetches, error) {
@@ -165,76 +217,36 @@ type ProductsConsumer struct {
 	decoder  Decoder
 }
 
-func NewProductsConsumer(opts ...ConsumerOpt) (ProductsConsumer, error) {
+func NewProductsConsumer(opts ...ConsumerOpt) (pc ProductsConsumer, err error) {
 	const op = "NewProductsConsumer"
 
 	var options consumerOpts
 	if err := options.apply(opts...); err != nil {
-		return ProductsConsumer{}, opErr(err, op)
+		return pc, opErr(err, op)
 	}
 
 	opPrefix := "ProductsConsumer"
-	c := consumer{
+
+	pc.opPrefix = opPrefix
+	pc.saver = options.productsSaver
+	pc.decoder = options.decoder
+
+	pc.consumer = consumer{
 		opPrefix:      opPrefix,
+		parent:        pc,
 		cl:            options.cl,
 		slowDownTimer: time.NewTimer(0),
 	}
 
-	return ProductsConsumer{
-		opPrefix: opPrefix,
-		consumer: c,
-		saver:    options.productsSaver,
-		decoder:  options.decoder,
-	}, nil
+	return pc, nil
+}
+
+func (c ProductsConsumer) Run(ctx context.Context) {
+	c.consumer.run(ctx)
 }
 
 func (c ProductsConsumer) Close() {
 	c.consumer.close()
-}
-
-func (c ProductsConsumer) Run(ctx context.Context) {
-	const op = "Run"
-	log := slog.With("op", makeOp(c.opPrefix, op))
-
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		default:
-			fetches, err := c.consumer.pollFetches(ctx)
-			if err != nil {
-				if errors.Is(err, context.Canceled) {
-					continue
-				}
-				log.Error("failed to poll fetches", "err", err)
-				c.consumer.slowDown()
-				continue
-			}
-
-			if fetches.Empty() {
-				continue
-			}
-
-			err = c.processFetches(ctx, fetches)
-			if err != nil {
-				if errors.Is(err, context.Canceled) {
-					continue
-				}
-				log.Error("failed to processFetches", "err", err)
-				c.consumer.slowDown()
-				continue
-			}
-
-			err = c.consumer.commit(ctx)
-			if err != nil {
-				if errors.Is(err, context.Canceled) {
-					continue
-				}
-				log.Error("failed to commit offset", "err", err)
-				c.consumer.slowDown()
-			}
-		}
-	}
 }
 
 func (c ProductsConsumer) processFetches(
@@ -254,7 +266,9 @@ func (c ProductsConsumer) processFetches(
 	return nil
 }
 
-func (c ProductsConsumer) toDomain(fetches kgo.Fetches) (vs []domain.Product) {
+func (c ProductsConsumer) toDomain(
+	fetches kgo.Fetches,
+) (vs []domain.Product) {
 	const op = "toDomain"
 	log := slog.With("op", makeOp(c.opPrefix, op))
 
@@ -269,7 +283,7 @@ func (c ProductsConsumer) toDomain(fetches kgo.Fetches) (vs []domain.Product) {
 		}
 		vs = append(vs, v)
 	})
-	return
+	return vs
 }
 
 func (c ProductsConsumer) decodeRecValue(
