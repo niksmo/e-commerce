@@ -28,7 +28,7 @@ type streamProcessors struct {
 }
 
 type storages struct {
-	sqldb storage.SQLStorage
+	products storage.ProductsRepository
 }
 
 type producers struct {
@@ -209,7 +209,7 @@ func (app *App) initOutboundAdapters() {
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
 
-	sqldb, err := storage.NewSQLStorage(ctx, sqldsn)
+	productsRepository, err := storage.NewProductsRepository(ctx, sqldsn)
 	if err != nil {
 		app.fallDown(op, err)
 	}
@@ -230,7 +230,7 @@ func (app *App) initOutboundAdapters() {
 		app.fallDown(op, err)
 	}
 
-	app.storages.sqldb = sqldb
+	app.storages.products = productsRepository
 	app.producers.products = productsProducer
 	app.producers.productFilter = productFilterProducer
 
@@ -240,7 +240,7 @@ func (app *App) initCoreService() {
 	app.coreService = service.New(
 		app.producers.products,
 		app.producers.productFilter,
-		app.storages.sqldb,
+		app.storages.products,
 		app.streamProcs.productFilter,
 		app.streamProcs.productBlocker,
 	)

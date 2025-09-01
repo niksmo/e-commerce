@@ -87,20 +87,15 @@ func (s Service) SaveProducts(ctx context.Context, vs []domain.Product) error {
 	const op = "Service.SaveProducts"
 	log := slog.With("op", op)
 
-	var products []string
-	for _, v := range vs {
-		products = append(products, v.Name)
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	log.Info("SAVE PRODUCTS", "nProducts", len(products))
+	log.Info("SAVE PRODUCTS", "nProducts", len(vs))
 
-	// if err := ctx.Err(); err != nil {
-	// 	return fmt.Errorf("%s: %w", op, err)
-	// }
-
-	// err := s.productsStorage.StoreProducts(ctx, vs)
-	// if err != nil {
-	// 	return fmt.Errorf("%s: %w", op, err)
-	// }
+	err := s.productsStorage.StoreProducts(ctx, vs)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
 	return nil
 }
