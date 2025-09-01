@@ -42,16 +42,26 @@ func New(
 //
 // Blocks current goroutine while components is preparing to ready state.
 func (s Service) Run(ctx context.Context, stopFn context.CancelFunc) {
+	const op = "Service.Run"
+	log := slog.With("op", op)
+
 	var wg sync.WaitGroup
 	wg.Add(2)
 	go s.productFilterProc.Run(ctx, stopFn, &wg)
 	go s.productBlockerProc.Run(ctx, stopFn, &wg)
 	wg.Wait()
+
+	log.Info("running")
 }
 
 func (s Service) Close() {
+	const op = "Service.Close"
+	log := slog.With("op", op)
+
+	log.Info("service is closing...")
 	s.productFilterProc.Close()
 	s.productBlockerProc.Close()
+	log.Info("service is closed")
 }
 
 func (s Service) SendProducts(ctx context.Context, vs []domain.Product) error {
@@ -91,11 +101,16 @@ func (s Service) SaveProducts(ctx context.Context, vs []domain.Product) error {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	log.Info("SAVE PRODUCTS", "nProducts", len(vs))
-
 	err := s.productsStorage.StoreProducts(ctx, vs)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
+
+	var names []string
+	for _, v := range vs {
+		names = append(names, v.Name)
+	}
+	n := len(vs)
+	log.Info("products saved", "nProducts", n, "products", names)
 	return nil
 }

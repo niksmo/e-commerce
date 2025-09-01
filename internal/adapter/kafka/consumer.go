@@ -102,10 +102,11 @@ func (c consumer) run(ctx context.Context) {
 	const op = "run"
 	log := slog.With("op", makeOp(c.opPrefix, op))
 
+	log.Info("running")
+
 	for {
 		select {
 		case <-ctx.Done():
-			log.Info("context is canceled")
 			return
 		default:
 			err := c.consume(ctx)

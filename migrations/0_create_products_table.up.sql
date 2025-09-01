@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS products (
     tags varchar(30)[] NOT NULL,
     images json NOT NULL,
     specifications json NOT NULL,
-    store_id bigint NOT NULL,
+    store_id varchar(100) NOT NULL,
     PRIMARY KEY (product_id, store_id)
 );
 

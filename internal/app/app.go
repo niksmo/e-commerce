@@ -49,6 +49,7 @@ type App struct {
 	producers   producers
 	consumers   consumers
 	coreService service.Service
+	sqldb       storage.SQLDB
 	httpServer  httphandler.HTTPServer
 }
 
@@ -74,16 +75,10 @@ func New(context context.Context, config config.Config) *App {
 }
 
 func (app *App) Run(stopFn context.CancelFunc) {
-	const op = "App.Run"
-	log := slog.With("op", op)
-
 	ctx := app.ctx
-
 	app.coreService.Run(ctx, stopFn)
 	go app.consumers.products.Run(ctx)
 	go app.httpServer.Run(stopFn)
-
-	log.Info("application is running")
 }
 
 func (app *App) Close(ctx context.Context) {
@@ -97,6 +92,8 @@ func (app *App) Close(ctx context.Context) {
 	app.producers.productFilter.Close()
 	app.streamProcs.productFilter.Close()
 	app.streamProcs.productBlocker.Close()
+	app.consumers.products.Close()
+	app.sqldb.Close()
 
 	log.Info("application is closed")
 }
@@ -209,7 +206,12 @@ func (app *App) initOutboundAdapters() {
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
 
-	productsRepository, err := storage.NewProductsRepository(ctx, sqldsn)
+	sqldb, err := storage.NewSQLDB(ctx, sqldsn)
+	if err != nil {
+		app.fallDown(op, err)
+	}
+
+	productsRepository := storage.NewProductsRepository(sqldb)
 	if err != nil {
 		app.fallDown(op, err)
 	}
@@ -230,6 +232,7 @@ func (app *App) initOutboundAdapters() {
 		app.fallDown(op, err)
 	}
 
+	app.sqldb = sqldb
 	app.storages.products = productsRepository
 	app.producers.products = productsProducer
 	app.producers.productFilter = productFilterProducer
