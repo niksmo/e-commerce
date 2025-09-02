@@ -258,3 +258,80 @@ func (ProductFilterProducer) toSchema(
 ) schema.ProductFilterV1 {
 	return productFilterToSchemaV1(v)
 }
+
+// A FindProductEventProducer used for produce [domain.ClientFindProductEvent]
+type FindProductEventProducer struct {
+	producer producer
+	encoder  Encoder
+	opPrefix string
+}
+
+func NewFindProductEventProducer(
+	opts ...ProducerOpt,
+) (FindProductEventProducer, error) {
+	const op = "FindProductEventEmitter"
+
+	var options producerOpts
+	if err := options.apply(opts...); err != nil {
+		return FindProductEventProducer{}, opErr(err, op)
+	}
+
+	opPrefix := "FindProductEventEmitter"
+	p := producer{
+		opPrefix: opPrefix,
+		cl:       options.cl,
+	}
+
+	return FindProductEventProducer{
+		producer: p,
+		encoder:  options.encoder,
+		opPrefix: opPrefix,
+	}, nil
+}
+
+func (p FindProductEventProducer) Close() {
+	p.producer.close()
+}
+
+func (p FindProductEventProducer) Emit(
+	ctx context.Context, evt domain.ClientFindProductEvent,
+) error {
+	const op = "Emit"
+
+	if err := ctx.Err(); err != nil {
+		return opErr(err, p.opPrefix, op)
+	}
+
+	rs, err := p.createRecord(evt)
+	if err != nil {
+		return opErr(err, p.opPrefix, op)
+	}
+
+	if err := p.producer.produce(ctx, &rs); err != nil {
+		return opErr(err, p.opPrefix, op)
+	}
+
+	return nil
+}
+
+func (p FindProductEventProducer) createRecord(
+	v domain.ClientFindProductEvent,
+) (rs kgo.Record, err error) {
+	const op = "createRecord"
+
+	s := p.toSchema(v)
+	b, err := p.encoder.Encode(s)
+	if err != nil {
+		return kgo.Record{}, opErr(err, p.opPrefix, op)
+	}
+	msgKey := []byte(s.Username)
+	r := kgo.Record{Key: msgKey, Value: b}
+
+	return r, nil
+}
+
+func (FindProductEventProducer) toSchema(
+	v domain.ClientFindProductEvent,
+) schema.ClientFindProductEventV1 {
+	return clientEventToSchema(v)
+}

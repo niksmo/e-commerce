@@ -62,3 +62,7 @@ type ProductReader interface {
 		ctx context.Context, productName string,
 	) (domain.Product, error)
 }
+
+type ClientFindProductEventEmitter interface {
+	Emit(context.Context, domain.ClientFindProductEvent) error
+}

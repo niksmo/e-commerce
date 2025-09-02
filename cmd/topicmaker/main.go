@@ -39,7 +39,7 @@ func main() {
 		cfg.Broker.Topics.ProductsFromShop,
 		cfg.Broker.Topics.ProductsToStorage,
 		cfg.Broker.Topics.FilterProductStream,
-		cfg.Broker.Topics.ClientEvents,
+		cfg.Broker.Topics.ClientFindProductEvents,
 	)
 	if err != nil {
 		printFail(err)
@@ -121,7 +121,7 @@ func printStart(cfg config.Config) {
 		cfg.Broker.Topics.ProductsToStorage,
 		cfg.Broker.Topics.FilterProductStream,
 		cfg.Broker.Topics.FilterProductTable,
-		cfg.Broker.Topics.ClientEvents,
+		cfg.Broker.Topics.ClientFindProductEvents,
 	)
 }
 

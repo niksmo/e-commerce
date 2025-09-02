@@ -13,7 +13,7 @@ broker:
     products_to_storage: products-to-storage
     filter_product_stream: filter-product-stream
     filter_product_table: filter-product-group-table # <prefix>-table derived from consumers.filter_product_group
-    client_events: client-events
+    client_find_product_events: client-find-product-events
   consumers:
     filter_product_group: filter-product-group
     product_blocker_group: product-blocker-group

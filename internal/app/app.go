@@ -17,9 +17,10 @@ import (
 )
 
 type serdes struct {
-	productFromShop  schema.Serde
-	productToStorage schema.Serde
-	productFilter    schema.Serde
+	productFromShop   schema.Serde
+	productToStorage  schema.Serde
+	productFilter     schema.Serde
+	findProductEvents schema.Serde
 }
 
 type streamProcessors struct {
@@ -32,8 +33,9 @@ type storages struct {
 }
 
 type producers struct {
-	products      kafka.ProductsProducer
-	productFilter kafka.ProductFilterProducer
+	products                 kafka.ProductsProducer
+	productFilter            kafka.ProductFilterProducer
+	findProductEventProducer kafka.FindProductEventProducer
 }
 
 type consumers struct {
@@ -48,7 +50,7 @@ type App struct {
 	storages    storages
 	producers   producers
 	consumers   consumers
-	coreService service.Service
+	coreService *service.Service
 	sqldb       storage.SQLDB
 	httpServer  httphandler.HTTPServer
 }
@@ -111,6 +113,7 @@ func (app *App) initSerdes() {
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	productsToStorageTopic := app.cfg.Broker.Topics.ProductsToStorage
 	filterProductsStream := app.cfg.Broker.Topics.FilterProductStream
+	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
 
 	srClient, err := sr.NewClient(sr.URLs(urls...))
 	if err != nil {
@@ -149,9 +152,17 @@ func (app *App) initSerdes() {
 		app.fallDown(op, err)
 	}
 
+	findProductEventsSS := schema.ValueSubject(findProductEventsTopic)
+	findProductEventsSerde, err := schema.NewSerdeClientFindProductEventV1(
+		ctx,
+		schema.SubjectOpt(findProductEventsSS),
+		schema.SchemaIdentifierOpt(schemaCreater),
+	)
+
 	app.serdes.productFromShop = productFromShopSerde
 	app.serdes.productFilter = productFilterSerde
 	app.serdes.productToStorage = productToStorageSerde
+	app.serdes.findProductEvents = findProductEventsSerde
 }
 
 func (app *App) initStreamProcessors() {
@@ -205,6 +216,7 @@ func (app *App) initOutboundAdapters() {
 	seedBrokers := app.cfg.Broker.SeedBrokers
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
+	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
 
 	sqldb, err := storage.NewSQLDB(ctx, sqldsn)
 	if err != nil {
@@ -232,11 +244,19 @@ func (app *App) initOutboundAdapters() {
 		app.fallDown(op, err)
 	}
 
+	findProductEventProducer, err := kafka.NewFindProductEventProducer(
+		kafka.ProducerClientOpt(ctx, seedBrokers, findProductEventsTopic),
+		kafka.ProducerEncoderOpt(app.serdes.findProductEvents),
+	)
+	if err != nil {
+		app.fallDown(op, err)
+	}
+
 	app.sqldb = sqldb
 	app.storages.products = productsRepository
 	app.producers.products = productsProducer
 	app.producers.productFilter = productFilterProducer
-
+	app.producers.findProductEventProducer = findProductEventProducer
 }
 
 func (app *App) initCoreService() {
@@ -244,6 +264,7 @@ func (app *App) initCoreService() {
 		app.streamProcs.productFilter, app.streamProcs.productBlocker,
 		app.producers.products, app.producers.productFilter,
 		app.storages.products, app.storages.products,
+		app.producers.findProductEventProducer,
 	)
 }
 

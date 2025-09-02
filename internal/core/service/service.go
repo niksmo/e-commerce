@@ -16,11 +16,6 @@ var (
 	ErrNotFound = errors.New("not found")
 )
 
-var _ port.ProductsSender = (*Service)(nil)
-var _ port.ProductFilterSetter = (*Service)(nil)
-var _ port.ProductsSaver = (*Service)(nil)
-var _ port.ProductFinder = (*Service)(nil)
-
 type Service struct {
 	productFilterProc     port.ProductFilterProcessor
 	productBlockerProc    port.ProductBlockerProcessor
@@ -28,6 +23,8 @@ type Service struct {
 	productFilterProducer port.ProductFilterProducer
 	productsStorage       port.ProductsStorage
 	productReader         port.ProductReader
+	evtProc               *findProductEventProc
+	evtC                  chan<- domain.ClientFindProductEvent
 }
 
 func New(
@@ -37,20 +34,28 @@ func New(
 	productsFilterProducer port.ProductFilterProducer,
 	productsStorage port.ProductsStorage,
 	productReader port.ProductReader,
-) Service {
-	return Service{
-		productFilterProc, productBlockerProc,
-		productsProducer, productsFilterProducer,
-		productsStorage, productReader,
+	findProductEventEmitter port.ClientFindProductEventEmitter,
+) *Service {
+	evtProc := &findProductEventProc{emitter: findProductEventEmitter}
+	return &Service{
+		productFilterProc:     productFilterProc,
+		productBlockerProc:    productBlockerProc,
+		productsProducer:      productsProducer,
+		productFilterProducer: productsFilterProducer,
+		productsStorage:       productsStorage,
+		productReader:         productReader,
+		evtProc:               evtProc,
 	}
 }
 
 // Run runs the services components in separate goroutines.
 //
 // Blocks current goroutine while components is preparing to ready state.
-func (s Service) Run(ctx context.Context, stopFn context.CancelFunc) {
+func (s *Service) Run(ctx context.Context, stopFn context.CancelFunc) {
 	const op = "Service.Run"
 	log := slog.With("op", op)
+
+	s.evtC = s.evtProc.run(ctx)
 
 	var wg sync.WaitGroup
 	wg.Add(2)
@@ -61,17 +66,18 @@ func (s Service) Run(ctx context.Context, stopFn context.CancelFunc) {
 	log.Info("running")
 }
 
-func (s Service) Close() {
+func (s *Service) Close() {
 	const op = "Service.Close"
 	log := slog.With("op", op)
 
 	log.Info("service is closing...")
 	s.productFilterProc.Close()
 	s.productBlockerProc.Close()
+	s.evtProc.close()
 	log.Info("service is closed")
 }
 
-func (s Service) SendProducts(ctx context.Context, vs []domain.Product) error {
+func (s *Service) SendProducts(ctx context.Context, vs []domain.Product) error {
 	const op = "Service.SendProducts"
 
 	if err := ctx.Err(); err != nil {
@@ -85,7 +91,7 @@ func (s Service) SendProducts(ctx context.Context, vs []domain.Product) error {
 	return nil
 }
 
-func (s Service) SetRule(ctx context.Context, v domain.ProductFilter) error {
+func (s *Service) SetRule(ctx context.Context, v domain.ProductFilter) error {
 	const op = "Service.SetRule"
 
 	if err := ctx.Err(); err != nil {
@@ -100,7 +106,7 @@ func (s Service) SetRule(ctx context.Context, v domain.ProductFilter) error {
 	return nil
 }
 
-func (s Service) SaveProducts(ctx context.Context, vs []domain.Product) error {
+func (s *Service) SaveProducts(ctx context.Context, vs []domain.Product) error {
 	const op = "Service.SaveProducts"
 	log := slog.With("op", op)
 
@@ -122,7 +128,7 @@ func (s Service) SaveProducts(ctx context.Context, vs []domain.Product) error {
 	return nil
 }
 
-func (s Service) FindProduct(
+func (s *Service) FindProduct(
 	ctx context.Context, productName string, user string,
 ) (domain.Product, error) {
 	const op = "Service.FindProduct"
@@ -139,7 +145,63 @@ func (s Service) FindProduct(
 		return domain.Product{}, fmt.Errorf("%s: %w", op, err)
 	}
 
-	// if user != "" > produce user event
+	if userEvent(user) {
+		s.evtC <- productToEvt(user, v)
+	}
 
 	return v, nil
+}
+
+// A findProductEventProc is used for process client event in core service.
+type findProductEventProc struct {
+	evtC    chan domain.ClientFindProductEvent
+	emitter port.ClientFindProductEventEmitter
+}
+
+func (p *findProductEventProc) run(
+	ctx context.Context,
+) chan<- domain.ClientFindProductEvent {
+	p.evtC = make(chan domain.ClientFindProductEvent, 1)
+	go p.runProc(ctx)
+	return p.evtC
+}
+
+func (p *findProductEventProc) runProc(ctx context.Context) {
+	const op = "Service.findProductEventProc.runProc"
+	log := slog.With("op", op)
+
+	for evt := range p.evtC {
+		err := p.emitter.Emit(ctx, evt)
+		if err != nil {
+			if errors.Is(err, context.Canceled) {
+				continue
+			}
+			log.Error("failed to emit clients find product event", "err", err)
+			return
+		}
+		log.Info("emit clients find product event", "user", evt.Username)
+	}
+}
+
+func (p *findProductEventProc) close() {
+	close(p.evtC)
+}
+
+func userEvent(user string) bool {
+	return user != ""
+}
+
+func productToEvt(
+	username string, v domain.Product,
+) (evt domain.ClientFindProductEvent) {
+	evt.Username = username
+	evt.ProductName = v.Name
+	evt.Brand = v.Brand
+	evt.Category = v.Category
+	evt.Price = v.Price
+	evt.Tags = v.Tags
+	evt.Specifications = v.Specifications
+	evt.StoreID = v.StoreID
+
+	return
 }

@@ -19,11 +19,11 @@ type consumers struct {
 }
 
 type topics struct {
-	ProductsFromShop    string `mapstructure:"products_from_shop"`
-	ProductsToStorage   string `mapstructure:"products_to_storage"`
-	FilterProductStream string `mapstructure:"filter_product_stream"`
-	FilterProductTable  string `mapstructure:"filter_product_table"`
-	ClientEvents        string `mapstructure:"client_events"`
+	ProductsFromShop        string `mapstructure:"products_from_shop"`
+	ProductsToStorage       string `mapstructure:"products_to_storage"`
+	FilterProductStream     string `mapstructure:"filter_product_stream"`
+	FilterProductTable      string `mapstructure:"filter_product_table"`
+	ClientFindProductEvents string `mapstructure:"client_find_product_events"`
 }
 
 type broker struct {
@@ -88,7 +88,7 @@ func (c Config) Print() {
 		ProductsToStorage=%q
 		FilterProductStream=%q
 		FilterProductTable=%q
-		ClientEvents=%q
+		ClientFindProductEvents=%q
 	Consumers:
 		FilterProductGroup=%q
 		ProductBlockerGroup=%q
@@ -107,7 +107,7 @@ func (c Config) Print() {
 		c.Broker.Topics.ProductsToStorage,
 		c.Broker.Topics.FilterProductStream,
 		c.Broker.Topics.FilterProductTable,
-		c.Broker.Topics.ClientEvents,
+		c.Broker.Topics.ClientFindProductEvents,
 		c.Broker.Consumers.FilterProductGroup,
 		c.Broker.Consumers.ProductBlockerGroup,
 		c.Broker.Consumers.ProductSaverGroup,
