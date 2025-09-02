@@ -1,9 +1,18 @@
 package httphandler
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+)
+
+type contextKey int
+
+const (
+	contextUserKey contextKey = iota
+)
 
 func AllowJSON(next http.Handler) http.Handler {
-	hf := func(w http.ResponseWriter, r *http.Request) {
+	h := func(w http.ResponseWriter, r *http.Request) {
 		if r.ContentLength == 0 {
 			next.ServeHTTP(w, r)
 			return
@@ -16,5 +25,19 @@ func AllowJSON(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	}
-	return http.HandlerFunc(hf)
+	return http.HandlerFunc(h)
+}
+
+func UserContext(next http.Handler) http.Handler {
+	h := func(w http.ResponseWriter, r *http.Request) {
+		user, _, ok := r.BasicAuth()
+		if ok {
+			ctxWithUser := context.WithValue(
+				r.Context(), contextUserKey, user)
+
+			r = r.WithContext(ctxWithUser)
+		}
+		next.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(h)
 }

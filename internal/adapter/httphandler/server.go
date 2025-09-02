@@ -13,7 +13,9 @@ type HTTPServer struct {
 }
 
 func NewHTTPServer(addr string, handler http.Handler) HTTPServer {
+	handler = applyMiddlewares(handler, AllowJSON, UserContext)
 	handler = http.TimeoutHandler(handler, 5*time.Second, "unavailable")
+
 	s := &http.Server{
 		Addr:              addr,
 		Handler:           handler,
@@ -48,4 +50,13 @@ func (s HTTPServer) Close(ctx context.Context) {
 		log.Error("failed to shutdown gracefully", "err", err)
 	}
 	log.Info("http server is closed")
+}
+
+func applyMiddlewares(
+	h http.Handler, middlewares ...func(http.Handler) http.Handler,
+) http.Handler {
+	for _, mdw := range middlewares {
+		h = mdw(h)
+	}
+	return h
 }

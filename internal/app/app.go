@@ -269,11 +269,9 @@ func (app *App) initInboundAdapters() {
 		app.fallDown(op, err)
 	}
 
-	mux := http.NewServeMux()
-	httphandler.RegisterProducts(mux, app.coreService, app.coreService)
-	httphandler.RegisterFilter(mux, app.coreService)
-
-	handler := httphandler.AllowJSON(mux)
+	handler := http.NewServeMux()
+	httphandler.RegisterProducts(handler, app.coreService, app.coreService)
+	httphandler.RegisterFilter(handler, app.coreService)
 	httpServer := httphandler.NewHTTPServer(addr, handler)
 
 	app.consumers.products = productsConsumer

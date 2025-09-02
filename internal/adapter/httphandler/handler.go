@@ -1,8 +1,10 @@
 package httphandler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -32,13 +34,12 @@ func RegisterProducts(
 // TODO: GET v1/products?name=<product_name> Headers Authorization Basic is opt (200 OK, 204 No content, 404)
 func (h ProductsHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	const (
-		op         = "ProductsHandler.GetProduct"
-		nameMaxLen = 100
+		op          = "ProductsHandler.GetProduct"
+		maxNameSize = 100
 	)
 	log := slog.With("op", op)
 
-	//get username from context
-	user := "USERNAME_STUB"
+	username, _ := getUsername(r.Context())
 
 	productName := r.FormValue("name")
 
@@ -50,11 +51,11 @@ func (h ProductsHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(productName) > nameMaxLen {
-		productName = productName[:nameMaxLen]
+	if len(productName) > maxNameSize {
+		productName = productName[:maxNameSize]
 	}
 
-	v, err := h.pFinder.FindProduct(r.Context(), productName, user)
+	v, err := h.pFinder.FindProduct(r.Context(), productName, username)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrNotFound):
@@ -78,7 +79,7 @@ func (h ProductsHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Info("find",
 		"statusCode", http.StatusOK,
-		"productName", v.Name, "user", user)
+		"productName", v.Name, "user", username)
 }
 
 func (h ProductsHandler) PostProducts(w http.ResponseWriter, r *http.Request) {
@@ -166,6 +167,25 @@ func (h FilterHandler) PostProductsRule(
 		"product filter rule accepted",
 		"productName", fv.ProductName, "blocked", fv.Blocked,
 	)
+}
+
+func getUsername(ctx context.Context) (string, bool) {
+	const op = "httphandler.getUsername"
+	log := slog.With("op", op)
+
+	v := ctx.Value(contextUserKey)
+	if v == nil {
+		return "", false
+	}
+	username, ok := v.(string)
+	if !ok {
+		log.Warn(
+			"unexpected context value type",
+			"valueType", fmt.Sprintf("%T", v),
+		)
+		return "", false
+	}
+	return username, true
 }
 
 func decodeJSON(
