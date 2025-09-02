@@ -400,11 +400,11 @@ services:
     #   retries: 60
 
   connect-mm2:
-    image: confluentinc/cp-kafka-connect:7.6.0
+    image: confluentinc/cp-kafka-connect:7.9.2
     hostname: connect-mm2
     container_name: connect-mm2
     ports:
-      - 127.0.0.1:8082:8082
+      - 127.0.0.1:8082:8083
     networks:
       - net
     deploy:
@@ -420,8 +420,7 @@ services:
         kafka-b-1:9092,\
         kafka-b-2:9092,\
         kafka-b-3:9092
-      CONNECT_REST_ADVERTISED_HOST_NAME: connect-mm2
-      CONNECT_REST_PORT: 8082
+      CONNECT_REST_ADVERTISED_HOST_NAME: localhost
       CONNECT_GROUP_ID: mm2-connect
       CONNECT_CONFIG_STORAGE_TOPIC: mm2-configs
       CONNECT_OFFSET_STORAGE_TOPIC: mm2-offsets
@@ -429,20 +428,11 @@ services:
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-
-      # MM2 best practice: byte-preserving (don't try to re-serialize in transit)
-      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.converters.ByteArrayConverter"
-      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.converters.ByteArrayConverter"
-
-      # Internal converters for Connect's own topics:
-      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-
-      # Allow connector client overrides (useful for dual-bootstrap etc.)
-      CONNECT_PLUGIN_PATH: "/usr/share/java"
-      CONNECT_PRODUCER_CLIENT_ID: "mm2-producer"
-      CONNECT_CONSUMER_CLIENT_ID: "mm2-consumer"
-      CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.converters.ByteArrayConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.converters.ByteArrayConverter
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_PLUGIN_PATH: /usr/share/java
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.9.2
