@@ -139,7 +139,7 @@ func (s Service) FindProduct(
 		return domain.Product{}, fmt.Errorf("%s: %w", op, err)
 	}
 
-	// produce client event
+	// if user != "" > produce user event
 
 	return v, nil
 }

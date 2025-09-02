@@ -1,0 +1,62 @@
+{
+    "type": "record",
+    "namespace": "analytics",
+    "name": "client_find_product_event",
+    "fields": [
+        {
+            "name": "username",
+            "type": "string"
+        },
+        {
+            "name": "product_name",
+            "type": "string"
+        },
+        {
+            "name": "brand",
+            "type": "string"
+        },
+        {
+            "name": "category",
+            "type": "string"
+        },
+        {
+            "name": "description",
+            "type": "string"
+        },
+        {
+            "name": "price",
+            "type": {
+                "type": "record",
+                "name": "product_price",
+                "fields": [
+                    {
+                        "name": "amount",
+                        "type": "double"
+                    },
+                    {
+                        "name": "currency",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "tags",
+            "type": {
+                "type": "array",
+                "items": "string"
+            }
+        },
+        {
+            "name": "specifications",
+            "type": {
+                "type": "map",
+                "values": "string"
+            }
+        },
+        {
+            "name": "store_id",
+            "type": "string"
+        }
+    ]
+}

@@ -146,3 +146,51 @@ func TestProductFilterV1(t *testing.T) {
 
 	assert.Equal(t, vMarshal, vUnmarshal)
 }
+
+func TestClientFindProductEventV1(t *testing.T) {
+	vMarshal := ClientFindProductEventV1{
+		Username:    "TestName",
+		ProductName: "TestProductName",
+		Brand:       "TestBrand",
+		Category:    "TestCategory",
+		Description: "TestDescription",
+		Price: ProductPriceV1{
+			Amount:   123.45,
+			Currency: "RUB",
+		},
+		Tags: []string{"tag1, tag2", "tag3"},
+		Specifications: map[string]string{
+			"specField1": "spec1Info",
+			"specField2": "spec2Info",
+		},
+		StoreID: "testStoreID",
+	}
+
+	schema, err := avro.Parse(ClientFindProductSchemaTextV1)
+	require.NoError(t, err)
+
+	data, err := avro.Marshal(schema, vMarshal)
+	require.NoError(t, err)
+
+	var vUnmarshal ClientFindProductEventV1
+	err = avro.Unmarshal(schema, data, &vUnmarshal)
+	require.NoError(t, err)
+
+	assert.Equal(t, vMarshal.Username, vUnmarshal.Username)
+	assert.Equal(t, vMarshal.ProductName, vUnmarshal.ProductName)
+	assert.Equal(t, vMarshal.Brand, vUnmarshal.Brand)
+	assert.Equal(t, vMarshal.Category, vUnmarshal.Category)
+	assert.Equal(t, vMarshal.Description, vUnmarshal.Description)
+	assert.Equal(t, vMarshal.Price, vUnmarshal.Price)
+	assert.Equal(t, vMarshal.StoreID, vUnmarshal.StoreID)
+
+	require.Len(t, vUnmarshal.Tags, len(vMarshal.Tags))
+	for i := range vMarshal.Tags {
+		assert.Equal(t, vMarshal.Tags[i], vUnmarshal.Tags[i])
+	}
+
+	require.Len(t, vUnmarshal.Specifications, len(vMarshal.Specifications))
+	for k := range vUnmarshal.Specifications {
+		assert.Equal(t, vMarshal.Specifications[k], vUnmarshal.Specifications[k])
+	}
+}

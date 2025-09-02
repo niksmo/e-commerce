@@ -65,10 +65,8 @@ func NewSerdeProductV1(ctx context.Context, opts ...Opt) (Serde, error) {
 	const op = "NewSerdeProductV1"
 	return serdeConstructor(
 		ctx,
-		ProductSchemaTextV1,
-		ProductV1{},
-		op,
-		opts...,
+		ProductSchemaTextV1, ProductV1{},
+		op, opts...,
 	)
 }
 
@@ -76,10 +74,17 @@ func NewSerdeProducFiltertV1(ctx context.Context, opts ...Opt) (Serde, error) {
 	const op = "NewSerdeProductFilterV1"
 	return serdeConstructor(
 		ctx,
-		ProductFilterSchemaTextV1,
-		ProductFilterV1{},
-		op,
-		opts...,
+		ProductFilterSchemaTextV1, ProductFilterV1{},
+		op, opts...,
+	)
+}
+
+func NewSerdeClientFindProductEventV1(ctx context.Context, opts ...Opt) (Serde, error) {
+	const op = "NewSerdeClientFindProductEventV1"
+	return serdeConstructor(
+		ctx,
+		ClientFindProductSchemaTextV1, ClientFindProductEventV1{},
+		op, opts...,
 	)
 }
 

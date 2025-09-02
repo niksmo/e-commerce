@@ -31,3 +31,14 @@ type ProductFilter struct {
 	ProductName string
 	Blocked     bool
 }
+
+type ClientFindProductEvent struct {
+	Username       string
+	ProductName    string
+	Brand          string
+	Category       string
+	Price          ProductPrice
+	Tags           []string
+	Specifications map[string]string
+	StoreID        string
+}
