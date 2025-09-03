@@ -65,9 +65,10 @@ func ProductsConsumerSaverOpt(ps port.ProductsSaver) ConsumerOpt {
 }
 
 type consumerOpts struct {
-	cl            ConsumerClient
-	decoder       Decoder
-	productsSaver port.ProductsSaver
+	cl                ConsumerClient
+	decoder           Decoder
+	productsSaver     port.ProductsSaver
+	clientEventsSaver port.ClientEventsSaver
 }
 
 func (co *consumerOpts) apply(opts ...ConsumerOpt) error {
@@ -296,5 +297,95 @@ func (c ProductsConsumer) decodeRecValue(
 		return domain.Product{}, err
 	}
 	v := schemaV1ToProduct(s)
+	return v, nil
+}
+
+// A ClientEventsConsumer consumes clients find product events
+// then sends to the core service for save.
+type ClientEventsConsumer struct {
+	opPrefix string
+	consumer consumer
+	saver    port.ClientEventsSaver
+	decoder  Decoder
+}
+
+func NewClientEventsConsumer(opts ...ConsumerOpt) (pc ClientEventsConsumer, err error) {
+	const op = "NewClientEventsConsumer"
+
+	var options consumerOpts
+	if err := options.apply(opts...); err != nil {
+		return pc, opErr(err, op)
+	}
+
+	opPrefix := "ClientEventsConsumer"
+
+	pc.opPrefix = opPrefix
+	pc.saver = options.clientEventsSaver
+	pc.decoder = options.decoder
+
+	pc.consumer = consumer{
+		opPrefix:      opPrefix,
+		parent:        pc,
+		cl:            options.cl,
+		slowDownTimer: time.NewTimer(0),
+	}
+
+	return pc, nil
+}
+
+func (c ClientEventsConsumer) Run(ctx context.Context) {
+	c.consumer.run(ctx)
+}
+
+func (c ClientEventsConsumer) Close() {
+	c.consumer.close()
+}
+
+func (c ClientEventsConsumer) processFetches(
+	ctx context.Context, fetches kgo.Fetches,
+) error {
+	const op = "processFetches"
+
+	values := c.toDomain(fetches)
+	if len(values) == 0 {
+		return nil
+	}
+
+	err := c.saver.SaveEvents(ctx, values)
+	if err != nil {
+		return opErr(err, c.opPrefix, op)
+	}
+	return nil
+}
+
+func (c ClientEventsConsumer) toDomain(
+	fetches kgo.Fetches,
+) (vs []domain.ClientFindProductEvent) {
+	const op = "toDomain"
+	log := slog.With("op", makeOp(c.opPrefix, op))
+
+	fetches.EachRecord(func(r *kgo.Record) {
+		v, err := c.decodeRecValue(r)
+		if err != nil {
+			log.Error(
+				"failed to decode value",
+				"err", opErr(err, c.opPrefix, op),
+			)
+			return
+		}
+		vs = append(vs, v)
+	})
+	return vs
+}
+
+func (c ClientEventsConsumer) decodeRecValue(
+	r *kgo.Record,
+) (domain.ClientFindProductEvent, error) {
+	var s schema.ClientFindProductEventV1
+	err := c.decoder.Decode(r.Value, &s)
+	if err != nil {
+		return domain.ClientFindProductEvent{}, err
+	}
+	v := schemaV1ToClientEvent(s)
 	return v, nil
 }

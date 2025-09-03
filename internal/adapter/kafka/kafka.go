@@ -102,3 +102,18 @@ func clientEventToSchema(
 	s.StoreID = evt.StoreID
 	return
 }
+
+func schemaV1ToClientEvent(
+	s schema.ClientFindProductEventV1,
+) (evt domain.ClientFindProductEvent) {
+	evt.Username = s.Username
+	evt.ProductName = s.ProductName
+	evt.Brand = s.Brand
+	evt.Category = s.Category
+	evt.Price.Amount = s.Price.Amount
+	evt.Price.Currency = s.Price.Currency
+	evt.Tags = s.Tags
+	evt.Specifications = s.Specifications
+	evt.StoreID = s.StoreID
+	return
+}

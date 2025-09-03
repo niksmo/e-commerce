@@ -66,3 +66,11 @@ type ProductReader interface {
 type ClientFindProductEventEmitter interface {
 	Emit(context.Context, domain.ClientFindProductEvent) error
 }
+
+type ClientEventsSaver interface {
+	SaveEvents(context.Context, []domain.ClientFindProductEvent) error
+}
+
+type ClientEventsStorage interface {
+	StoreEvents(context.Context, []domain.ClientFindProductEvent) error
+}

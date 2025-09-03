@@ -16,6 +16,7 @@ type consumers struct {
 	FilterProductGroup  string `mapstructure:"filter_product_group"`
 	ProductBlockerGroup string `mapstructure:"product_blocker_group"`
 	ProductSaverGroup   string `mapstructure:"product_saver_group"`
+	ClientEventsGroup   string `mapstructure:"client_events_group"`
 }
 
 type topics struct {
@@ -93,6 +94,7 @@ func (c Config) Print() {
 		FilterProductGroup=%q
 		ProductBlockerGroup=%q
 		ProductSaverGroup=%q
+		ClientEventsGroup=%q
 
 `
 	fmt.Println("Loaded config:")
@@ -111,5 +113,6 @@ func (c Config) Print() {
 		c.Broker.Consumers.FilterProductGroup,
 		c.Broker.Consumers.ProductBlockerGroup,
 		c.Broker.Consumers.ProductSaverGroup,
+		c.Broker.Consumers.ClientEventsGroup,
 	)
 }

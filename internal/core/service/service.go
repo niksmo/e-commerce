@@ -22,6 +22,7 @@ type Service struct {
 	productsProducer      port.ProductsProducer
 	productFilterProducer port.ProductFilterProducer
 	productsStorage       port.ProductsStorage
+	clientEventsStorage   port.ClientEventsStorage
 	productReader         port.ProductReader
 	evtProc               *findProductEventProc
 	evtC                  chan<- domain.ClientFindProductEvent
@@ -35,6 +36,7 @@ func New(
 	productsStorage port.ProductsStorage,
 	productReader port.ProductReader,
 	findProductEventEmitter port.ClientFindProductEventEmitter,
+	clientEventsStorage port.ClientEventsStorage,
 ) *Service {
 	evtProc := &findProductEventProc{emitter: findProductEventEmitter}
 	return &Service{
@@ -43,6 +45,7 @@ func New(
 		productsProducer:      productsProducer,
 		productFilterProducer: productsFilterProducer,
 		productsStorage:       productsStorage,
+		clientEventsStorage:   clientEventsStorage,
 		productReader:         productReader,
 		evtProc:               evtProc,
 	}
@@ -150,6 +153,18 @@ func (s *Service) FindProduct(
 	}
 
 	return v, nil
+}
+
+func (s *Service) SaveEvents(
+	ctx context.Context, evts []domain.ClientFindProductEvent,
+) error {
+	const op = "Service.SaveEvents"
+
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
 }
 
 // A findProductEventProc is used for process client event in core service.

@@ -10,11 +10,7 @@ import (
 	"strings"
 
 	"github.com/niksmo/e-commerce/internal/core/domain"
-	"github.com/niksmo/e-commerce/internal/core/port"
 )
-
-var _ port.ProductsStorage = (*ProductsRepository)(nil)
-var _ port.ProductReader = (*ProductsRepository)(nil)
 
 type ProductsRepository struct {
 	sqldb sqldb
