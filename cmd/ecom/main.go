@@ -18,13 +18,13 @@ func main() {
 	cfg := config.Load()
 	cfg.Print()
 
-	service := app.New(sigCtx, cfg)
+	ecomService := app.New(sigCtx, cfg)
 
-	service.Run(closeApp)
+	ecomService.Run(closeApp)
 
 	<-sigCtx.Done()
 	ctx, cancel := context.WithTimeout(context.Background(), closeTimeout)
 	defer cancel()
 
-	service.Close(ctx)
+	ecomService.Close(ctx)
 }

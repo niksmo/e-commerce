@@ -14,7 +14,10 @@ networks:
   net:
 
 services:
-
+########################################################
+################ APACHE KAFKA CLUSTER-A ################
+################         PRIMARY        ################
+########################################################
   kafka-a-1:
     image: confluentinc/cp-kafka:7.4.10
     hostname: kafka-a-1
@@ -210,6 +213,10 @@ services:
     depends_on:
       - pg
 
+########################################################
+################ APACHE KAFKA CLUSTER-B ################
+################        SECONDARY       ################
+########################################################
   kafka-b-1:
     image: confluentinc/cp-kafka:7.4.10
     hostname: kafka-b-1
@@ -399,6 +406,10 @@ services:
     #   timeout: 5s
     #   retries: 60
 
+
+########################################################
+################ TOOLS FOR APACHE KAFKA ################
+########################################################
   connect-mm2:
     image: confluentinc/cp-kafka-connect:7.9.2
     hostname: connect-mm2
@@ -497,7 +508,11 @@ services:
       - kafka-a-1
       - kafka-a-2
       - kafka-a-3
-  
+
+
+########################################################
+################      SQL DATABASE      ################
+########################################################
   pg:
     image: postgres:17.6
     container_name: pg
@@ -533,3 +548,51 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: user@email.com
       PGADMIN_DEFAULT_PASSWORD: pass
+
+########################################################
+################       APACHE HADOOP      ##############
+########################################################
+  namenode:
+      image: apache/hadoop:3.4.1
+      platform: linux/amd64
+      hostname: namenode
+      container_name: namenode
+      ports:
+        - 127.0.0.1:9870:9870
+        - 127.0.0.1:9000:9000
+      deploy:
+        resources:
+          limits:
+            cpus: 1.0
+            memory: 2g
+      shm_size: 10G
+      volumes:
+        - ./infra/hadoop/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+        - ./infra/hadoop/hdfs-site-namenode.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+        - ./infra/hadoop/namenode_entrypoint.sh:/namenode_entrypoint.sh
+      user: root
+      entrypoint: ["/bin/bash", "/namenode_entrypoint.sh"]
+      command: ["hdfs", "namenode"]
+
+
+  datanode:
+      image: apache/hadoop:3.4.1
+      platform: linux/amd64
+      hostname: datanode
+      container_name: datanode
+      ports:
+        - 127.0.0.1:9864:9864
+        - 127.0.0.1:9970:9970
+      deploy:
+        resources:
+          limits:
+            cpus: 1.0
+            memory: 2g
+      shm_size: 10G
+      volumes:
+        - ./infra/hadoop/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+        - ./infra/hadoop/hdfs-site-datanode.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+        - ./infra/hadoop/datanode_entrypoint.sh:/datanode_entrypoint.sh
+      user: root
+      entrypoint: ["/bin/bash", "/datanode_entrypoint.sh"]
+      command: ["hdfs", "datanode"]
