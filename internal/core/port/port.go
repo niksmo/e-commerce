@@ -72,5 +72,6 @@ type ClientEventsSaver interface {
 }
 
 type ClientEventsStorage interface {
-	StoreEvents(context.Context, []domain.ClientFindProductEvent) error
+	StoreEvents(ctx context.Context,
+		username string, evts []domain.ClientFindProductEvent) error
 }

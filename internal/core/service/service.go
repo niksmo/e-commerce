@@ -164,6 +164,16 @@ func (s *Service) SaveEvents(
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
+	if len(evts) == 0 {
+		return nil
+	}
+
+	username := evts[0].Username
+	err := s.clientEventsStorage.StoreEvents(ctx, username, evts)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
 	return nil
 }
 
