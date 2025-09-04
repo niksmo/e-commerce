@@ -11,13 +11,15 @@ const defaultDelay = 100 * time.Millisecond
 
 type Backoff func(attempt int) time.Duration
 
-type Settings struct {
+type ShouldRetry func(error) bool
+
+type RetryConfig struct {
 	MaxAttempts int
 	Backoff     Backoff
-	ShouldRetry func(error) bool
+	ShouldRetry ShouldRetry
 }
 
-func (s *Settings) normalize() {
+func (s *RetryConfig) normalize() {
 	if s.MaxAttempts == 0 {
 		s.MaxAttempts = 1
 	}
@@ -48,14 +50,20 @@ func ExponentialBackoff(delay time.Duration) Backoff {
 	}
 }
 
-func Do(ctx context.Context, s Settings, fn func() error) error {
+func LineareBackoff(delay time.Duration) Backoff {
+	return func(attempt int) time.Duration {
+		return delay
+	}
+}
+
+func Do(ctx context.Context, s RetryConfig, fn func() error) error {
 	_, err := DoWithResult(ctx, s, func() (struct{}, error) {
 		return struct{}{}, fn()
 	})
 	return err
 }
 
-func DoWithResult[T any](ctx context.Context, s Settings, fn func() (T, error)) (T, error) {
+func DoWithResult[T any](ctx context.Context, s RetryConfig, fn func() (T, error)) (T, error) {
 	var (
 		zero, result T
 		err          error
