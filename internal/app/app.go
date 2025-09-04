@@ -29,7 +29,8 @@ type streamProcessors struct {
 }
 
 type storages struct {
-	products storage.ProductsRepository
+	products     storage.ProductsRepository
+	clientEvents storage.ClientEventsRepository
 }
 
 type producers struct {
@@ -39,7 +40,8 @@ type producers struct {
 }
 
 type consumers struct {
-	products kafka.ProductsConsumer
+	products     kafka.ProductsConsumer
+	clientEvents kafka.ClientEventsConsumer
 }
 
 type App struct {
@@ -52,6 +54,7 @@ type App struct {
 	consumers   consumers
 	coreService *service.Service
 	sqldb       storage.SQLDB
+	hdfs        storage.HDFS
 	httpServer  httphandler.HTTPServer
 }
 
@@ -79,6 +82,7 @@ func New(context context.Context, config config.Config) *App {
 func (app *App) Run(stopFn context.CancelFunc) {
 	ctx := app.ctx
 	app.coreService.Run(ctx, stopFn)
+	go app.consumers.clientEvents.Run(ctx)
 	go app.consumers.products.Run(ctx)
 	go app.httpServer.Run(stopFn)
 }
@@ -95,7 +99,9 @@ func (app *App) Close(ctx context.Context) {
 	app.streamProcs.productFilter.Close()
 	app.streamProcs.productBlocker.Close()
 	app.consumers.products.Close()
+	app.consumers.clientEvents.Close()
 	app.sqldb.Close()
+	app.hdfs.Close()
 
 	log.Info("application is closed")
 }
@@ -158,6 +164,9 @@ func (app *App) initSerdes() {
 		schema.SubjectOpt(findProductEventsSS),
 		schema.SchemaIdentifierOpt(schemaCreater),
 	)
+	if err != nil {
+		app.fallDown(op, err)
+	}
 
 	app.serdes.productFromShop = productFromShopSerde
 	app.serdes.productFilter = productFilterSerde
@@ -213,12 +222,19 @@ func (app *App) initOutboundAdapters() {
 
 	ctx := app.ctx
 	sqldsn := app.cfg.SQLDB
+	hdfsAddr := app.cfg.HDFS.Addr
+	hdfsUser := app.cfg.HDFS.User
 	seedBrokers := app.cfg.Broker.SeedBrokers
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
 	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
 
 	sqldb, err := storage.NewSQLDB(ctx, sqldsn)
+	if err != nil {
+		app.fallDown(op, err)
+	}
+
+	hdfs, err := storage.NewHDFS(hdfsAddr, hdfsUser)
 	if err != nil {
 		app.fallDown(op, err)
 	}
@@ -252,8 +268,12 @@ func (app *App) initOutboundAdapters() {
 		app.fallDown(op, err)
 	}
 
+	clientEventsRepository := storage.NewClientEventsRepository(hdfs)
+
 	app.sqldb = sqldb
+	app.hdfs = hdfs
 	app.storages.products = productsRepository
+	app.storages.clientEvents = clientEventsRepository
 	app.producers.products = productsProducer
 	app.producers.productFilter = productFilterProducer
 	app.producers.findProductEventProducer = findProductEventProducer
@@ -265,6 +285,7 @@ func (app *App) initCoreService() {
 		app.producers.products, app.producers.productFilter,
 		app.storages.products, app.storages.products,
 		app.producers.findProductEventProducer,
+		app.storages.clientEvents,
 	)
 }
 
@@ -274,6 +295,8 @@ func (app *App) initInboundAdapters() {
 	seedBrokers := app.cfg.Broker.SeedBrokers
 	productsToStorageTopic := app.cfg.Broker.Topics.ProductsToStorage
 	productsSaverGroup := app.cfg.Broker.Consumers.ProductSaverGroup
+	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
+	clientEventsGroup := app.cfg.Broker.Consumers.ClientEventsGroup
 
 	addr := app.cfg.HTTPServerAddr
 
@@ -290,12 +313,26 @@ func (app *App) initInboundAdapters() {
 		app.fallDown(op, err)
 	}
 
+	clientEventsConsumer, err := kafka.NewClientEventsConsumer(
+		kafka.ConsumerClientOpt(
+			seedBrokers,
+			findProductEventsTopic,
+			clientEventsGroup,
+		),
+		kafka.ConsumerDecoderOpt(app.serdes.findProductEvents),
+		kafka.ClientEventsConsumerSaverOpt(app.coreService),
+	)
+	if err != nil {
+		app.fallDown(op, err)
+	}
+
 	handler := http.NewServeMux()
 	httphandler.RegisterProducts(handler, app.coreService, app.coreService)
 	httphandler.RegisterFilter(handler, app.coreService)
 	httpServer := httphandler.NewHTTPServer(addr, handler)
 
 	app.consumers.products = productsConsumer
+	app.consumers.clientEvents = clientEventsConsumer
 	app.httpServer = httpServer
 }
 

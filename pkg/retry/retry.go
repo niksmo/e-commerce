@@ -56,14 +56,14 @@ func LineareBackoff(delay time.Duration) Backoff {
 	}
 }
 
-func Do(ctx context.Context, s RetryConfig, fn func() error) error {
-	_, err := DoWithResult(ctx, s, func() (struct{}, error) {
+func Do(ctx context.Context, c RetryConfig, fn func() error) error {
+	_, err := DoWithResult(ctx, c, func() (struct{}, error) {
 		return struct{}{}, fn()
 	})
 	return err
 }
 
-func DoWithResult[T any](ctx context.Context, s RetryConfig, fn func() (T, error)) (T, error) {
+func DoWithResult[T any](ctx context.Context, c RetryConfig, fn func() (T, error)) (T, error) {
 	var (
 		zero, result T
 		err          error
@@ -74,16 +74,16 @@ func DoWithResult[T any](ctx context.Context, s RetryConfig, fn func() (T, error
 		return zero, err
 	}
 
-	s.normalize()
+	c.normalize()
 	timer := time.NewTimer(0)
 
-	for attempt := 1; attempt <= s.MaxAttempts; attempt++ {
+	for attempt := 1; attempt <= c.MaxAttempts; attempt++ {
 		result, err = fn()
-		if err == nil || !s.ShouldRetry(err) {
+		if err == nil || !c.ShouldRetry(err) {
 			return result, nil
 		}
 
-		wait := s.Backoff(attempt)
+		wait := c.Backoff(attempt)
 		timer.Reset(wait)
 		select {
 		case <-ctx.Done():

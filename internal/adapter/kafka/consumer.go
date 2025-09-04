@@ -64,6 +64,16 @@ func ProductsConsumerSaverOpt(ps port.ProductsSaver) ConsumerOpt {
 	}
 }
 
+func ClientEventsConsumerSaverOpt(s port.ClientEventsSaver) ConsumerOpt {
+	return func(co *consumerOpts) error {
+		if s == nil {
+			return errors.New("client events saver is nil")
+		}
+		co.clientEventsSaver = s
+		return nil
+	}
+}
+
 type consumerOpts struct {
 	cl                ConsumerClient
 	decoder           Decoder

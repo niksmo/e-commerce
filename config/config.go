@@ -34,11 +34,17 @@ type broker struct {
 	Consumers          consumers `mapstructure:"consumers"`
 }
 
+type hdfs struct {
+	Addr string `mapstructure:"addr"`
+	User string `mapstructure:"user"`
+}
+
 type Config struct {
 	LogLevel       slog.Level `mapstructure:"log_level"`
 	HTTPServerAddr string     `mapstructure:"http_server_addr"`
 	SQLDB          string     `mapstructure:"sql_db"`
 	Broker         broker     `mapstructure:"broker"`
+	HDFS           hdfs       `mapstructure:"hdfs"`
 }
 
 func Load() Config {
@@ -95,6 +101,9 @@ func (c Config) Print() {
 		ProductBlockerGroup=%q
 		ProductSaverGroup=%q
 		ClientEventsGroup=%q
+	HDFS:
+		Addr=%q
+		User=%q
 
 `
 	fmt.Println("Loaded config:")
@@ -114,5 +123,7 @@ func (c Config) Print() {
 		c.Broker.Consumers.ProductBlockerGroup,
 		c.Broker.Consumers.ProductSaverGroup,
 		c.Broker.Consumers.ClientEventsGroup,
+		c.HDFS.Addr,
+		c.HDFS.User,
 	)
 }

@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 
 	hdfscl "github.com/colinmarc/hdfs/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/niksmo/e-commerce/pkg/retry"
 )
 
 var (
@@ -58,11 +60,10 @@ func (s SQLDB) Close() {
 	log.Info("sql database is closed")
 }
 
-type hdfs interface {
+type hdfsStorage interface {
 	Stat(name string) (os.FileInfo, error)
 	Create(name string) (*hdfscl.FileWriter, error)
 	Append(name string) (*hdfscl.FileWriter, error)
-	Close() error
 }
 
 type HDFS struct {
@@ -71,6 +72,7 @@ type HDFS struct {
 
 func NewHDFS(addr, user string) (HDFS, error) {
 	const op = "HDFS"
+	log := slog.With("op", op)
 
 	cl, err := hdfscl.NewClient(
 		hdfscl.ClientOptions{
@@ -83,9 +85,31 @@ func NewHDFS(addr, user string) (HDFS, error) {
 		return HDFS{}, fmt.Errorf("%s: %w", op, err)
 	}
 
-	if _, err := cl.StatFs(); err != nil {
-		return HDFS{}, fmt.Errorf("%s: HDFS is unavailable: %w", op, err)
+	retryCfg := retry.RetryConfig{
+		MaxAttempts: 10,
+		Backoff:     retry.LineareBackoff(5 * time.Second),
 	}
+	retry.Do(context.TODO(), retryCfg, func() error {
+		if _, err := cl.StatFs(); err != nil {
+			return fmt.Errorf("%s: HDFS is unavailable: %w", op, err)
+		}
+		return nil
+	})
+	log.Info("HDFS is available")
 
 	return HDFS{cl}, nil
+}
+
+func (s HDFS) Close() {
+	const op = "HDFS.Close"
+
+	log := slog.With("op", op)
+
+	log.Info("closing HDFS...")
+
+	if err := s.Client.Close(); err != nil {
+		log.Error("failed to close", "err", err)
+		return
+	}
+	log.Info("HDFS is closed")
 }

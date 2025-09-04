@@ -19,3 +19,6 @@ broker:
     product_blocker_group: product-blocker-group
     product_saver_group: product-saver-group
     client_events_group: client-events-group
+hdfs:
+  addr: 127.0.0.1:9000
+  user: root

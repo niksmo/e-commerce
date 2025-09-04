@@ -159,6 +159,7 @@ func (s *Service) SaveEvents(
 	ctx context.Context, evts []domain.ClientFindProductEvent,
 ) error {
 	const op = "Service.SaveEvents"
+	log := slog.With("op", op)
 
 	if err := ctx.Err(); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
@@ -174,6 +175,7 @@ func (s *Service) SaveEvents(
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
+	log.Info("client events saved", "nEvents", len(evts))
 	return nil
 }
 
