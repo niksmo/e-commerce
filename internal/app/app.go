@@ -177,7 +177,7 @@ func (app *App) initSerdes() {
 func (app *App) initStreamProcessors() {
 	const op = "App.initStreamProcessors"
 
-	seedBrokers := app.cfg.Broker.SeedBrokers
+	seedBrokersPrimary := app.cfg.Broker.SeedBrokersPrimary
 	filterProductConsumer := app.cfg.Broker.Consumers.FilterProductGroup
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
 	blockerProductConsumer := app.cfg.Broker.Consumers.ProductBlockerGroup
@@ -186,7 +186,7 @@ func (app *App) initStreamProcessors() {
 	productsToStorage := app.cfg.Broker.Topics.ProductsToStorage
 
 	productFilterProc, err := kafka.NewProductFilterProc(
-		kafka.SeedBrokersProcOpt(seedBrokers...),
+		kafka.SeedBrokersProcOpt(seedBrokersPrimary...),
 		kafka.GroupProcOpt(&filterProductConsumer),
 		kafka.InputTopicProcOpt(&filterProductStream),
 		kafka.SerdeProcOpt(
@@ -199,7 +199,7 @@ func (app *App) initStreamProcessors() {
 	}
 
 	productBlockerProc, err := kafka.NewProductBlockerProc(
-		kafka.SeedBrokersProcOpt(seedBrokers...),
+		kafka.SeedBrokersProcOpt(seedBrokersPrimary...),
 		kafka.GroupProcOpt(&blockerProductConsumer),
 		kafka.InputTopicProcOpt(&productsFromShopTopic),
 		kafka.JoinTopicProcOpt(&filterProductTable),
@@ -224,7 +224,7 @@ func (app *App) initOutboundAdapters() {
 	sqldsn := app.cfg.SQLDB
 	hdfsAddr := app.cfg.HDFS.Addr
 	hdfsUser := app.cfg.HDFS.User
-	seedBrokers := app.cfg.Broker.SeedBrokers
+	seedBrokersPrimary := app.cfg.Broker.SeedBrokersPrimary
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
 	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
@@ -245,7 +245,7 @@ func (app *App) initOutboundAdapters() {
 	}
 
 	productsProducer, err := kafka.NewProductsProducer(
-		kafka.ProducerClientOpt(ctx, seedBrokers, productsFromShopTopic),
+		kafka.ProducerClientOpt(ctx, seedBrokersPrimary, productsFromShopTopic),
 		kafka.ProducerEncoderOpt(app.serdes.productFromShop),
 	)
 	if err != nil {
@@ -253,7 +253,7 @@ func (app *App) initOutboundAdapters() {
 	}
 
 	productFilterProducer, err := kafka.NewProductFilterProducer(
-		kafka.ProducerClientOpt(ctx, seedBrokers, filterProductStream),
+		kafka.ProducerClientOpt(ctx, seedBrokersPrimary, filterProductStream),
 		kafka.ProducerEncoderOpt(app.serdes.productFilter),
 	)
 	if err != nil {
@@ -261,7 +261,7 @@ func (app *App) initOutboundAdapters() {
 	}
 
 	findProductEventProducer, err := kafka.NewFindProductEventProducer(
-		kafka.ProducerClientOpt(ctx, seedBrokers, findProductEventsTopic),
+		kafka.ProducerClientOpt(ctx, seedBrokersPrimary, findProductEventsTopic),
 		kafka.ProducerEncoderOpt(app.serdes.findProductEvents),
 	)
 	if err != nil {
@@ -292,7 +292,8 @@ func (app *App) initCoreService() {
 func (app *App) initInboundAdapters() {
 	const op = "App.initInboundAdapters"
 
-	seedBrokers := app.cfg.Broker.SeedBrokers
+	seedBrokersPrimary := app.cfg.Broker.SeedBrokersPrimary
+	seedBrokersSecondary := app.cfg.Broker.SeedBrokersSecondary
 	productsToStorageTopic := app.cfg.Broker.Topics.ProductsToStorage
 	productsSaverGroup := app.cfg.Broker.Consumers.ProductSaverGroup
 	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
@@ -302,7 +303,7 @@ func (app *App) initInboundAdapters() {
 
 	productsConsumer, err := kafka.NewProductsConsumer(
 		kafka.ConsumerClientOpt(
-			seedBrokers,
+			seedBrokersPrimary,
 			productsToStorageTopic,
 			productsSaverGroup,
 		),
@@ -315,7 +316,7 @@ func (app *App) initInboundAdapters() {
 
 	clientEventsConsumer, err := kafka.NewClientEventsConsumer(
 		kafka.ConsumerClientOpt(
-			seedBrokers,
+			seedBrokersSecondary,
 			findProductEventsTopic,
 			clientEventsGroup,
 		),

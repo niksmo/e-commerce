@@ -28,10 +28,11 @@ type topics struct {
 }
 
 type broker struct {
-	SeedBrokers        []string  `mapstructure:"seed_brokers"`
-	SchemaRegistryURLs []string  `mapstructure:"schema_registry_urls"`
-	Topics             topics    `mapstructure:"topics"`
-	Consumers          consumers `mapstructure:"consumers"`
+	SeedBrokersPrimary   []string  `mapstructure:"seed_brokers_primary"`
+	SeedBrokersSecondary []string  `mapstructure:"seed_brokers_secondary"`
+	SchemaRegistryURLs   []string  `mapstructure:"schema_registry_urls"`
+	Topics               topics    `mapstructure:"topics"`
+	Consumers            consumers `mapstructure:"consumers"`
 }
 
 type hdfs struct {
@@ -88,7 +89,8 @@ func (c Config) Print() {
 	SQLDB=%q
 
 	BrokerConfig:
-	SeedBrokers=%q
+	SeedBrokersPrimary=%q
+	SeedBrokersSecondary=%q
 	SchemaRegistryURLs=%q
 	Topics:
 		ProductsFromShop=%q
@@ -112,7 +114,8 @@ func (c Config) Print() {
 		c.LogLevel,
 		c.HTTPServerAddr,
 		c.SQLDB,
-		c.Broker.SeedBrokers,
+		c.Broker.SeedBrokersPrimary,
+		c.Broker.SeedBrokersSecondary,
 		c.Broker.SchemaRegistryURLs,
 		c.Broker.Topics.ProductsFromShop,
 		c.Broker.Topics.ProductsToStorage,

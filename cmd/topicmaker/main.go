@@ -27,7 +27,7 @@ func main() {
 
 	cfg := config.Load()
 
-	cl := createClient(cfg.Broker.SeedBrokers)
+	cl := createClient(cfg.Broker.SeedBrokersPrimary)
 	defer cl.Close()
 
 	printStart(cfg)

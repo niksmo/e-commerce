@@ -2,10 +2,14 @@ log_level: -4
 http_server_addr: 127.0.0.1:8000
 sql_db: postgres://user:pass@127.0.0.1:5432/ecom?sslmode=disable
 broker:
-  seed_brokers:
+  seed_brokers_primary:
     - 127.0.0.1:7011
     - 127.0.0.1:7012
     - 127.0.0.1:7013
+  seed_brokers_secondary:
+    - 127.0.0.1:7021
+    - 127.0.0.1:7022
+    - 127.0.0.1:7023
   schema_registry_urls:
     - http://127.0.0.1:8081
   topics:
