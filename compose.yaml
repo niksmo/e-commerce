@@ -563,16 +563,18 @@ services:
       ports:
         - 127.0.0.1:9870:9870
         - 127.0.0.1:9000:9000
+      volumes:
+        - ./infra/hadoop/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+        - ./infra/hadoop/hdfs-site-namenode.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+        - ./infra/hadoop/namenode_entrypoint.sh:/namenode_entrypoint.sh
+      networks:
+        - net
       deploy:
         resources:
           limits:
             cpus: 1.0
             memory: 2g
       shm_size: 10G
-      volumes:
-        - ./infra/hadoop/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
-        - ./infra/hadoop/hdfs-site-namenode.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
-        - ./infra/hadoop/namenode_entrypoint.sh:/namenode_entrypoint.sh
       user: root
       entrypoint: ["/bin/bash", "/namenode_entrypoint.sh"]
       command: ["hdfs", "namenode"]
@@ -586,16 +588,18 @@ services:
       ports:
         - 127.0.0.1:9864:9864
         - 127.0.0.1:9970:9970
+      volumes:
+        - ./infra/hadoop/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+        - ./infra/hadoop/hdfs-site-datanode.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+        - ./infra/hadoop/datanode_entrypoint.sh:/datanode_entrypoint.sh
+      networks:
+        - net
       deploy:
         resources:
           limits:
             cpus: 1.0
             memory: 2g
       shm_size: 10G
-      volumes:
-        - ./infra/hadoop/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
-        - ./infra/hadoop/hdfs-site-datanode.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
-        - ./infra/hadoop/datanode_entrypoint.sh:/datanode_entrypoint.sh
       user: root
       entrypoint: ["/bin/bash", "/datanode_entrypoint.sh"]
       command: ["hdfs", "datanode"]
