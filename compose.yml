@@ -41,24 +41,13 @@ services:
     environment:
       CLUSTER_ID: ljBR46ekRHi8bhWVIKADGw
       KAFKA_NODE_ID: 1
-      KAFKA_ADVERTISED_LISTENERS: \
-        INTERNAL://kafka-a-1:9092,\
-        EXTERNAL://127.0.0.1:7011
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-a-1:9092,EXTERNAL://127.0.0.1:7011
       KAFKA_PROCESS_ROLES: controller,broker
-      KAFKA_CONTROLLER_QUORUM_VOTERS: \
-        1@kafka-a-1:9093,\
-        2@kafka-a-2:9093,\
-        3@kafka-a-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-a-1:9093,2@kafka-a-2:9093,3@kafka-a-3:9093
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_LISTENERS: \
-        INTERNAL://:9092,\
-        CONTROLLER://:9093,\
-        EXTERNAL://:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: \
-        INTERNAL:SASL_SSL,\
-        CONTROLLER:SASL_SSL,\
-        EXTERNAL:SASL_SSL
+      KAFKA_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:SASL_SSL,CONTROLLER:SASL_SSL,EXTERNAL:SASL_SSL
       KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
@@ -106,24 +95,13 @@ services:
     environment:
       CLUSTER_ID: ljBR46ekRHi8bhWVIKADGw
       KAFKA_NODE_ID: 2
-      KAFKA_ADVERTISED_LISTENERS: \
-        INTERNAL://kafka-a-2:9092,\
-        EXTERNAL://127.0.0.1:7012
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-a-2:9092,EXTERNAL://127.0.0.1:7012
       KAFKA_PROCESS_ROLES: controller,broker
-      KAFKA_CONTROLLER_QUORUM_VOTERS: \
-        1@kafka-a-1:9093,\
-        2@kafka-a-2:9093,\
-        3@kafka-a-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-a-1:9093,2@kafka-a-2:9093,3@kafka-a-3:9093
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_LISTENERS: \
-        INTERNAL://:9092,\
-        CONTROLLER://:9093,\
-        EXTERNAL://:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: \
-        INTERNAL:SASL_SSL,\
-        CONTROLLER:SASL_SSL,\
-        EXTERNAL:SASL_SSL
+      KAFKA_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:SASL_SSL,CONTROLLER:SASL_SSL,EXTERNAL:SASL_SSL
       KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
@@ -171,24 +149,13 @@ services:
     environment:
       CLUSTER_ID: ljBR46ekRHi8bhWVIKADGw
       KAFKA_NODE_ID: 3
-      KAFKA_ADVERTISED_LISTENERS: \
-        INTERNAL://kafka-a-3:9092,\
-        EXTERNAL://127.0.0.1:7013
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-a-3:9092,EXTERNAL://127.0.0.1:7013
       KAFKA_PROCESS_ROLES: controller,broker
-      KAFKA_CONTROLLER_QUORUM_VOTERS: \
-        1@kafka-a-1:9093,\
-        2@kafka-a-2:9093,\
-        3@kafka-a-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-a-1:9093,2@kafka-a-2:9093,3@kafka-a-3:9093
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_LISTENERS: \
-        INTERNAL://:9092,\
-        CONTROLLER://:9093,\
-        EXTERNAL://:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: \
-        INTERNAL:SASL_SSL,\
-        CONTROLLER:SASL_SSL,\
-        EXTERNAL:SASL_SSL
+      KAFKA_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:SASL_SSL,CONTROLLER:SASL_SSL,EXTERNAL:SASL_SSL
       KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
@@ -241,24 +208,13 @@ services:
     environment:
       CLUSTER_ID: VqJBRkB2RDOaWZdCnCcigg
       KAFKA_NODE_ID: 1
-      KAFKA_ADVERTISED_LISTENERS: \
-        INTERNAL://kafka-b-1:9092,\
-        EXTERNAL://127.0.0.1:7021
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-b-1:9092,EXTERNAL://127.0.0.1:7021
       KAFKA_PROCESS_ROLES: controller,broker
-      KAFKA_CONTROLLER_QUORUM_VOTERS: \
-        1@kafka-b-1:9093,\
-        2@kafka-b-2:9093,\
-        3@kafka-b-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-b-1:9093,2@kafka-b-2:9093,3@kafka-b-3:9093
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_LISTENERS: \
-        INTERNAL://:9092,\
-        CONTROLLER://:9093,\
-        EXTERNAL://:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: \
-        INTERNAL:SASL_SSL,\
-        CONTROLLER:SASL_SSL,\
-        EXTERNAL:SASL_SSL
+      KAFKA_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:SASL_SSL,CONTROLLER:SASL_SSL,EXTERNAL:SASL_SSL
       KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
@@ -304,24 +260,13 @@ services:
     environment:
       CLUSTER_ID: VqJBRkB2RDOaWZdCnCcigg
       KAFKA_NODE_ID: 2
-      KAFKA_ADVERTISED_LISTENERS: \
-        INTERNAL://kafka-b-2:9092,\
-        EXTERNAL://127.0.0.1:7022
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-b-2:9092,EXTERNAL://127.0.0.1:7022
       KAFKA_PROCESS_ROLES: controller,broker
-      KAFKA_CONTROLLER_QUORUM_VOTERS: \
-        1@kafka-b-1:9093,\
-        2@kafka-b-2:9093,\
-        3@kafka-b-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-b-1:9093,2@kafka-b-2:9093,3@kafka-b-3:9093
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_LISTENERS: \
-        INTERNAL://:9092,\
-        CONTROLLER://:9093,\
-        EXTERNAL://:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: \
-        INTERNAL:SASL_SSL,\
-        CONTROLLER:SASL_SSL,\
-        EXTERNAL:SASL_SSL
+      KAFKA_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:SASL_SSL,CONTROLLER:SASL_SSL,EXTERNAL:SASL_SSL
       KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
@@ -367,24 +312,13 @@ services:
     environment:
       CLUSTER_ID: VqJBRkB2RDOaWZdCnCcigg
       KAFKA_NODE_ID: 3
-      KAFKA_ADVERTISED_LISTENERS: \
-        INTERNAL://kafka-b-3:9092,\
-        EXTERNAL://127.0.0.1:7023
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-b-3:9092,EXTERNAL://127.0.0.1:7023
       KAFKA_PROCESS_ROLES: controller,broker
-      KAFKA_CONTROLLER_QUORUM_VOTERS: \
-        1@kafka-b-1:9093,\
-        2@kafka-b-2:9093,\
-        3@kafka-b-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-b-1:9093,2@kafka-b-2:9093,3@kafka-b-3:9093
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_LISTENERS: \
-        INTERNAL://:9092,\
-        CONTROLLER://:9093,\
-        EXTERNAL://:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: \
-        INTERNAL:SASL_SSL,\
-        CONTROLLER:SASL_SSL,\
-        EXTERNAL:SASL_SSL
+      KAFKA_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:SASL_SSL,CONTROLLER:SASL_SSL,EXTERNAL:SASL_SSL
       KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
@@ -430,10 +364,7 @@ services:
       - kafka-b-2
       - kafka-b-3
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: \
-        kafka-b-1:9092,\
-        kafka-b-2:9092,\
-        kafka-b-3:9092
+      CONNECT_BOOTSTRAP_SERVERS: kafka-b-1:9092,kafka-b-2:9092,kafka-b-3:9092
       CONNECT_REST_ADVERTISED_HOST_NAME: localhost
       CONNECT_GROUP_ID: mm2-connect
       CONNECT_CONFIG_STORAGE_TOPIC: mm2-configs
@@ -466,15 +397,10 @@ services:
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: \
-        SASL_SSL://kafka-a-1:9092,\
-        SASL_SSL://kafka-a-2:9092,\
-        SASL_SSL://kafka-a-3:9092
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka-a-1:9092,kafka-a-2:9092,kafka-a-3:9092
       SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: SASL_SSL
       SCHEMA_REGISTRY_KAFKASTORE_SASL_MECHANISM: PLAIN
-      SCHEMA_REGISTRY_KAFKASTORE_SASL_JAAS_CONFIG: \
-        org.apache.kafka.common.security.plain.PlainLoginModule \
-        required username="admin" password="admin";
+      SCHEMA_REGISTRY_KAFKASTORE_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin";'
       SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_LOCATION: /kafka.truststore.jks
       SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_PASSWORD: 123456
       SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_LOCATION: /schema-registry.keystore.jks
@@ -503,29 +429,21 @@ services:
       KAFKA_CLUSTERS_0_NAME: cluster_a
       KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SASL_SSL
       KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM: PLAIN
-      KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG: \
-        org.apache.kafka.common.security.plain.PlainLoginModule \
-        required username="admin" password="admin";
+      KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin";'
       KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION: /kafka.keystore.jks
       KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD: 123456
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: \
-        kafka-a-1:9092,\
-        kafka-a-2:9092,\
-        kafka-a-3:9092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-a-1:9092,kafka-a-2:9092,kafka-a-3:9092
       KAFKA_CLUSTERS_0_SSL_TRUSTSTORELOCATION: /kafka.truststore.jks
       KAFKA_CLUSTERS_0_SSL_TRUSTSTOREPASSWORD: 123456
       KAFKA_CLUSTERS_1_NAME: cluster_b
       KAFKA_CLUSTERS_1_PROPERTIES_SECURITY_PROTOCOL: SASL_SSL
       KAFKA_CLUSTERS_1_PROPERTIES_SASL_MECHANISM: PLAIN
-      KAFKA_CLUSTERS_1_PROPERTIES_SASL_JAAS_CONFIG: \
-        org.apache.kafka.common.security.plain.PlainLoginModule \
-        required username="admin" password="admin";
+      KAFKA_CLUSTERS_1_PROPERTIES_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin";'
       KAFKA_CLUSTERS_1_PROPERTIES_SSL_KEYSTORE_LOCATION: /kafka.keystore.jks
       KAFKA_CLUSTERS_1_PROPERTIES_SSL_KEYSTORE_PASSWORD: 123456
-      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: \
-        kafka-b-1:9092,\
-        kafka-b-2:9092,\
-        kafka-b-3:9092
+      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: kafka-b-1:9092,kafka-b-2:9092,kafka-b-3:9092
+      KAFKA_CLUSTERS_1_SSL_TRUSTSTORELOCATION: /kafka.truststore.jks
+      KAFKA_CLUSTERS_1_SSL_TRUSTSTOREPASSWORD: 123456
     depends_on:
       - kafka-a-1
       - kafka-a-2
