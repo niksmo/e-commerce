@@ -277,6 +277,11 @@ services:
       # KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false # DOTO: set to false after develop
+      # METRICS
+      KAFKA_JMX_PORT: 9991
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka-b-1:9092
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: false
       # ACL
       # KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       # KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: false
@@ -340,6 +345,11 @@ services:
       # KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false # DOTO: set to false after develop
+      # METRICS
+      KAFKA_JMX_PORT: 9991
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka-b-2:9092
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: false
       # ACL
       # KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       # KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: false
@@ -403,6 +413,11 @@ services:
       # KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false # DOTO: set to false after develop
+      # METRICS
+      KAFKA_JMX_PORT: 9991
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka-b-3:9092
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: false
       # ACL
       # KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       # KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: false
@@ -617,8 +632,8 @@ services:
     image: sscaling/jmx-prometheus-exporter
     container_name: jmx-kafka-a-1
     hostname: jmx-kafka-a-1
-    ports:
-     - 127.0.0.1:5556:5556
+    expose:
+      - 5556
     networks:
       - net
     volumes:
@@ -633,8 +648,8 @@ services:
     image: sscaling/jmx-prometheus-exporter
     container_name: jmx-kafka-a-2
     hostname: jmx-kafka-a-2
-    ports:
-     - 127.0.0.1:5557:5556
+    expose:
+      - 5556
     networks:
       - net
     volumes:
@@ -649,8 +664,8 @@ services:
     image: sscaling/jmx-prometheus-exporter
     container_name: jmx-kafka-a-3
     hostname: jmx-kafka-a-3
-    ports:
-     - 127.0.0.1:5558:5556
+    expose:
+      - 5556
     networks:
       - net
     volumes:
@@ -660,6 +675,54 @@ services:
      JVM_OPTS: -Xmx128M
     depends_on:
      - kafka-a-3
+
+  jmx-kafka-b-1:
+    image: sscaling/jmx-prometheus-exporter
+    container_name: jmx-kafka-b-1
+    hostname: jmx-kafka-b-1
+    expose:
+      - 5556
+    networks:
+      - net
+    volumes:
+     - ./infra/jmx_exporter/config_kafka-b-1.yml:/etc/jmx_exporter/config.yml
+    environment:
+     CONFIG_YML : /etc/jmx_exporter/config.yml
+     JVM_OPTS: -Xmx128M
+    depends_on:
+     - kafka-b-1
+
+  jmx-kafka-b-2:
+    image: sscaling/jmx-prometheus-exporter
+    container_name: jmx-kafka-b-2
+    hostname: jmx-kafka-b-2
+    expose:
+      - 5556
+    networks:
+      - net
+    volumes:
+     - ./infra/jmx_exporter/config_kafka-b-2.yml:/etc/jmx_exporter/config.yml
+    environment:
+     CONFIG_YML : /etc/jmx_exporter/config.yml
+     JVM_OPTS: -Xmx128M
+    depends_on:
+     - kafka-b-2
+
+  jmx-kafka-b-3:
+    image: sscaling/jmx-prometheus-exporter
+    container_name: jmx-kafka-b-3
+    hostname: jmx-kafka-b-3
+    expose:
+      - 5556
+    networks:
+      - net
+    volumes:
+     - ./infra/jmx_exporter/config_kafka-b-3.yml:/etc/jmx_exporter/config.yml
+    environment:
+     CONFIG_YML : /etc/jmx_exporter/config.yml
+     JVM_OPTS: -Xmx128M
+    depends_on:
+     - kafka-b-3
 
 
 ########################################################

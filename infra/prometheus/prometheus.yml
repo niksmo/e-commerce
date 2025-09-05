@@ -8,3 +8,8 @@ scrape_configs:
     static_configs:
       - targets:
           ["jmx-kafka-a-1:5556", "jmx-kafka-a-2:5556", "jmx-kafka-a-3:5556"]
+
+  - job_name: kafka-b
+    static_configs:
+      - targets:
+          ["jmx-kafka-b-1:5556", "jmx-kafka-b-2:5556", "jmx-kafka-b-3:5556"]
