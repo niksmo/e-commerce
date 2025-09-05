@@ -1,5 +1,29 @@
 # E-commerce
 
+
+## Set permission for 
+```
+docker compose exec kafka-a-1 kafka-acls --bootstrap-server localhost:9092 \
+  --command-config /etc/kafka/admin-client.properties \
+  --add --allow-principal User:app --producer \
+  --topic products-from-shop \
+  --topic products-to-storage \
+  --topic filter-product-stream \
+  --topic filter-product-group-table \
+  --topic filter_product_group \
+  --topic client-find-product-events
+
+docker compose exec kafka-a-1 kafka-acls --bootstrap-server localhost:9092 \
+  --command-config /etc/kafka/admin-client.properties \
+  --add --allow-principal User:app --consumer \
+  --topic products-from-shop \
+  --topic products-to-storage \
+  --topic filter-product-stream \
+  --topic filter-product-group-table \
+  --topic filter_product_group \
+  --topic client-find-product-events
+```
+
 ## Apply cluster A replication to B
 ```
 curl -i -X PUT http://127.0.0.1:8082/connectors/mm2-src/config -H "Content-Type: application/json" -d '{
