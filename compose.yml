@@ -9,6 +9,7 @@ volumes:
   kafka-b-3-data:
   pg-data:
   pg-admin-data:
+  grafana-data:
 
 networks:
   net:
@@ -61,6 +62,11 @@ services:
       # KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false # DOTO: set to false after develop
+      # METRICS
+      KAFKA_JMX_PORT: 9991
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka-a-1:9092
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: false
       # ACL
       # KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       # KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: false
@@ -126,6 +132,11 @@ services:
       # KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false # DOTO: set to false after develop
+      # METRICS
+      KAFKA_JMX_PORT: 9991
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka-a-2:9092
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: false
       # ACL
       # KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       # KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: false
@@ -191,6 +202,11 @@ services:
       # KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: false # DOTO: set to false after develop
+      # METRICS
+      KAFKA_JMX_PORT: 9991
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka-a-3:9092
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: false
       # ACL
       # KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       # KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: false
@@ -550,6 +566,100 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: user@email.com
       PGADMIN_DEFAULT_PASSWORD: pass
+
+
+########################################################
+################        MONITORING        ##############
+########################################################
+
+  grafana:
+    image: grafana/grafana:9.5.12
+    container_name: grafana
+    hostname: grafana
+    ports:
+     - 127.0.0.1:3000:3000
+    networks:
+      - net
+    volumes:
+     - ./infra/grafana/provisioning/dashboards/:/etc/grafana/provisioning/dashboards/
+     - ./infra/grafana/provisioning/datasources/:/etc/grafana/provisioning/datasources/
+     - ./infra/grafana/dashboards/:/var/lib/grafana/dashboards/
+     - grafana-data:/var/lib/grafana/
+    environment:
+      GF_PATHS_DATA : /var/lib/grafana
+      GF_SECURITY_ADMIN_PASSWORD : pass
+      GF_USERS_ALLOW_SIGN_UP: false
+      GF_PANELS_DISABLE_SANITIZE_HTML: true
+      GF_SECURITY_ALLOW_EMBEDDING: true
+    depends_on:
+     - prometheus
+
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    container_name: prometheus
+    hostname: prometheus
+    ports:
+     - 127.0.0.1:9090:9090
+    volumes:
+     - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - net
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    - --storage.tsdb.path=/prometheus
+    - --web.console.libraries=/etc/prometheus/console_libraries
+    - --web.console.templates=/etc/prometheus/consoles
+    - --storage.tsdb.retention.time=200h
+    - --web.enable-lifecycle
+
+  jmx-kafka-a-1:
+    image: sscaling/jmx-prometheus-exporter
+    container_name: jmx-kafka-a-1
+    hostname: jmx-kafka-a-1
+    ports:
+     - 127.0.0.1:5556:5556
+    networks:
+      - net
+    volumes:
+     - ./infra/jmx_exporter/config_kafka-a-1.yml:/etc/jmx_exporter/config.yml
+    environment:
+     CONFIG_YML : /etc/jmx_exporter/config.yml
+     JVM_OPTS: -Xmx128M
+    depends_on:
+     - kafka-a-1
+
+  jmx-kafka-a-2:
+    image: sscaling/jmx-prometheus-exporter
+    container_name: jmx-kafka-a-2
+    hostname: jmx-kafka-a-2
+    ports:
+     - 127.0.0.1:5557:5556
+    networks:
+      - net
+    volumes:
+     - ./infra/jmx_exporter/config_kafka-a-2.yml:/etc/jmx_exporter/config.yml
+    environment:
+     CONFIG_YML : /etc/jmx_exporter/config.yml
+     JVM_OPTS: -Xmx128M
+    depends_on:
+     - kafka-a-2
+
+  jmx-kafka-a-3:
+    image: sscaling/jmx-prometheus-exporter
+    container_name: jmx-kafka-a-3
+    hostname: jmx-kafka-a-3
+    ports:
+     - 127.0.0.1:5558:5556
+    networks:
+      - net
+    volumes:
+     - ./infra/jmx_exporter/config_kafka-a-3.yml:/etc/jmx_exporter/config.yml
+    environment:
+     CONFIG_YML : /etc/jmx_exporter/config.yml
+     JVM_OPTS: -Xmx128M
+    depends_on:
+     - kafka-a-3
 
 
 ########################################################
