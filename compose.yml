@@ -616,10 +616,11 @@ services:
     hostname: prometheus
     ports:
      - 127.0.0.1:9090:9090
-    volumes:
-     - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - net
+    volumes:
+     - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+     - ./infra/prometheus/alert.rules:/etc/prometheus/alert.rules
     command:
     - --config.file=/etc/prometheus/prometheus.yml
     - --storage.tsdb.path=/prometheus
@@ -627,6 +628,21 @@ services:
     - --web.console.templates=/etc/prometheus/consoles
     - --storage.tsdb.retention.time=200h
     - --web.enable-lifecycle
+
+  alertmanager:
+    image: prom/alertmanager:v0.21.0
+    container_name: alertmanager
+    hostname: alertnamager
+    ports:
+      - 127.0.0.1:9093:9093
+    networks:
+      - net
+    volumes:
+      - ./infra/alertmanager/config.yml:/etc/alertmanager/config.yml
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+      - '--log.level=debug'
 
   jmx-kafka-a-1:
     image: sscaling/jmx-prometheus-exporter

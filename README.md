@@ -1,6 +1,6 @@
 # E-commerce
 
-## apply replication A > B
+## Apply cluster A replication to B
 ```
 curl -i -X PUT http://127.0.0.1:8082/connectors/mm2-src/config -H "Content-Type: application/json" -d '{
   "name": "mm2-src",
