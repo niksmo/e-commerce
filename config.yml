@@ -25,7 +25,7 @@ broker:
     client_events_group: client-events-group
   sasl_ssl:
     ca_cert: ./certs/ca.crt
-    app_cert: ./certs/app.key
+    app_cert: ./certs/app.crt
     app_key: ./certs/app.key
     app_user: app
     app_pass: app

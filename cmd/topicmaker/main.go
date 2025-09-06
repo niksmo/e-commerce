@@ -7,10 +7,12 @@ import (
 	"time"
 
 	"github.com/niksmo/e-commerce/config"
+	"github.com/niksmo/e-commerce/internal/adapter/kafka"
 	"github.com/niksmo/e-commerce/pkg/sigctx"
 	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kerr"
 	"github.com/twmb/franz-go/pkg/kgo"
+	"github.com/twmb/franz-go/pkg/sasl/plain"
 )
 
 const (
@@ -27,7 +29,18 @@ func main() {
 
 	cfg := config.Load()
 
-	cl := createClient(cfg.Broker.SeedBrokersPrimary)
+	cl := createClient(
+		cfg.Broker.SeedBrokersPrimary,
+		tlsCfg{
+			ca:   cfg.Broker.SASLSSL.CACert,
+			cert: cfg.Broker.SASLSSL.AppCert,
+			Key:  cfg.Broker.SASLSSL.AppKey,
+		},
+		sasl{
+			user: cfg.Broker.SASLSSL.AppUser,
+			pass: cfg.Broker.SASLSSL.AppPass,
+		},
+	)
 	defer cl.Close()
 
 	printStart(cfg)
@@ -57,9 +70,25 @@ func main() {
 	}
 }
 
-func createClient(seedBrokers []string) *kadm.Client {
+type tlsCfg struct {
+	ca, cert, Key string
+}
+type sasl struct {
+	user, pass string
+}
+
+func createClient(
+	seedBrokers []string, tlsCfg tlsCfg, sasl sasl,
+) *kadm.Client {
+	tlsConfig := kafka.MakeTLSConfig(tlsCfg.ca, tlsCfg.cert, tlsCfg.Key)
+
 	cl, err := kadm.NewOptClient(
 		kgo.SeedBrokers(seedBrokers...),
+		kgo.DialTLSConfig(tlsConfig),
+		kgo.SASL(plain.Auth{
+			User: sasl.user,
+			Pass: sasl.pass,
+		}.AsMechanism()),
 	)
 	if err != nil {
 		panic(err) // develop mistake
