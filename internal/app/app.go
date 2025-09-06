@@ -248,6 +248,8 @@ func (app *App) initOutboundAdapters() {
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
 	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
+	user := app.cfg.Broker.SASLSSL.AppUser
+	pass := app.cfg.Broker.SASLSSL.AppPass
 
 	sqldb, err := storage.NewSQLDB(ctx, sqldsn)
 	if err != nil {
@@ -265,24 +267,45 @@ func (app *App) initOutboundAdapters() {
 	}
 
 	productsProducer, err := kafka.NewProductsProducer(
-		kafka.ProducerClientOpt(ctx, seedBrokersPrimary, productsFromShopTopic),
-		kafka.ProducerEncoderOpt(app.serdes.productFromShop),
+		kafka.ProducerConfig{
+			ProducerClient: kafka.NewProducerClient(
+				ctx,
+				seedBrokersPrimary,
+				productsFromShopTopic,
+				app.tlsConfig, user, pass,
+			),
+			Encoder: app.serdes.productFromShop,
+		},
 	)
 	if err != nil {
 		app.fallDown(op, err)
 	}
 
 	productFilterProducer, err := kafka.NewProductFilterProducer(
-		kafka.ProducerClientOpt(ctx, seedBrokersPrimary, filterProductStream),
-		kafka.ProducerEncoderOpt(app.serdes.productFilter),
+		kafka.ProducerConfig{
+			ProducerClient: kafka.NewProducerClient(
+				ctx,
+				seedBrokersPrimary,
+				filterProductStream,
+				app.tlsConfig, user, pass,
+			),
+			Encoder: app.serdes.productFilter,
+		},
 	)
 	if err != nil {
 		app.fallDown(op, err)
 	}
 
 	findProductEventProducer, err := kafka.NewFindProductEventProducer(
-		kafka.ProducerClientOpt(ctx, seedBrokersPrimary, findProductEventsTopic),
-		kafka.ProducerEncoderOpt(app.serdes.findProductEvents),
+		kafka.ProducerConfig{
+			ProducerClient: kafka.NewProducerClient(
+				ctx,
+				seedBrokersPrimary,
+				findProductEventsTopic,
+				app.tlsConfig, user, pass,
+			),
+			Encoder: app.serdes.findProductEvents,
+		},
 	)
 	if err != nil {
 		app.fallDown(op, err)

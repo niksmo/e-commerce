@@ -85,10 +85,7 @@ func createClient(
 	cl, err := kadm.NewOptClient(
 		kgo.SeedBrokers(seedBrokers...),
 		kgo.DialTLSConfig(tlsConfig),
-		kgo.SASL(plain.Auth{
-			User: sasl.user,
-			Pass: sasl.pass,
-		}.AsMechanism()),
+		kgo.SASL(plain.Auth{User: sasl.user, Pass: sasl.pass}.AsMechanism()),
 	)
 	if err != nil {
 		panic(err) // develop mistake

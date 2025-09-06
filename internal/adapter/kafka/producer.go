@@ -2,12 +2,14 @@ package kafka
 
 import (
 	"context"
-	"errors"
+	"crypto/tls"
+	"fmt"
 	"log/slog"
 
 	"github.com/niksmo/e-commerce/internal/core/domain"
 	"github.com/niksmo/e-commerce/pkg/schema"
 	"github.com/twmb/franz-go/pkg/kgo"
+	"github.com/twmb/franz-go/pkg/sasl/plain"
 )
 
 type ProducerClient interface {
@@ -15,62 +17,37 @@ type ProducerClient interface {
 	Close()
 }
 
-////////////////////////////////////////////////////////
-///////////////           OPTS            //////////////
-////////////////////////////////////////////////////////
-
-type ProducerOpt func(*producerOpts) error
-
-type producerOpts struct {
-	cl      ProducerClient
-	encoder Encoder
+func NewProducerClient(
+	ctx context.Context,
+	seedBrokers []string,
+	topic string,
+	tlsConfig *tls.Config,
+	user, pass string,
+) ProducerClient {
+	const op = "ProducerClient"
+	cl, err := kgo.NewClient(
+		kgo.SeedBrokers(seedBrokers...),
+		kgo.DefaultProduceTopicAlways(),
+		kgo.DefaultProduceTopic(topic),
+		kgo.RequiredAcks(kgo.AllISRAcks()),
+		kgo.AllowAutoTopicCreation(),
+		kgo.DialTLSConfig(tlsConfig),
+		kgo.SASL(plain.Auth{User: user, Pass: pass}.AsMechanism()),
+	)
+	if err != nil {
+		err = fmt.Errorf("%s: %w", op, err)
+		panic(err)
+	}
+	if err := cl.Ping(ctx); err != nil {
+		err = fmt.Errorf("%s: %w", op, err)
+		panic(err)
+	}
+	return cl
 }
 
-func (po *producerOpts) apply(opts ...ProducerOpt) error {
-	if len(opts) != 2 {
-		return ErrTooFewOpts
-	}
-
-	for _, opt := range opts {
-		if err := opt(po); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func ProducerClientOpt(
-	ctx context.Context, seedBrokers []string, topic string,
-) ProducerOpt {
-	return func(opts *producerOpts) error {
-		cl, err := kgo.NewClient(
-			kgo.SeedBrokers(seedBrokers...),
-			kgo.DefaultProduceTopicAlways(),
-			kgo.DefaultProduceTopic(topic),
-			kgo.RequiredAcks(kgo.AllISRAcks()),
-			kgo.AllowAutoTopicCreation(),
-		)
-		if err != nil {
-			return err
-		}
-
-		if err := cl.Ping(ctx); err != nil {
-			return err
-		}
-		opts.cl = cl
-		return nil
-	}
-}
-
-func ProducerEncoderOpt(encoder Encoder) ProducerOpt {
-	return func(opts *producerOpts) error {
-		if encoder == nil {
-			return errors.New("encoder is nil")
-		}
-		opts.encoder = encoder
-		return nil
-	}
+type ProducerConfig struct {
+	ProducerClient ProducerClient
+	Encoder        Encoder
 }
 
 ////////////////////////////////////////////////////////
@@ -111,24 +88,15 @@ type ProductsProducer struct {
 	opPrefix string
 }
 
-func NewProductsProducer(
-	opts ...ProducerOpt,
-) (ProductsProducer, error) {
-	const op = "NewProductsProducer"
-
-	var options producerOpts
-	if err := options.apply(opts...); err != nil {
-		return ProductsProducer{}, opErr(err, op)
-	}
-
+func NewProductsProducer(config ProducerConfig) (ProductsProducer, error) {
 	opPrefix := "ProductsProducer"
 	p := producer{
 		opPrefix: opPrefix,
-		cl:       options.cl,
+		cl:       config.ProducerClient,
 	}
 
 	return ProductsProducer{
-		encoder:  options.encoder,
+		encoder:  config.Encoder,
 		producer: p,
 		opPrefix: opPrefix,
 	}, nil
@@ -190,24 +158,17 @@ type ProductFilterProducer struct {
 }
 
 func NewProductFilterProducer(
-	opts ...ProducerOpt,
+	config ProducerConfig,
 ) (ProductFilterProducer, error) {
-	const op = "NewProductFilterProducer"
-
-	var options producerOpts
-	if err := options.apply(opts...); err != nil {
-		return ProductFilterProducer{}, opErr(err, op)
-	}
-
 	opPrefix := "ProductFilterProducer"
 	p := producer{
 		opPrefix: opPrefix,
-		cl:       options.cl,
+		cl:       config.ProducerClient,
 	}
 
 	return ProductFilterProducer{
 		producer: p,
-		encoder:  options.encoder,
+		encoder:  config.Encoder,
 		opPrefix: opPrefix,
 	}, nil
 }
@@ -267,24 +228,17 @@ type FindProductEventProducer struct {
 }
 
 func NewFindProductEventProducer(
-	opts ...ProducerOpt,
+	config ProducerConfig,
 ) (FindProductEventProducer, error) {
-	const op = "FindProductEventEmitter"
-
-	var options producerOpts
-	if err := options.apply(opts...); err != nil {
-		return FindProductEventProducer{}, opErr(err, op)
-	}
-
 	opPrefix := "FindProductEventEmitter"
 	p := producer{
 		opPrefix: opPrefix,
-		cl:       options.cl,
+		cl:       config.ProducerClient,
 	}
 
 	return FindProductEventProducer{
 		producer: p,
-		encoder:  options.encoder,
+		encoder:  config.Encoder,
 		opPrefix: opPrefix,
 	}, nil
 }

@@ -21,134 +21,6 @@ var (
 )
 
 ////////////////////////////////////////////////////////
-///////////////           OPTS            //////////////
-////////////////////////////////////////////////////////
-
-type ProcessorOpt func(*processorOpts) error
-
-func SeedBrokersProcOpt(seedBrokers ...string) ProcessorOpt {
-	return func(po *processorOpts) error {
-		if len(seedBrokers) == 0 {
-			return errors.New("seed brokers is not set")
-		}
-		po.seedBrokers = seedBrokers
-		return nil
-	}
-}
-
-func GroupProcOpt(consumerGroup *string) ProcessorOpt {
-	return func(po *processorOpts) error {
-		po.consumerGroup = (*goka.Group)(consumerGroup)
-		return nil
-	}
-}
-
-func InputTopicProcOpt(topic *string) ProcessorOpt {
-	return func(po *processorOpts) error {
-		po.inputStream = (*goka.Stream)(topic)
-		return nil
-	}
-}
-func OutputTopicProcOpt(topic *string) ProcessorOpt {
-	return func(po *processorOpts) error {
-		po.outputStream = (*goka.Stream)(topic)
-		return nil
-	}
-}
-func JoinTopicProcOpt(topic *string) ProcessorOpt {
-	return func(po *processorOpts) error {
-		po.joinTable = (*goka.Table)(topic)
-		return nil
-	}
-}
-
-func SerdeProcOpt(sEncode, sDecode Serde) ProcessorOpt {
-	return func(po *processorOpts) error {
-		if sEncode == nil || sDecode == nil {
-			return errors.New("not all serdes is set")
-		}
-		po.serdeEncode = sEncode
-		po.serdeDecode = sDecode
-		return nil
-	}
-}
-
-type processorOpts struct {
-	seedBrokers   []string
-	consumerGroup *goka.Group
-	inputStream   *goka.Stream
-	joinTable     *goka.Table
-	outputStream  *goka.Stream
-	serdeEncode   Serde
-	serdeDecode   Serde
-}
-
-func (po *processorOpts) apply(opts ...ProcessorOpt) error {
-	for _, opt := range opts {
-		if err := opt(po); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (po *processorOpts) validate(validations ...func() error) error {
-	var errs []error
-	for _, validateFn := range validations {
-		errs = append(errs, validateFn())
-	}
-	return errors.Join(errs...)
-}
-
-func (po *processorOpts) verifySeedBrokers() error {
-	const op = "processorOpts.verifySeedBrokers"
-	if len(po.seedBrokers) == 0 {
-		return opErr(ErrRequiredOpt, op)
-	}
-	return nil
-}
-
-func (po *processorOpts) verifyConsumerGroup() error {
-	const op = "processorOpts.verifyConsumerGroup"
-	if po.consumerGroup == nil {
-		return opErr(ErrRequiredOpt, op)
-	}
-	return nil
-}
-
-func (po *processorOpts) verifyInputStream() error {
-	const op = "processorOpts.verifyInputStream"
-	if po.inputStream == nil {
-		return opErr(ErrRequiredOpt, op)
-	}
-	return nil
-}
-
-func (po *processorOpts) verifyJoinTable() error {
-	const op = "processorOpts.verifyJoinTables"
-	if po.joinTable == nil {
-		return opErr(ErrRequiredOpt, op)
-	}
-	return nil
-}
-
-func (po *processorOpts) verifyOutputStream() error {
-	const op = "processorOpts.verifyOutputStream"
-	if po.outputStream == nil {
-		return opErr(ErrRequiredOpt, op)
-	}
-	return nil
-}
-
-func (po *processorOpts) verifySerdes() error {
-	const op = "processorOpts.verifySerdes"
-	if po.serdeEncode == nil || po.serdeDecode == nil {
-		return opErr(ErrRequiredOpt, op)
-	}
-	return nil
-}
-
-////////////////////////////////////////////////////////
 //////////////           CODECS            /////////////
 ////////////////////////////////////////////////////////
 
@@ -243,12 +115,18 @@ func (blockValueCodec) Decode(data []byte) (any, error) {
 //////////////         PROCESSORS          /////////////
 ////////////////////////////////////////////////////////
 
+type processorClient interface {
+	Run(ctx context.Context) (rerr error)
+	WaitForReadyContext(ctx context.Context) error
+	Stop()
+}
+
 // A processor is used for composition.
 //
 // Running and closing the underlying [goka.Processor]
 type processor struct {
 	opPrefix string
-	gp       *goka.Processor
+	gp       processorClient
 }
 
 func (p *processor) run(
@@ -267,7 +145,7 @@ func (p *processor) run(
 }
 
 func (p *processor) runProc(ctx context.Context, stopFn context.CancelFunc) {
-	const op = "run"
+	const op = "runProc"
 	log := slog.With("op", makeOp(p.opPrefix, op))
 
 	defer stopFn()
@@ -303,6 +181,9 @@ func (p *processor) close() {
 	log.Info("processor is closed")
 }
 
+// A ProductFilterProcessor used for setup [ProductFilterProcessor].
+//
+// All fields are required.
 type ProductFilterProcessorConfig struct {
 	SeedBrokers   []string
 	ConsumerGroup string
@@ -381,6 +262,9 @@ func (p *ProductFilterProcessor) processFn(ctx goka.Context, msg any) {
 	)
 }
 
+// A ProductBlockerProcessorConfig used for setup [ProductBlockerProcessor].
+//
+// All fields are required.
 type ProductBlockerProcessorConfig struct {
 	SeedBrokers   []string
 	ConsumerGroup string
