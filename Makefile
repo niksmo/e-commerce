@@ -1,10 +1,11 @@
 .PHONY: infra-start infra-stop infra-restart \
         compose-up wait-kafka kafka-permissions \
-        compose-down compose-clean app-start
+        spark-connect compose-down compose-clean \
+		app-start
 
 export ECOM_CONFIG_FILE=./config.yml
 
-infra-start: compose-up wait-kafka kafka-permissions
+infra-start: compose-up wait-kafka kafka-permissions spark-connect
 
 infra-stop: compose-down compose-clean
 
@@ -16,9 +17,9 @@ compose-up:
 wait-kafka:
 	@echo "Waiting for Kafka to be ready..."
 	@until docker compose exec kafka-a-1 \
-	kafka-cluster cluster-id -c /etc/kafka/admin-client.properties -b localhost:9092 >/dev/null 2>&1; do \
-	sleep 2; \
-	done
+	kafka-cluster cluster-id -c /etc/kafka/admin-client.properties \
+	-b localhost:9092 >/dev/null 2>&1; \
+	do sleep 2; done
 	@echo "Kafka is ready!"
 
 kafka-permissions:
@@ -31,6 +32,10 @@ kafka-permissions:
   	--topic filter-product-group-table \
   	--topic filter-product-group \
   	--topic client-find-product-events
+
+spark-connect:
+	docker compose exec spark-master sbin/start-connect-server.sh \
+	--packages org.apache.spark:spark-connect_2.12:3.5.2
 
 compose-down:
 	docker compose down
