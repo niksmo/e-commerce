@@ -23,6 +23,12 @@ broker:
     product_blocker_group: product-blocker-group
     product_saver_group: product-saver-group
     client_events_group: client-events-group
+  sasl_ssl:
+    ca_cert: ./certs/ca.crt
+    app_cert: ./certs/app.key
+    app_key: ./certs/app.key
+    app_user: app
+    app_pass: app
 hdfs:
   addr: 127.0.0.1:9000
   user: root

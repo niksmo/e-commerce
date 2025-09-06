@@ -12,6 +12,14 @@ import (
 
 const configFileEnvName = "ECOM_CONFIG_FILE"
 
+type saslssl struct {
+	CACert  string `mapstructure:"ca_cert"`
+	AppCert string `mapstructure:"app_cert"`
+	AppKey  string `mapstructure:"app_key"`
+	AppUser string `mapstructure:"app_user"`
+	AppPass string `mapstructure:"app_pass"`
+}
+
 type consumers struct {
 	FilterProductGroup  string `mapstructure:"filter_product_group"`
 	ProductBlockerGroup string `mapstructure:"product_blocker_group"`
@@ -33,6 +41,7 @@ type broker struct {
 	SchemaRegistryURLs   []string  `mapstructure:"schema_registry_urls"`
 	Topics               topics    `mapstructure:"topics"`
 	Consumers            consumers `mapstructure:"consumers"`
+	SASLSSL              saslssl   `mapstructure:"sasl_ssl"`
 }
 
 type hdfs struct {
@@ -103,6 +112,12 @@ func (c Config) Print() {
 		ProductBlockerGroup=%q
 		ProductSaverGroup=%q
 		ClientEventsGroup=%q
+	SASLSSL:
+		CACert=%q
+		AppCert=%q
+		AppKey=%q
+		AppUser=%q
+		AppPass=%q
 	HDFS:
 		Addr=%q
 		User=%q
@@ -126,6 +141,11 @@ func (c Config) Print() {
 		c.Broker.Consumers.ProductBlockerGroup,
 		c.Broker.Consumers.ProductSaverGroup,
 		c.Broker.Consumers.ClientEventsGroup,
+		c.Broker.SASLSSL.CACert,
+		c.Broker.SASLSSL.AppCert,
+		c.Broker.SASLSSL.AppKey,
+		c.Broker.SASLSSL.AppUser,
+		c.Broker.SASLSSL.AppPass,
 		c.HDFS.Addr,
 		c.HDFS.User,
 	)
