@@ -24,7 +24,7 @@ type Service struct {
 	productsStorage       port.ProductsStorage
 	clientEventsStorage   port.ClientEventsStorage
 	productReader         port.ProductReader
-	evtProc               *findProductEventProc
+	evtProc               *clientEventWorker
 	evtC                  chan<- domain.ClientFindProductEvent
 }
 
@@ -38,7 +38,7 @@ func New(
 	findProductEventEmitter port.ClientFindProductEventEmitter,
 	clientEventsStorage port.ClientEventsStorage,
 ) *Service {
-	evtProc := &findProductEventProc{emitter: findProductEventEmitter}
+	evtProc := &clientEventWorker{emitter: findProductEventEmitter}
 	return &Service{
 		productFilterProc:     productFilterProc,
 		productBlockerProc:    productBlockerProc,
@@ -179,13 +179,13 @@ func (s *Service) SaveEvents(
 	return nil
 }
 
-// A findProductEventProc is used for process client event in core service.
-type findProductEventProc struct {
+// A clientEventWorker is used for process client event in core service.
+type clientEventWorker struct {
 	evtC    chan domain.ClientFindProductEvent
 	emitter port.ClientFindProductEventEmitter
 }
 
-func (p *findProductEventProc) run(
+func (p *clientEventWorker) run(
 	ctx context.Context,
 ) chan<- domain.ClientFindProductEvent {
 	p.evtC = make(chan domain.ClientFindProductEvent, 1)
@@ -193,8 +193,8 @@ func (p *findProductEventProc) run(
 	return p.evtC
 }
 
-func (p *findProductEventProc) runProc(ctx context.Context) {
-	const op = "Service.findProductEventProc.runProc"
+func (p *clientEventWorker) runProc(ctx context.Context) {
+	const op = "Service.clientEventWorker.runProc"
 	log := slog.With("op", op)
 
 	for evt := range p.evtC {
@@ -210,7 +210,7 @@ func (p *findProductEventProc) runProc(ctx context.Context) {
 	}
 }
 
-func (p *findProductEventProc) close() {
+func (p *clientEventWorker) close() {
 	close(p.evtC)
 }
 
