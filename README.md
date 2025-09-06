@@ -26,47 +26,66 @@ docker compose exec kafka-a-1 kafka-acls --bootstrap-server localhost:9092 \
 
 ## Apply cluster A replication to B
 ```
-curl -i -X PUT http://127.0.0.1:8082/connectors/mm2-src/config -H "Content-Type: application/json" -d '{
-  "name": "mm2-src",
-  "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
-  "tasks.max": "2",
-  "source.cluster.alias":"source",
-  "source.cluster.bootstrap.servers": "kafka-a-1:9092,kafka-a-2:9092,kafka-a-3:9092",
-  "target.cluster.bootstrap.servers": "kafka-b-1:9092,kafka-b-2:9092,kafka-b-3:9092",
-  "replication.policy.class": "org.apache.kafka.connect.mirror.IdentityReplicationPolicy",
-  "topics": ".*",
-  "emit.checkpoints.enabled": "true",
-  "emit.heartbeats.enabled": "true",
-  "sync.topic.configs.enabled": "true",
-  "sync.topic.acls.enabled": "false",
-  "refresh.topics.interval.seconds": "30",
-  "refresh.groups.interval.seconds": "30"
+curl -i -X POST http://127.0.0.1:8082/connectors -H "Content-Type: application/json" -d '{
+    "name": "mirror_A_to_B",
+    "config": {
+        "name": "mirror_A_to_B",
+        "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
+        "tasks.max": "2",
+        "source.cluster.alias": "source",
+        "source.cluster.bootstrap.servers": "kafka-a-1:9092,kafka-a-2:9092,kafka-a-3:9092",
+        "source.cluster.security.protocol": "SASL_SSL",
+        "source.cluster.sasl.mechanism": "PLAIN",
+        "source.cluster.sasl.jaas.config": "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"admin\";",
+        "source.cluster.ssl.truststore.location": "/etc/kafka/secrets/kafka.truststore.jks",
+        "source.cluster.ssl.truststore.password": "123456",
+        "source.cluster.ssl.keystore.location": "/etc/kafka/secrets/connect-mm2.keystore.jks",
+        "source.cluster.ssl.keystore.password": "123456",
+        "target.cluster.bootstrap.servers": "kafka-b-1:9092,kafka-b-2:9092,kafka-b-3:9092",
+        "replication.policy.class": "org.apache.kafka.connect.mirror.IdentityReplicationPolicy",
+        "topics": ".*",
+        "emit.checkpoints.enabled": "true",
+        "emit.heartbeats.enabled": "true",
+        "sync.topic.configs.enabled": "true",
+        "sync.topic.acls.enabled": "false",
+        "refresh.topics.interval.seconds": "30",
+        "refresh.groups.interval.seconds": "30"
+    }
 }'
 ```
 
 ```
-curl -i -X PUT http://127.0.0.1:8082/connectors/mm2-heartbeat/config -H "Content-Type: application/json" -d '{
+curl -i -X POST http://127.0.0.1:8082/connectors -H "Content-Type: application/json" -d '{
   "name": "mm2-heartbeat",
-  "connector.class": "org.apache.kafka.connect.mirror.MirrorHeartbeatConnector",
-  "tasks.max": "1",
-  "source.cluster.alias":"source",
-  "source.cluster.bootstrap.servers": "kafka-a-1:9092,kafka-a-2:9092,kafka-a-3:9092",
-  "target.cluster.bootstrap.servers": "kafka-b-1:9092,kafka-b-2:9092,kafka-b-3:9092"
+  "config": {
+    "connector.class": "org.apache.kafka.connect.mirror.MirrorHeartbeatConnector",
+    "tasks.max": "1",
+    "source.cluster.alias":"source",
+    "source.cluster.bootstrap.servers": "kafka-a-1:9092,kafka-a-2:9092,kafka-a-3:9092",
+    "target.cluster.bootstrap.servers": "kafka-b-1:9092,kafka-b-2:9092,kafka-b-3:9092"
+  }
 }'
 ```
 
 ```
-curl -i -X PUT http://127.0.0.1:8082/connectors/mm2-checkpoint/config -H "Content-Type: application/json" -d '{
+curl -i -X POST http://127.0.0.1:8082/connectors -H "Content-Type: application/json" -d '{
   "name": "mm2-checkpoint",
-  "connector.class": "org.apache.kafka.connect.mirror.MirrorCheckpointConnector",
-  "tasks.max": "1",
-  "source.cluster.alias":"source",
-  "source.cluster.bootstrap.servers": "kafka-a-1:9092,kafka-a-2:9092,kafka-a-3:9092",
-  "target.cluster.bootstrap.servers": "kafka-b-1:9092,kafka-b-2:9092,kafka-b-3:9092",
-  "emit.checkpoints.interval.seconds": "10"
+  "config": {
+    "connector.class": "org.apache.kafka.connect.mirror.MirrorCheckpointConnector",
+    "tasks.max": "1",
+    "source.cluster.alias":"source",
+    "source.cluster.bootstrap.servers": "kafka-a-1:9092,kafka-a-2:9092,kafka-a-3:9092",
+    "target.cluster.bootstrap.servers": "kafka-b-1:9092,kafka-b-2:9092,kafka-b-3:9092",
+    "emit.checkpoints.interval.seconds": "10"
+  }
 }'
 ```
 
+## Build applications:
+
+```
+# TODO
+```
 
 ## Migrate database
 ```
