@@ -268,12 +268,14 @@ func (app *App) initOutboundAdapters() {
 
 	productsProducer, err := kafka.NewProductsProducer(
 		kafka.ProducerConfig{
-			ProducerClient: kafka.NewProducerClient(
-				ctx,
-				seedBrokersPrimary,
-				productsFromShopTopic,
-				app.tlsConfig, user, pass,
-			),
+			ProducerClient: kafka.NewProducerClient(ctx,
+				kafka.ProducerClientConfig{
+					SeedBrokers: seedBrokersPrimary,
+					Topic:       productsFromShopTopic,
+					User:        user,
+					Pass:        pass,
+					TLSConfig:   app.tlsConfig,
+				}),
 			Encoder: app.serdes.productFromShop,
 		},
 	)
@@ -283,12 +285,14 @@ func (app *App) initOutboundAdapters() {
 
 	productFilterProducer, err := kafka.NewProductFilterProducer(
 		kafka.ProducerConfig{
-			ProducerClient: kafka.NewProducerClient(
-				ctx,
-				seedBrokersPrimary,
-				filterProductStream,
-				app.tlsConfig, user, pass,
-			),
+			ProducerClient: kafka.NewProducerClient(ctx,
+				kafka.ProducerClientConfig{
+					SeedBrokers: seedBrokersPrimary,
+					Topic:       filterProductStream,
+					User:        user,
+					Pass:        pass,
+					TLSConfig:   app.tlsConfig,
+				}),
 			Encoder: app.serdes.productFilter,
 		},
 	)
@@ -298,12 +302,14 @@ func (app *App) initOutboundAdapters() {
 
 	findProductEventProducer, err := kafka.NewFindProductEventProducer(
 		kafka.ProducerConfig{
-			ProducerClient: kafka.NewProducerClient(
-				ctx,
-				seedBrokersPrimary,
-				findProductEventsTopic,
-				app.tlsConfig, user, pass,
-			),
+			ProducerClient: kafka.NewProducerClient(ctx,
+				kafka.ProducerClientConfig{
+					SeedBrokers: seedBrokersPrimary,
+					Topic:       findProductEventsTopic,
+					User:        user,
+					Pass:        pass,
+					TLSConfig:   app.tlsConfig,
+				}),
 			Encoder: app.serdes.findProductEvents,
 		},
 	)
@@ -335,37 +341,52 @@ func (app *App) initCoreService() {
 func (app *App) initInboundAdapters() {
 	const op = "App.initInboundAdapters"
 
+	ctx := app.ctx
 	seedBrokersPrimary := app.cfg.Broker.SeedBrokersPrimary
-	seedBrokersSecondary := app.cfg.Broker.SeedBrokersSecondary
+
+	// Because mirror maker is not working
+	// seedBrokersSecondary := app.cfg.Broker.SeedBrokersSecondary
+
 	productsToStorageTopic := app.cfg.Broker.Topics.ProductsToStorage
 	productsSaverGroup := app.cfg.Broker.Consumers.ProductSaverGroup
 	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
 	clientEventsGroup := app.cfg.Broker.Consumers.ClientEventsGroup
-
 	addr := app.cfg.HTTPServerAddr
+	user := app.cfg.Broker.SASLSSL.AppUser
+	pass := app.cfg.Broker.SASLSSL.AppPass
 
 	productsConsumer, err := kafka.NewProductsConsumer(
-		kafka.ConsumerClientOpt(
-			seedBrokersPrimary,
-			productsToStorageTopic,
-			productsSaverGroup,
-		),
-		kafka.ConsumerDecoderOpt(app.serdes.productToStorage),
-		kafka.ProductsConsumerSaverOpt(app.coreService),
-	)
+		kafka.ProductsConsumerConfig{
+			ConsumerClient: kafka.NewConsumerClient(ctx,
+				kafka.ConsumerClientConfig{
+					SeedBrokers: seedBrokersPrimary,
+					Topic:       productsToStorageTopic,
+					Group:       productsSaverGroup,
+					User:        user,
+					Pass:        pass,
+					TLSConfig:   app.tlsConfig,
+				}),
+			Decoder: app.serdes.productToStorage,
+			Saver:   app.coreService,
+		})
 	if err != nil {
 		app.fallDown(op, err)
 	}
 
 	clientEventsConsumer, err := kafka.NewClientEventsConsumer(
-		kafka.ConsumerClientOpt(
-			seedBrokersSecondary,
-			findProductEventsTopic,
-			clientEventsGroup,
-		),
-		kafka.ConsumerDecoderOpt(app.serdes.findProductEvents),
-		kafka.ClientEventsConsumerSaverOpt(app.coreService),
-	)
+		kafka.ClientEventsConsumerConfig{
+			ConsumerClient: kafka.NewConsumerClient(ctx,
+				kafka.ConsumerClientConfig{
+					SeedBrokers: seedBrokersPrimary, // should be "seedBrokersSecondary"
+					Topic:       findProductEventsTopic,
+					Group:       clientEventsGroup,
+					User:        user,
+					Pass:        pass,
+					TLSConfig:   app.tlsConfig,
+				}),
+			Decoder: app.serdes.findProductEvents,
+			Saver:   app.coreService,
+		})
 	if err != nil {
 		app.fallDown(op, err)
 	}

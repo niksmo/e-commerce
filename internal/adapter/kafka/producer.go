@@ -17,22 +17,25 @@ type ProducerClient interface {
 	Close()
 }
 
+type ProducerClientConfig struct {
+	SeedBrokers       []string
+	Topic, User, Pass string
+	TLSConfig         *tls.Config
+}
+
 func NewProducerClient(
 	ctx context.Context,
-	seedBrokers []string,
-	topic string,
-	tlsConfig *tls.Config,
-	user, pass string,
+	cfg ProducerClientConfig,
 ) ProducerClient {
 	const op = "ProducerClient"
 	cl, err := kgo.NewClient(
-		kgo.SeedBrokers(seedBrokers...),
+		kgo.SeedBrokers(cfg.SeedBrokers...),
 		kgo.DefaultProduceTopicAlways(),
-		kgo.DefaultProduceTopic(topic),
+		kgo.DefaultProduceTopic(cfg.Topic),
 		kgo.RequiredAcks(kgo.AllISRAcks()),
 		kgo.AllowAutoTopicCreation(),
-		kgo.DialTLSConfig(tlsConfig),
-		kgo.SASL(plain.Auth{User: user, Pass: pass}.AsMechanism()),
+		kgo.DialTLSConfig(cfg.TLSConfig),
+		kgo.SASL(plain.Auth{User: cfg.User, Pass: cfg.Pass}.AsMechanism()),
 	)
 	if err != nil {
 		err = fmt.Errorf("%s: %w", op, err)

@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -12,82 +13,13 @@ import (
 	"github.com/niksmo/e-commerce/internal/core/port"
 	"github.com/niksmo/e-commerce/pkg/schema"
 	"github.com/twmb/franz-go/pkg/kgo"
+	"github.com/twmb/franz-go/pkg/sasl/plain"
 )
 
 type ConsumerClient interface {
 	PollFetches(context.Context) kgo.Fetches
 	CommitUncommittedOffsets(context.Context) error
 	Close()
-}
-
-////////////////////////////////////////////////////////
-///////////////           OPTS            //////////////
-////////////////////////////////////////////////////////
-
-type ConsumerOpt func(*consumerOpts) error
-
-func ConsumerClientOpt(
-	seedBrokers []string, topic, group string,
-) ConsumerOpt {
-	return func(co *consumerOpts) error {
-		cl, err := kgo.NewClient(
-			kgo.SeedBrokers(seedBrokers...),
-			kgo.ConsumeTopics(topic),
-			kgo.ConsumerGroup(group),
-			kgo.DisableAutoCommit(),
-		)
-		if err != nil {
-			return err
-		}
-		co.cl = cl
-		return nil
-	}
-}
-
-func ConsumerDecoderOpt(decoder Decoder) ConsumerOpt {
-	return func(co *consumerOpts) error {
-		if decoder == nil {
-			return errors.New("decoder is nil")
-		}
-		co.decoder = decoder
-		return nil
-	}
-}
-
-func ProductsConsumerSaverOpt(ps port.ProductsSaver) ConsumerOpt {
-	return func(co *consumerOpts) error {
-		if ps == nil {
-			return errors.New("products saver is nil")
-		}
-		co.productsSaver = ps
-		return nil
-	}
-}
-
-func ClientEventsConsumerSaverOpt(s port.ClientEventsSaver) ConsumerOpt {
-	return func(co *consumerOpts) error {
-		if s == nil {
-			return errors.New("client events saver is nil")
-		}
-		co.clientEventsSaver = s
-		return nil
-	}
-}
-
-type consumerOpts struct {
-	cl                ConsumerClient
-	decoder           Decoder
-	productsSaver     port.ProductsSaver
-	clientEventsSaver port.ClientEventsSaver
-}
-
-func (co *consumerOpts) apply(opts ...ConsumerOpt) error {
-	for _, opt := range opts {
-		if err := opt(co); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 ////////////////////////////////////////////////////////
@@ -220,6 +152,42 @@ func (c consumer) close() {
 	log.Info("consumer is closed")
 }
 
+type ConsumerClientConfig struct {
+	SeedBrokers              []string
+	Topic, Group, User, Pass string
+	TLSConfig                *tls.Config
+}
+
+func NewConsumerClient(
+	ctx context.Context,
+	cfg ConsumerClientConfig,
+) ConsumerClient {
+	const op = "NewConsumerClient"
+	cl, err := kgo.NewClient(
+		kgo.SeedBrokers(cfg.SeedBrokers...),
+		kgo.ConsumeTopics(cfg.Topic),
+		kgo.ConsumerGroup(cfg.Group),
+		kgo.DisableAutoCommit(),
+		kgo.DialTLSConfig(cfg.TLSConfig),
+		kgo.SASL(plain.Auth{User: cfg.User, Pass: cfg.Pass}.AsMechanism()),
+	)
+	if err != nil {
+		err = fmt.Errorf("%s: %w", op, err)
+		panic(err)
+	}
+	if err := cl.Ping(ctx); err != nil {
+		err = fmt.Errorf("%s: %w", op, err)
+		panic(err)
+	}
+	return cl
+}
+
+type ProductsConsumerConfig struct {
+	ConsumerClient ConsumerClient
+	Saver          port.ProductsSaver
+	Decoder        Decoder
+}
+
 // A ProductsConsumer consumes filtered products
 // then sends to the core service for save.
 type ProductsConsumer struct {
@@ -229,24 +197,21 @@ type ProductsConsumer struct {
 	decoder  Decoder
 }
 
-func NewProductsConsumer(opts ...ConsumerOpt) (pc ProductsConsumer, err error) {
+func NewProductsConsumer(
+	config ProductsConsumerConfig,
+) (pc ProductsConsumer, err error) {
 	const op = "NewProductsConsumer"
-
-	var options consumerOpts
-	if err := options.apply(opts...); err != nil {
-		return pc, opErr(err, op)
-	}
 
 	opPrefix := "ProductsConsumer"
 
 	pc.opPrefix = opPrefix
-	pc.saver = options.productsSaver
-	pc.decoder = options.decoder
+	pc.saver = config.Saver
+	pc.decoder = config.Decoder
 
 	pc.consumer = consumer{
 		opPrefix:      opPrefix,
 		parent:        pc,
-		cl:            options.cl,
+		cl:            config.ConsumerClient,
 		slowDownTimer: time.NewTimer(0),
 	}
 
@@ -310,6 +275,12 @@ func (c ProductsConsumer) decodeRecValue(
 	return v, nil
 }
 
+type ClientEventsConsumerConfig struct {
+	ConsumerClient ConsumerClient
+	Saver          port.ClientEventsSaver
+	Decoder        Decoder
+}
+
 // A ClientEventsConsumer consumes clients find product events
 // then sends to the core service for save.
 type ClientEventsConsumer struct {
@@ -319,24 +290,21 @@ type ClientEventsConsumer struct {
 	decoder  Decoder
 }
 
-func NewClientEventsConsumer(opts ...ConsumerOpt) (pc ClientEventsConsumer, err error) {
+func NewClientEventsConsumer(
+	config ClientEventsConsumerConfig,
+) (pc ClientEventsConsumer, err error) {
 	const op = "NewClientEventsConsumer"
-
-	var options consumerOpts
-	if err := options.apply(opts...); err != nil {
-		return pc, opErr(err, op)
-	}
 
 	opPrefix := "ClientEventsConsumer"
 
 	pc.opPrefix = opPrefix
-	pc.saver = options.clientEventsSaver
-	pc.decoder = options.decoder
+	pc.saver = config.Saver
+	pc.decoder = config.Decoder
 
 	pc.consumer = consumer{
 		opPrefix:      opPrefix,
 		parent:        pc,
-		cl:            options.cl,
+		cl:            config.ConsumerClient,
 		slowDownTimer: time.NewTimer(0),
 	}
 
