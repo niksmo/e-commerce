@@ -10,7 +10,6 @@ docker compose exec kafka-a-1 kafka-acls --bootstrap-server localhost:9092 \
   --topic products-to-storage \
   --topic filter-product-stream \
   --topic filter-product-group-table \
-  --topic filter_product_group \
   --topic client-find-product-events
 
 docker compose exec kafka-a-1 kafka-acls --bootstrap-server localhost:9092 \

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/niksmo/e-commerce/config"
-	"github.com/niksmo/e-commerce/internal/adapter/kafka"
+	"github.com/niksmo/e-commerce/internal/adapter"
 	"github.com/niksmo/e-commerce/pkg/sigctx"
 	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kerr"
@@ -80,7 +80,7 @@ type sasl struct {
 func createClient(
 	seedBrokers []string, tlsCfg tlsCfg, sasl sasl,
 ) *kadm.Client {
-	tlsConfig := kafka.MakeTLSConfig(tlsCfg.ca, tlsCfg.cert, tlsCfg.Key)
+	tlsConfig := adapter.MakeTLSConfig(tlsCfg.ca, tlsCfg.cert, tlsCfg.Key)
 
 	cl, err := kadm.NewOptClient(
 		kgo.SeedBrokers(seedBrokers...),

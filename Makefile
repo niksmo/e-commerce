@@ -24,12 +24,12 @@ wait-kafka:
 kafka-permissions:
 	docker compose exec kafka-a-1 kafka-acls --bootstrap-server localhost:9092 \
 	--command-config /etc/kafka/admin-client.properties \
-  	--add --allow-principal User:app --producer \
+  	--add --allow-principal User:app --operation all \
   	--topic products-from-shop \
   	--topic products-to-storage \
   	--topic filter-product-stream \
   	--topic filter-product-group-table \
-  	--topic filter_product_group \
+  	--topic filter-product-group \
   	--topic client-find-product-events
 
 compose-down:

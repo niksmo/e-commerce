@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"io"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/IBM/sarama"
 	"github.com/lovoo/goka"
 	"github.com/niksmo/e-commerce/pkg/schema"
 )
@@ -301,6 +303,17 @@ func (p *processor) close() {
 	log.Info("processor is closed")
 }
 
+type ProductFilterProcessorConfig struct {
+	SeedBrokers   []string
+	ConsumerGroup string
+	InputStream   string
+	Encoder       Serde
+	Decoder       Serde
+	TLSConfig     *tls.Config
+	User          string
+	Pass          string
+}
+
 // A ProductFilterProcessor proccess filter events
 // from stream topic to group table.
 type ProductFilterProcessor struct {
@@ -309,37 +322,27 @@ type ProductFilterProcessor struct {
 }
 
 func NewProductFilterProc(
-	opts ...ProcessorOpt,
+	config ProductFilterProcessorConfig,
 ) (*ProductFilterProcessor, error) {
 	const op = "NewProductFilterProc"
 
-	var options processorOpts
-	if err := options.apply(opts...); err != nil {
-		return nil, opErr(err, op)
-	}
-
-	err := options.validate(
-		options.verifyConsumerGroup,
-		options.verifySeedBrokers,
-		options.verifyInputStream,
-		options.verifySerdes,
-	)
-	if err != nil {
-		return nil, opErr(err, op)
-	}
-
 	var p ProductFilterProcessor
 
-	gg := goka.DefineGroup(*options.consumerGroup,
+	gg := goka.DefineGroup(goka.Group(config.ConsumerGroup),
 		goka.Input(
-			*options.inputStream,
-			newFilterEventCodec(options.serdeEncode, options.serdeDecode),
+			goka.Stream(config.InputStream),
+			newFilterEventCodec(config.Encoder, config.Decoder),
 			p.processFn,
 		),
 		goka.Persist(blockValueCodec{}),
 	)
 
-	gp, err := goka.NewProcessor(options.seedBrokers, gg, withNonlogProcOpt())
+	gp, err := goka.NewProcessor(
+		config.SeedBrokers,
+		gg,
+		withTopicManagerBuilder(config.TLSConfig, config.User, config.Pass),
+		withNonlogProcOpt(),
+	)
 	if err != nil {
 		return nil, opErr(err, op)
 	}
@@ -378,6 +381,19 @@ func (p *ProductFilterProcessor) processFn(ctx goka.Context, msg any) {
 	)
 }
 
+type ProductBlockerProcessorConfig struct {
+	SeedBrokers   []string
+	ConsumerGroup string
+	InputStream   string
+	JoinTable     string
+	OutputStream  string
+	Encoder       Serde
+	Decoder       Serde
+	TLSConfig     *tls.Config
+	User          string
+	Pass          string
+}
+
 // A ProductBlockerProcessor proccess products from input stream,
 //
 // applying filter from group table and send product to output topic.
@@ -389,38 +405,26 @@ type ProductBlockerProcessor struct {
 }
 
 func NewProductBlockerProc(
-	opts ...ProcessorOpt,
+	config ProductBlockerProcessorConfig,
 ) (*ProductBlockerProcessor, error) {
 	const op = "NewProductBlockerProc"
 
-	var options processorOpts
-	if err := options.apply(opts...); err != nil {
-		return nil, opErr(err, op)
-	}
-
-	err := options.validate(
-		options.verifyConsumerGroup,
-		options.verifySeedBrokers,
-		options.verifyInputStream,
-		options.verifyJoinTable,
-		options.verifyOutputStream,
-		options.verifySerdes,
-	)
-	if err != nil {
-		return nil, opErr(err, op)
-	}
-
 	var p ProductBlockerProcessor
 
-	productEventCodec := newProductEventCodec(options.serdeEncode, options.serdeDecode)
+	productEventCodec := newProductEventCodec(config.Encoder, config.Decoder)
 
-	gg := goka.DefineGroup(*options.consumerGroup,
-		goka.Input(*options.inputStream, productEventCodec, p.processFn),
-		goka.Join(*options.joinTable, blockValueCodec{}),
-		goka.Output(*options.outputStream, productEventCodec),
+	gg := goka.DefineGroup(goka.Group(config.ConsumerGroup),
+		goka.Input(goka.Stream(config.InputStream), productEventCodec, p.processFn),
+		goka.Join(goka.Table(config.JoinTable), blockValueCodec{}),
+		goka.Output(goka.Stream(config.OutputStream), productEventCodec),
 	)
 
-	gp, err := goka.NewProcessor(options.seedBrokers, gg, withNonlogProcOpt())
+	gp, err := goka.NewProcessor(
+		config.SeedBrokers,
+		gg,
+		withTopicManagerBuilder(config.TLSConfig, config.User, config.Pass),
+		withNonlogProcOpt(),
+	)
 	if err != nil {
 		return nil, opErr(err, op)
 	}
@@ -431,8 +435,8 @@ func NewProductBlockerProc(
 		gp:       gp,
 	}
 	p.opPrefix = opPrefix
-	p.joinedTable = *options.joinTable
-	p.outputStream = *options.outputStream
+	p.joinedTable = goka.Table(config.JoinTable)
+	p.outputStream = goka.Stream(config.OutputStream)
 	return &p, nil
 }
 
@@ -465,4 +469,18 @@ func (p *ProductBlockerProcessor) processFn(ctx goka.Context, msg any) {
 
 func withNonlogProcOpt() goka.ProcessorOption {
 	return goka.WithLogger(log.New(io.Discard, "", 0))
+}
+
+func withTopicManagerBuilder(
+	tlsConfig *tls.Config, user, pass string,
+) goka.ProcessorOption {
+	saramaCfg := sarama.NewConfig()
+	saramaCfg.Net.TLS.Enable = true
+	saramaCfg.Net.TLS.Config = tlsConfig
+	saramaCfg.Net.SASL.Enable = true
+	saramaCfg.Net.SASL.User = user
+	saramaCfg.Net.SASL.Password = pass
+	gokaDefaultCfg := goka.NewTopicManagerConfig()
+	tmb := goka.TopicManagerBuilderWithConfig(saramaCfg, gokaDefaultCfg)
+	return goka.WithTopicManagerBuilder(tmb)
 }

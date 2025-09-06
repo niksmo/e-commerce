@@ -2,12 +2,14 @@ package app
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
 
 	"github.com/niksmo/e-commerce/config"
+	"github.com/niksmo/e-commerce/internal/adapter"
 	"github.com/niksmo/e-commerce/internal/adapter/httphandler"
 	"github.com/niksmo/e-commerce/internal/adapter/kafka"
 	"github.com/niksmo/e-commerce/internal/adapter/storage"
@@ -56,6 +58,7 @@ type App struct {
 	sqldb       storage.SQLDB
 	hdfs        storage.HDFS
 	httpServer  httphandler.HTTPServer
+	tlsConfig   *tls.Config
 }
 
 func New(context context.Context, config config.Config) *App {
@@ -68,6 +71,7 @@ func New(context context.Context, config config.Config) *App {
 	log := slog.With("op", op)
 	log.Info("initialize application components...")
 
+	app.initTLSConfig()
 	app.initSerdes()
 	app.initStreamProcessors()
 	app.initOutboundAdapters()
@@ -110,6 +114,14 @@ func (app *App) initLogger() {
 	opts := &slog.HandlerOptions{Level: app.cfg.LogLevel}
 	logger := slog.New(slog.NewJSONHandler(os.Stderr, opts))
 	slog.SetDefault(logger)
+}
+
+func (app *App) initTLSConfig() {
+	app.tlsConfig = adapter.MakeTLSConfig(
+		app.cfg.Broker.SASLSSL.CACert,
+		app.cfg.Broker.SASLSSL.AppCert,
+		app.cfg.Broker.SASLSSL.AppKey,
+	)
 }
 
 func (app *App) initSerdes() {
@@ -184,30 +196,38 @@ func (app *App) initStreamProcessors() {
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductTable := app.cfg.Broker.Topics.FilterProductTable
 	productsToStorage := app.cfg.Broker.Topics.ProductsToStorage
+	user := app.cfg.Broker.SASLSSL.AppUser
+	pass := app.cfg.Broker.SASLSSL.AppPass
 
 	productFilterProc, err := kafka.NewProductFilterProc(
-		kafka.SeedBrokersProcOpt(seedBrokersPrimary...),
-		kafka.GroupProcOpt(&filterProductConsumer),
-		kafka.InputTopicProcOpt(&filterProductStream),
-		kafka.SerdeProcOpt(
-			app.serdes.productFilter,
-			app.serdes.productFilter,
-		),
+		kafka.ProductFilterProcessorConfig{
+			SeedBrokers:   seedBrokersPrimary,
+			ConsumerGroup: filterProductConsumer,
+			InputStream:   filterProductStream,
+			Encoder:       app.serdes.productFilter,
+			Decoder:       app.serdes.productFilter,
+			TLSConfig:     app.tlsConfig,
+			User:          user,
+			Pass:          pass,
+		},
 	)
 	if err != nil {
 		app.fallDown(op, err)
 	}
 
 	productBlockerProc, err := kafka.NewProductBlockerProc(
-		kafka.SeedBrokersProcOpt(seedBrokersPrimary...),
-		kafka.GroupProcOpt(&blockerProductConsumer),
-		kafka.InputTopicProcOpt(&productsFromShopTopic),
-		kafka.JoinTopicProcOpt(&filterProductTable),
-		kafka.OutputTopicProcOpt(&productsToStorage),
-		kafka.SerdeProcOpt(
-			app.serdes.productToStorage,
-			app.serdes.productFromShop,
-		),
+		kafka.ProductBlockerProcessorConfig{
+			SeedBrokers:   seedBrokersPrimary,
+			ConsumerGroup: blockerProductConsumer,
+			InputStream:   productsFromShopTopic,
+			JoinTable:     filterProductTable,
+			OutputStream:  productsToStorage,
+			Encoder:       app.serdes.productToStorage,
+			Decoder:       app.serdes.productFromShop,
+			TLSConfig:     app.tlsConfig,
+			User:          user,
+			Pass:          pass,
+		},
 	)
 	if err != nil {
 		app.fallDown(op, err)
