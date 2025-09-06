@@ -735,12 +735,12 @@ services:
 ########################################################
 
   spark-master:
-    image: bitnami/spark:3.5.6
+    image: bitnami/spark:3.5.4
     container_name: spark-master
     hostname: spark-master
     ports:
       - 127.0.0.1:8083:8080
-      - 127.0.0.1:7077:7077
+      - 127.0.0.1:15002:15002
     networks:
       - net
     environment:
@@ -748,7 +748,7 @@ services:
       SPARK_MASTER_HOST: spark-master
 
   spark-worker:
-    image: bitnami/spark:3.5.6
+    image: bitnami/spark:3.5.4
     container_name: spark-worker
     hostname: spark-worker
     networks:
