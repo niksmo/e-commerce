@@ -38,6 +38,7 @@ services:
       resources:
         limits:
           memory: 2G
+    restart: unless-stopped
     environment:
       CLUSTER_ID: ljBR46ekRHi8bhWVIKADGw
       KAFKA_NODE_ID: 1
@@ -92,6 +93,7 @@ services:
       resources:
         limits:
           memory: 2G
+    restart: unless-stopped
     environment:
       CLUSTER_ID: ljBR46ekRHi8bhWVIKADGw
       KAFKA_NODE_ID: 2
@@ -146,6 +148,7 @@ services:
       resources:
         limits:
           memory: 2G
+    restart: unless-stopped
     environment:
       CLUSTER_ID: ljBR46ekRHi8bhWVIKADGw
       KAFKA_NODE_ID: 3
@@ -205,6 +208,7 @@ services:
       resources:
         limits:
           memory: 2G
+    restart: unless-stopped
     environment:
       CLUSTER_ID: VqJBRkB2RDOaWZdCnCcigg
       KAFKA_NODE_ID: 1
@@ -257,6 +261,7 @@ services:
       resources:
         limits:
           memory: 2G
+    restart: unless-stopped
     environment:
       CLUSTER_ID: VqJBRkB2RDOaWZdCnCcigg
       KAFKA_NODE_ID: 2
@@ -309,6 +314,7 @@ services:
       resources:
         limits:
           memory: 2G
+    restart: unless-stopped
     environment:
       CLUSTER_ID: VqJBRkB2RDOaWZdCnCcigg
       KAFKA_NODE_ID: 3

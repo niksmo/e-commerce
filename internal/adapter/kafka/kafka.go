@@ -49,17 +49,18 @@ func MakeTLSConfig(ca, cert, key string) *tls.Config {
 		panic(err)
 	}
 
-	clientCert, err := tls.LoadX509KeyPair(cert, key)
-	if err != nil {
-		err = fmt.Errorf("%s: %w", op, err)
-		panic(err)
-	}
+	// TODO: delete or not
+	// clientCert, err := tls.LoadX509KeyPair(cert, key)
+	// if err != nil {
+	// 	err = fmt.Errorf("%s: %w", op, err)
+	// 	panic(err)
+	// }
 
 	return &tls.Config{
-		RootCAs:      caCertPool,
-		ClientCAs:    caCertPool,
-		Certificates: []tls.Certificate{clientCert},
-		ClientAuth:   tls.RequireAndVerifyClientCert,
+		RootCAs:   caCertPool,
+		ClientCAs: caCertPool,
+		// Certificates: []tls.Certificate{clientCert},
+		// ClientAuth:   tls.RequireAndVerifyClientCert,
 	}
 }
 
