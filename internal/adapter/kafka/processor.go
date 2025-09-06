@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/IBM/sarama"
 	"github.com/lovoo/goka"
 	"github.com/niksmo/e-commerce/pkg/schema"
 )
@@ -218,12 +217,9 @@ func NewProductFilterProc(
 		goka.Persist(blockValueCodec{}),
 	)
 
-	gp, err := goka.NewProcessor(
-		config.SeedBrokers,
-		gg,
-		withTopicManagerBuilder(config.TLSConfig, config.User, config.Pass),
-		withNonlogProcOpt(),
-	)
+	applySASLTLS(config.TLSConfig, config.User, config.Pass)
+
+	gp, err := goka.NewProcessor(config.SeedBrokers, gg, withNonlogProcOpt())
 	if err != nil {
 		return nil, opErr(err, op)
 	}
@@ -303,12 +299,9 @@ func NewProductBlockerProc(
 		goka.Output(goka.Stream(config.OutputStream), productEventCodec),
 	)
 
-	gp, err := goka.NewProcessor(
-		config.SeedBrokers,
-		gg,
-		withTopicManagerBuilder(config.TLSConfig, config.User, config.Pass),
-		withNonlogProcOpt(),
-	)
+	applySASLTLS(config.TLSConfig, config.User, config.Pass)
+
+	gp, err := goka.NewProcessor(config.SeedBrokers, gg, withNonlogProcOpt())
 	if err != nil {
 		return nil, opErr(err, op)
 	}
@@ -355,16 +348,12 @@ func withNonlogProcOpt() goka.ProcessorOption {
 	return goka.WithLogger(log.New(io.Discard, "", 0))
 }
 
-func withTopicManagerBuilder(
-	tlsConfig *tls.Config, user, pass string,
-) goka.ProcessorOption {
-	saramaCfg := sarama.NewConfig()
+func applySASLTLS(tlsConfig *tls.Config, user, pass string) {
+	saramaCfg := goka.DefaultConfig()
 	saramaCfg.Net.TLS.Enable = true
 	saramaCfg.Net.TLS.Config = tlsConfig
 	saramaCfg.Net.SASL.Enable = true
 	saramaCfg.Net.SASL.User = user
 	saramaCfg.Net.SASL.Password = pass
-	gokaDefaultCfg := goka.NewTopicManagerConfig()
-	tmb := goka.TopicManagerBuilderWithConfig(saramaCfg, gokaDefaultCfg)
-	return goka.WithTopicManagerBuilder(tmb)
+	goka.ReplaceGlobalConfig(saramaCfg)
 }
