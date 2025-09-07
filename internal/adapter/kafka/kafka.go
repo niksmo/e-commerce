@@ -137,9 +137,17 @@ func schemaV1ToClientEvent(
 }
 
 func productOfferToSchema(
-	r domain.ProductOffer,
+	v domain.ProductOffer,
 ) (s schema.ProductOfferV1) {
-	s.Username = r.Username
-	s.Events = r.Events
+	s.Username = v.Username
+	s.Events = v.Events
+	return
+}
+
+func schemaV1ToProductOffer(
+	s schema.ProductOfferV1,
+) (v domain.ProductOffer) {
+	v.Username = s.Username
+	v.Events = s.Events
 	return
 }

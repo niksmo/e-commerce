@@ -25,6 +25,7 @@ type consumers struct {
 	ProductBlockerGroup string `mapstructure:"product_blocker_group"`
 	ProductSaverGroup   string `mapstructure:"product_saver_group"`
 	ClientEventsGroup   string `mapstructure:"client_events_group"`
+	ProductOffersGroup  string `mapstructure:"product_offers_group"`
 }
 
 type topics struct {
@@ -120,6 +121,7 @@ func (c Config) Print() {
 		ProductBlockerGroup=%q
 		ProductSaverGroup=%q
 		ClientEventsGroup=%q
+		ProductOffersGroup=%q
 	SASLSSL:
 		CACert=%q
 		AppCert=%q
@@ -153,6 +155,7 @@ func (c Config) Print() {
 		c.Broker.Consumers.ProductBlockerGroup,
 		c.Broker.Consumers.ProductSaverGroup,
 		c.Broker.Consumers.ClientEventsGroup,
+		c.Broker.Consumers.ProductOffersGroup,
 		c.Broker.SASLSSL.CACert,
 		c.Broker.SASLSSL.AppCert,
 		c.Broker.SASLSSL.AppKey,

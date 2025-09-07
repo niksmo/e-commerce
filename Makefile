@@ -31,7 +31,8 @@ kafka-permissions:
   	--topic filter-product-group --topic client-find-product-events \
 	--topic product-offers \
 	--group filter-product-group --group product-blocker-group \
-	--group product-saver-group --group client-events-group
+	--group product-saver-group --group client-events-group \
+	--group product-offers-group
 
 spark-connect:
 	docker compose exec spark-master sbin/start-connect-server.sh \

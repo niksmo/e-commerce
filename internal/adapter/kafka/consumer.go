@@ -367,3 +367,155 @@ func (c ClientEventsConsumer) decodeRecValue(
 	v := schemaV1ToClientEvent(s)
 	return v, nil
 }
+
+// ProductOffersConsumerConfig
+type ProductOffersConsumerConfig struct {
+	ConsumerClient ConsumerClient
+	Decoder        Decoder
+}
+
+// A ProductOffersConsumer
+type ProductOffersConsumer struct {
+	cl      ConsumerClient
+	decoder Decoder
+}
+
+func NewProductOffersConsumer(
+	config ProductOffersConsumerConfig,
+) ProductOffersConsumer {
+	return ProductOffersConsumer{
+		cl:      config.ConsumerClient,
+		decoder: config.Decoder,
+	}
+}
+
+func (c ProductOffersConsumer) GetOffers(
+	ctx context.Context,
+) ([]domain.ProductOffer, error) {
+	const op = "ProductOffersConsumer.GetOffers"
+
+	fetches, err := c.pollFetches(ctx)
+	if err != nil {
+		return nil, opErr(err, op)
+	}
+
+	if fetches.Empty() {
+		return nil, nil
+	}
+
+	offers, err := c.getOffers(fetches)
+	if err != nil {
+		return nil, opErr(err, op)
+	}
+
+	err = c.commit(ctx)
+	if err != nil {
+		return nil, opErr(err, op)
+	}
+
+	return offers, nil
+}
+
+func (c ProductOffersConsumer) pollFetches(
+	ctx context.Context,
+) (kgo.Fetches, error) {
+	const op = "ProductOffersConsumer.pollFetches"
+
+	fetches := c.cl.PollFetches(ctx)
+	if err := fetches.Err0(); err != nil {
+		return nil, opErr(err, op)
+	}
+
+	err := c.handleFetchesErrs(fetches)
+	if err != nil {
+		return nil, opErr(err, op)
+	}
+
+	return fetches, nil
+}
+
+func (c ProductOffersConsumer) handleFetchesErrs(fetches kgo.Fetches) error {
+	var errsMessages []string
+	fetches.EachError(func(t string, p int32, err error) {
+		if err != nil {
+			errMsg := fmt.Sprintf(
+				"topic %q partition %d: %q", t, p, err,
+			)
+			errsMessages = append(errsMessages, errMsg)
+		}
+	})
+
+	if len(errsMessages) != 0 {
+		return errors.New(strings.Join(errsMessages, "; "))
+	}
+	return nil
+}
+
+func (c ProductOffersConsumer) commit(ctx context.Context) error {
+	const op = "ProductOffersConsumer.commit"
+
+	err := ctx.Err()
+	if err != nil {
+		return opErr(err, op)
+	}
+
+	err = c.cl.CommitUncommittedOffsets(ctx)
+	if err != nil {
+		return opErr(err, op)
+	}
+	return nil
+}
+
+func (c ProductOffersConsumer) Close() {
+	const op = "ProductOffersConsumer.Close"
+	log := slog.With("op", op)
+
+	log.Info("closing consumer...")
+	c.cl.Close()
+	log.Info("consumer is closed")
+}
+
+func (c ProductOffersConsumer) getOffers(
+	fetches kgo.Fetches,
+) ([]domain.ProductOffer, error) {
+	const op = "ProductOffersConsumer.processFetches"
+
+	values, err := c.toDomain(fetches)
+	if err != nil {
+		return nil, opErr(err, op)
+	}
+
+	if len(values) == 0 {
+		return nil, nil
+	}
+
+	return values, nil
+}
+
+func (c ProductOffersConsumer) toDomain(
+	fetches kgo.Fetches,
+) (vs []domain.ProductOffer, err error) {
+	const op = "ProductOffersConsumer.toDomain"
+	var lastErr error
+	fetches.EachRecord(func(r *kgo.Record) {
+		v, err := c.decodeRecValue(r)
+		if err != nil {
+			lastErr = opErr(err, op)
+			return
+		}
+		vs = append(vs, v)
+	})
+	return nil, lastErr
+}
+
+func (c ProductOffersConsumer) decodeRecValue(
+	r *kgo.Record,
+) (domain.ProductOffer, error) {
+	var s schema.ProductOfferV1
+	err := c.decoder.Decode(r.Value, &s)
+	if err != nil {
+		return domain.ProductOffer{}, err
+	}
+	v := schemaV1ToProductOffer(s)
+	return v, nil
+}

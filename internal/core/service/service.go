@@ -28,7 +28,7 @@ type ServiceConfig struct {
 	ClientEventsStorage      port.ClientEventsStorage
 	ClientEventsAnalyzer     port.ClientEventsAnalyzer
 	ProductOfferProducer     port.ProductOfferProducer
-	ProductOffersView        port.ProductOffersView
+	ProductOffersView        port.ProductOffersGetter
 }
 
 type Service struct {
@@ -39,7 +39,7 @@ type Service struct {
 	productsStorage       port.ProductsStorage
 	clientEventsStorage   port.ClientEventsStorage
 	productReader         port.ProductReader
-	productOffersView     port.ProductOffersView
+	productOffersView     port.ProductOffersGetter
 	clientEventsWorker    clientEventWorker
 	analyticsWorker       analyticsWorker
 }
@@ -83,8 +83,6 @@ func (s *Service) Run(ctx context.Context, stopFn context.CancelFunc) {
 	go s.productFilterProc.Run(ctx, stopFn, &wg)
 	go s.productBlockerProc.Run(ctx, stopFn, &wg)
 	wg.Wait()
-
-	go s.productOffersView.Run(ctx)
 
 	go s.clientEventsWorker.run(ctx)
 	go s.analyticsWorker.run(ctx)
@@ -203,12 +201,16 @@ func (s *Service) SaveEvents(
 	return nil
 }
 
-func (s *Service) ViewOffers(username string) {
+func (s *Service) ViewOffers(ctx context.Context) ([]domain.ProductOffer, error) {
 	const op = "Service.ViewOffers"
 	log := slog.With("op", op)
 
 	log.Info("try get offers")
-	s.productOffersView.GetOffers(username)
+	offers, err := s.productOffersView.GetOffers(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	return offers, nil
 }
 
 func (s *Service) emitEvent(evt domain.ClientFindProductEvent) {

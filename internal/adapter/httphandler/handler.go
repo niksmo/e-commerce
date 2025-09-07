@@ -14,24 +14,24 @@ import (
 	"github.com/niksmo/e-commerce/internal/core/service"
 )
 
-// TODO: GET v1/recomendations Headers Authorization Basic is opt (200 OK, 204 No content)
-
 type ProductsHandler struct {
 	pSender port.ProductsSender
 	pFinder port.ProductFinder
+	oViewer port.ProductOffersViewer
 }
 
 func RegisterProducts(
 	mux *http.ServeMux,
 	pSender port.ProductsSender,
 	pFinder port.ProductFinder,
+	oViewer port.ProductOffersViewer,
 ) {
-	h := ProductsHandler{pSender, pFinder}
+	h := ProductsHandler{pSender, pFinder, oViewer}
 	mux.HandleFunc("GET /v1/products", h.GetProduct)
 	mux.HandleFunc("POST /v1/products", h.PostProducts)
+	mux.HandleFunc("GET /v1/products/offers", h.GetOffers)
 }
 
-// TODO: GET v1/products?name=<product_name> Headers Authorization Basic is opt (200 OK, 204 No content, 404)
 func (h ProductsHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	const (
 		op          = "ProductsHandler.GetProduct"
@@ -80,6 +80,19 @@ func (h ProductsHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	log.Info("find",
 		"statusCode", http.StatusOK,
 		"productName", v.Name, "user", username)
+}
+
+func (h ProductsHandler) GetOffers(w http.ResponseWriter, r *http.Request) {
+	const op = "ProductsHandler.GetOffers"
+	log := slog.With("op", op)
+
+	log.Info("try get offers")
+	offers, err := h.oViewer.ViewOffers(r.Context())
+	if err != nil {
+		log.Error("failed get offers", "err", err)
+		return
+	}
+	fmt.Println("OFFERS***:", offers)
 }
 
 func (h ProductsHandler) PostProducts(w http.ResponseWriter, r *http.Request) {

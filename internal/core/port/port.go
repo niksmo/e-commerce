@@ -85,7 +85,10 @@ type ProductOfferProducer interface {
 	Produce(context.Context, domain.ProductOffer) error
 }
 
-type ProductOffersView interface {
-	Run(context.Context)
-	GetOffers(username string)
+type ProductOffersGetter interface {
+	GetOffers(context.Context) ([]domain.ProductOffer, error)
+}
+
+type ProductOffersViewer interface {
+	ViewOffers(context.Context) ([]domain.ProductOffer, error)
 }

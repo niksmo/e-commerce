@@ -33,8 +33,9 @@ type streamProcessors struct {
 }
 
 type storages struct {
-	products     storage.ProductsRepository
-	clientEvents storage.ClientEventsRepository
+	products      storage.ProductsRepository
+	clientEvents  storage.ClientEventsRepository
+	productOffers kafka.ProductOffersConsumer
 }
 
 type producers struct {
@@ -277,6 +278,7 @@ func (app *App) initOutboundAdapters() {
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
 	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
 	productOffersTopic := app.cfg.Broker.Topics.ProductOffers
+	productOffersGroup := app.cfg.Broker.Consumers.ProductOffersGroup
 	user := app.cfg.Broker.SASLSSL.AppUser
 	pass := app.cfg.Broker.SASLSSL.AppPass
 
@@ -363,12 +365,28 @@ func (app *App) initOutboundAdapters() {
 		app.fallDown(op, err)
 	}
 
+	productsOfferConsumer := kafka.NewProductOffersConsumer(
+		kafka.ProductOffersConsumerConfig{
+			ConsumerClient: kafka.NewConsumerClient(ctx,
+				kafka.ConsumerClientConfig{
+					SeedBrokers: seedBrokersPrimary,
+					Topic:       productOffersTopic,
+					Group:       productOffersGroup,
+					User:        user,
+					Pass:        pass,
+					TLSConfig:   app.tlsConfig,
+				}),
+			Decoder: app.serdes.productOffer,
+		},
+	)
+
 	clientEventsRepository := storage.NewClientEventsRepository(hdfs)
 
 	app.sqldb = sqldb
 	app.hdfs = hdfs
 	app.storages.products = productsRepository
 	app.storages.clientEvents = clientEventsRepository
+	app.storages.productOffers = productsOfferConsumer
 	app.producers.products = productsProducer
 	app.producers.productFilter = productFilterProducer
 	app.producers.findProductEvent = findProductEventProducer
@@ -387,6 +405,7 @@ func (app *App) initCoreService() {
 		ClientEventsStorage:      app.storages.clientEvents,
 		ClientEventsAnalyzer:     app.analyzers.clientEvents,
 		ProductOfferProducer:     app.producers.productOffer,
+		ProductOffersView:        app.storages.productOffers,
 	}
 	app.coreService = service.New(serviceConfig)
 }
@@ -445,7 +464,12 @@ func (app *App) initInboundAdapters() {
 	}
 
 	handler := http.NewServeMux()
-	httphandler.RegisterProducts(handler, app.coreService, app.coreService)
+	httphandler.RegisterProducts(
+		handler,
+		app.coreService,
+		app.coreService,
+		app.coreService,
+	)
 	httphandler.RegisterFilter(handler, app.coreService)
 	httpServer := httphandler.NewHTTPServer(addr, handler)
 
