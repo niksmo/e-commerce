@@ -17,18 +17,6 @@ var (
 	ErrNotFound = errors.New("not found")
 )
 
-type Service struct {
-	productFilterProc     port.ProductFilterProcessor
-	productBlockerProc    port.ProductBlockerProcessor
-	productsProducer      port.ProductsProducer
-	productFilterProducer port.ProductFilterProducer
-	productsStorage       port.ProductsStorage
-	clientEventsStorage   port.ClientEventsStorage
-	productReader         port.ProductReader
-	clientEventsWorker    clientEventWorker
-	analyticsWorker       analyticsWorker
-}
-
 type ServiceConfig struct {
 	ProductFilterProc        port.ProductFilterProcessor
 	ProductBlockerProc       port.ProductBlockerProcessor
@@ -40,6 +28,20 @@ type ServiceConfig struct {
 	ClientEventsStorage      port.ClientEventsStorage
 	ClientEventsAnalyzer     port.ClientEventsAnalyzer
 	ProductOfferProducer     port.ProductOfferProducer
+	ProductOffersView        port.ProductOffersView
+}
+
+type Service struct {
+	productFilterProc     port.ProductFilterProcessor
+	productBlockerProc    port.ProductBlockerProcessor
+	productsProducer      port.ProductsProducer
+	productFilterProducer port.ProductFilterProducer
+	productsStorage       port.ProductsStorage
+	clientEventsStorage   port.ClientEventsStorage
+	productReader         port.ProductReader
+	productOffersView     port.ProductOffersView
+	clientEventsWorker    clientEventWorker
+	analyticsWorker       analyticsWorker
 }
 
 func New(
@@ -63,6 +65,7 @@ func New(
 		productsStorage:       config.ProductsStorage,
 		clientEventsStorage:   config.ClientEventsStorage,
 		productReader:         config.ProductReader,
+		productOffersView:     config.ProductOffersView,
 		clientEventsWorker:    clientEventsWorker,
 		analyticsWorker:       analyticsWorker,
 	}
@@ -80,6 +83,8 @@ func (s *Service) Run(ctx context.Context, stopFn context.CancelFunc) {
 	go s.productFilterProc.Run(ctx, stopFn, &wg)
 	go s.productBlockerProc.Run(ctx, stopFn, &wg)
 	wg.Wait()
+
+	go s.productOffersView.Run(ctx)
 
 	go s.clientEventsWorker.run(ctx)
 	go s.analyticsWorker.run(ctx)
@@ -196,6 +201,14 @@ func (s *Service) SaveEvents(
 
 	log.Info("client events saved", "nEvents", len(evts))
 	return nil
+}
+
+func (s *Service) ViewOffers(username string) {
+	const op = "Service.ViewOffers"
+	log := slog.With("op", op)
+
+	log.Info("try get offers")
+	s.productOffersView.GetOffers(username)
 }
 
 func (s *Service) emitEvent(evt domain.ClientFindProductEvent) {

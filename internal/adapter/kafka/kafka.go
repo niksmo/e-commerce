@@ -1,10 +1,14 @@
 package kafka
 
 import (
+	"crypto/tls"
 	"errors"
 	"fmt"
+	"io"
+	"log"
 	"strings"
 
+	"github.com/lovoo/goka"
 	"github.com/niksmo/e-commerce/internal/core/domain"
 	"github.com/niksmo/e-commerce/pkg/schema"
 )
@@ -34,6 +38,20 @@ func makeOp(s ...string) string {
 
 func opErr(err error, op ...string) error {
 	return fmt.Errorf("%s: %w", makeOp(op...), err)
+}
+
+func withNonlogProcOpt() goka.ProcessorOption {
+	return goka.WithLogger(log.New(io.Discard, "", 0))
+}
+
+func applySASLTLS(tlsConfig *tls.Config, user, pass string) {
+	saramaCfg := goka.DefaultConfig()
+	saramaCfg.Net.TLS.Enable = true
+	saramaCfg.Net.TLS.Config = tlsConfig
+	saramaCfg.Net.SASL.Enable = true
+	saramaCfg.Net.SASL.User = user
+	saramaCfg.Net.SASL.Password = pass
+	goka.ReplaceGlobalConfig(saramaCfg)
 }
 
 func productToSchemaV1(v domain.Product) (s schema.ProductV1) {

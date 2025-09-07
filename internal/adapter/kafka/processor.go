@@ -4,8 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"io"
-	"log"
 	"log/slog"
 	"strconv"
 	"sync"
@@ -342,18 +340,4 @@ func (p *ProductBlockerProcessor) processFn(ctx goka.Context, msg any) {
 	}
 	ctx.Emit(p.outputStream, productV.Name, productV)
 	log.Info("product is allowed")
-}
-
-func withNonlogProcOpt() goka.ProcessorOption {
-	return goka.WithLogger(log.New(io.Discard, "", 0))
-}
-
-func applySASLTLS(tlsConfig *tls.Config, user, pass string) {
-	saramaCfg := goka.DefaultConfig()
-	saramaCfg.Net.TLS.Enable = true
-	saramaCfg.Net.TLS.Config = tlsConfig
-	saramaCfg.Net.SASL.Enable = true
-	saramaCfg.Net.SASL.User = user
-	saramaCfg.Net.SASL.Password = pass
-	goka.ReplaceGlobalConfig(saramaCfg)
 }

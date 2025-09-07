@@ -84,3 +84,8 @@ type ClientEventsAnalyzer interface {
 type ProductOfferProducer interface {
 	Produce(context.Context, domain.ProductOffer) error
 }
+
+type ProductOffersView interface {
+	Run(context.Context)
+	GetOffers(username string)
+}
