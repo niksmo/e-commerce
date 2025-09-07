@@ -74,4 +74,13 @@ type ClientEventsSaver interface {
 type ClientEventsStorage interface {
 	StoreEvents(ctx context.Context,
 		username string, evts []domain.ClientFindProductEvent) error
+	DataPaths() []string
+}
+
+type ClientEventsAnalyzer interface {
+	Do(ctx context.Context, srcPaths []string) <-chan domain.Recommendation
+}
+
+type RecommendationProducer interface {
+	Produce(context.Context, domain.Recommendation) error
 }

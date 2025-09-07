@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"sync"
+	"time"
 
 	"github.com/niksmo/e-commerce/internal/adapter/storage"
 	"github.com/niksmo/e-commerce/internal/core/domain"
@@ -17,15 +18,30 @@ var (
 )
 
 type Service struct {
-	productFilterProc     port.ProductFilterProcessor
-	productBlockerProc    port.ProductBlockerProcessor
-	productsProducer      port.ProductsProducer
-	productFilterProducer port.ProductFilterProducer
-	productsStorage       port.ProductsStorage
-	clientEventsStorage   port.ClientEventsStorage
-	productReader         port.ProductReader
-	evtProc               *clientEventWorker
-	evtC                  chan<- domain.ClientFindProductEvent
+	productFilterProc      port.ProductFilterProcessor
+	productBlockerProc     port.ProductBlockerProcessor
+	productsProducer       port.ProductsProducer
+	productFilterProducer  port.ProductFilterProducer
+	productsStorage        port.ProductsStorage
+	clientEventsStorage    port.ClientEventsStorage
+	productReader          port.ProductReader
+	clientEventsAnalyzer   port.ClientEventsAnalyzer
+	recommendationProducer port.RecommendationProducer
+	evtProc                *clientEventWorker
+	evtC                   chan<- domain.ClientFindProductEvent
+}
+
+type ServiceConfig struct {
+	ProductFilterProc       port.ProductFilterProcessor
+	ProductBlockerProc      port.ProductBlockerProcessor
+	ProductsProducer        port.ProductsProducer
+	ProductsFilterProducer  port.ProductFilterProducer
+	ProductsStorage         port.ProductsStorage
+	ProductReader           port.ProductReader
+	FindProductEventEmitter port.ClientFindProductEventEmitter
+	ClientEventsStorage     port.ClientEventsStorage
+	ClientEventsAnalyzer    port.ClientEventsAnalyzer
+	RecommendationProducer  port.RecommendationProducer
 }
 
 func New(
@@ -37,17 +53,21 @@ func New(
 	productReader port.ProductReader,
 	findProductEventEmitter port.ClientFindProductEventEmitter,
 	clientEventsStorage port.ClientEventsStorage,
+	clientEventsAnalyzer port.ClientEventsAnalyzer,
+	recommendationProducer port.RecommendationProducer,
 ) *Service {
 	evtProc := &clientEventWorker{emitter: findProductEventEmitter}
 	return &Service{
-		productFilterProc:     productFilterProc,
-		productBlockerProc:    productBlockerProc,
-		productsProducer:      productsProducer,
-		productFilterProducer: productsFilterProducer,
-		productsStorage:       productsStorage,
-		clientEventsStorage:   clientEventsStorage,
-		productReader:         productReader,
-		evtProc:               evtProc,
+		productFilterProc:      productFilterProc,
+		productBlockerProc:     productBlockerProc,
+		productsProducer:       productsProducer,
+		productFilterProducer:  productsFilterProducer,
+		productsStorage:        productsStorage,
+		clientEventsStorage:    clientEventsStorage,
+		productReader:          productReader,
+		evtProc:                evtProc,
+		clientEventsAnalyzer:   clientEventsAnalyzer,
+		recommendationProducer: recommendationProducer,
 	}
 }
 
@@ -59,6 +79,8 @@ func (s *Service) Run(ctx context.Context, stopFn context.CancelFunc) {
 	log := slog.With("op", op)
 
 	s.evtC = s.evtProc.run(ctx)
+
+	go s.runAnanalytics(ctx)
 
 	var wg sync.WaitGroup
 	wg.Add(2)
@@ -149,7 +171,8 @@ func (s *Service) FindProduct(
 	}
 
 	if userEvent(user) {
-		s.evtC <- productToEvt(user, v)
+		evt := productToEvt(user, v)
+		s.emitEvent(evt)
 	}
 
 	return v, nil
@@ -177,6 +200,48 @@ func (s *Service) SaveEvents(
 
 	log.Info("client events saved", "nEvents", len(evts))
 	return nil
+}
+
+func (s *Service) emitEvent(evt domain.ClientFindProductEvent) {
+	s.evtC <- evt
+}
+
+func (s *Service) runAnanalytics(ctx context.Context) {
+	const op = "Service.runAnanalytics"
+	log := slog.With("op", op)
+
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			srcPaths := s.clientEventsStorage.DataPaths()
+
+			if len(srcPaths) == 0 {
+				log.Info("no data for analytics")
+				continue
+			}
+
+			stream := s.clientEventsAnalyzer.Do(ctx, srcPaths)
+			for r := range stream {
+				s.produceRecommendation(ctx, r)
+			}
+		}
+	}
+}
+
+func (s *Service) produceRecommendation(
+	ctx context.Context, r domain.Recommendation,
+) {
+	const op = "Service.produceRecommendation"
+	log := slog.With("op", op)
+	err := s.recommendationProducer.Produce(ctx, r)
+	if err != nil {
+		log.Error("failed produce recommendation", "err", err)
+	}
 }
 
 // A clientEventWorker is used for process client event in core service.

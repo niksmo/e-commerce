@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"io/fs"
 	"log/slog"
 	"os"
 	"time"
@@ -64,6 +65,7 @@ type hdfsStorage interface {
 	Stat(name string) (os.FileInfo, error)
 	Create(name string) (*hdfscl.FileWriter, error)
 	Append(name string) (*hdfscl.FileWriter, error)
+	Filepaths(dir string) (paths []string)
 }
 
 type HDFS struct {
@@ -112,4 +114,29 @@ func (s HDFS) Close() {
 		return
 	}
 	log.Info("HDFS is closed")
+}
+
+func (s HDFS) Filepaths(dir string) (paths []string) {
+	const op = "HDFS.Filepaths"
+	log := slog.With("op", op)
+
+	s.Walk(dir, func(path string, info fs.FileInfo, err error) error {
+		if path == dir {
+			return nil
+		}
+
+		if err != nil {
+			log.Error("failed on dir walk", "err", err)
+			return nil
+		}
+
+		if info.IsDir() {
+			return fs.SkipDir
+		}
+
+		paths = append(paths, path)
+		return nil
+	})
+
+	return paths
 }

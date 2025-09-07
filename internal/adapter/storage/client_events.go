@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"strings"
 	"time"
 
 	"github.com/colinmarc/hdfs/v2"
@@ -34,10 +35,11 @@ type (
 
 type ClientEventsRepository struct {
 	hdfs hdfsStorage
+	host string
 }
 
-func NewClientEventsRepository(hdfs hdfsStorage) ClientEventsRepository {
-	return ClientEventsRepository{hdfs}
+func NewClientEventsRepository(hdfs hdfsStorage, host string) ClientEventsRepository {
+	return ClientEventsRepository{hdfs, host}
 }
 
 func (r ClientEventsRepository) StoreEvents(
@@ -49,7 +51,7 @@ func (r ClientEventsRepository) StoreEvents(
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	filepath := r.getFileName(username)
+	filepath := r.filepath(username)
 
 	w, err := r.createWriter(filepath)
 	if err != nil {
@@ -69,8 +71,16 @@ func (r ClientEventsRepository) StoreEvents(
 	return nil
 }
 
-func (r ClientEventsRepository) getFileName(username string) string {
-	return "/" + username
+func (r ClientEventsRepository) DataPaths() []string {
+	return r.hdfs.Filepaths("/")
+}
+
+func (r ClientEventsRepository) filepath(username string) string {
+	var b strings.Builder
+	b.WriteString(r.host)
+	b.WriteString("/")
+	b.WriteString(strings.ToLower(username))
+	return b.String()
 }
 
 func (r ClientEventsRepository) createWriter(filepath string) (io.WriteCloser, error) {
