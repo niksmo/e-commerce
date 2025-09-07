@@ -1,7 +1,7 @@
 .PHONY: infra-start infra-stop infra-restart \
         compose-up wait-kafka kafka-permissions \
         spark-connect compose-down compose-clean \
-		app-start
+		app-bin app-prepare build
 
 export ECOM_CONFIG_FILE=./config.yml
 
@@ -26,13 +26,12 @@ kafka-permissions:
 	docker compose exec kafka-a-1 kafka-acls --bootstrap-server localhost:9092 \
 	--command-config /etc/kafka/admin-client.properties \
   	--add --allow-principal User:app --operation all \
-  	--topic products-from-shop \
-  	--topic products-to-storage \
-  	--topic filter-product-stream \
-  	--topic filter-product-group-table \
-  	--topic filter-product-group \
-  	--topic client-find-product-events
-	--topic product-offers
+  	--topic products-from-shop --topic products-to-storage \
+  	--topic filter-product-stream --topic filter-product-group-table \
+  	--topic filter-product-group --topic client-find-product-events \
+	--topic product-offers \
+	--group filter-product-group --group product-blocker-group \
+	--group product-saver-group --group client-events-group
 
 spark-connect:
 	docker compose exec spark-master sbin/start-connect-server.sh \
@@ -44,9 +43,17 @@ compose-down:
 compose-clean:
 	yes | docker volume prune
 
-app-start:
-	go run ./cmd/topicmaker/. && \
-	go run ./cmd/migrator/. \
+app-bin:
+	@rm -r ./bin 2>/dev/null || true
+	@mkdir ./bin
+	go build -o ./bin/topicmaker ./cmd/topicmaker/. && \
+	go build -o ./bin/migrator ./cmd/migrator/. && \
+	go build -o ./bin/app ./cmd/ecom/.
+
+app-prepare:
+	./bin/topicmaker && \
+	./bin/migrator \
 	--storage-path 'user:pass@127.0.0.1:5432/ecom?sslmode=disable' \
-	--migrations-path ./migrations && \
-	go run ./cmd/ecom/.
+	--migrations-path ./migrations
+
+build: app-bin app-prepare

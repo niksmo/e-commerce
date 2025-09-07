@@ -114,7 +114,7 @@ func (c Config) Print() {
 		FilterProductStream=%q
 		FilterProductTable=%q
 		ClientFindProductEvents=%q
-		ProductOfferss=%q
+		ProductOffers=%q
 	Consumers:
 		FilterProductGroup=%q
 		ProductBlockerGroup=%q
@@ -148,6 +148,7 @@ func (c Config) Print() {
 		c.Broker.Topics.FilterProductStream,
 		c.Broker.Topics.FilterProductTable,
 		c.Broker.Topics.ClientFindProductEvents,
+		c.Broker.Topics.ProductOffers,
 		c.Broker.Consumers.FilterProductGroup,
 		c.Broker.Consumers.ProductBlockerGroup,
 		c.Broker.Consumers.ProductSaverGroup,
