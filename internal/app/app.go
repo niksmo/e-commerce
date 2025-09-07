@@ -271,6 +271,7 @@ func (app *App) initOutboundAdapters() {
 	sqldsn := app.cfg.SQLDB
 	hdfsAddr := app.cfg.HDFS.Addr
 	hdfsUser := app.cfg.HDFS.User
+	hdfsHost := app.cfg.HDFS.Host
 	seedBrokersPrimary := app.cfg.Broker.SeedBrokersPrimary
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
@@ -284,7 +285,7 @@ func (app *App) initOutboundAdapters() {
 		app.fallDown(op, err)
 	}
 
-	hdfs, err := storage.NewHDFS(hdfsAddr, hdfsUser)
+	hdfs, err := storage.NewHDFS(hdfsAddr, hdfsUser, hdfsHost)
 	if err != nil {
 		app.fallDown(op, err)
 	}
@@ -362,7 +363,7 @@ func (app *App) initOutboundAdapters() {
 		app.fallDown(op, err)
 	}
 
-	clientEventsRepository := storage.NewClientEventsRepository(hdfs, app.cfg.HDFS.Host)
+	clientEventsRepository := storage.NewClientEventsRepository(hdfs)
 
 	app.sqldb = sqldb
 	app.hdfs = hdfs

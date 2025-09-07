@@ -226,7 +226,7 @@ func (w *analyticsWorker) run(ctx context.Context) {
 	const op = "analyticsWorker.run"
 	log := slog.With("op", op)
 
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(30 * time.Second)
 	defer ticker.Stop()
 
 	for {

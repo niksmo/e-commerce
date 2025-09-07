@@ -35,11 +35,10 @@ type (
 
 type ClientEventsRepository struct {
 	hdfs hdfsStorage
-	host string
 }
 
-func NewClientEventsRepository(hdfs hdfsStorage, host string) ClientEventsRepository {
-	return ClientEventsRepository{hdfs, host}
+func NewClientEventsRepository(hdfs hdfsStorage) ClientEventsRepository {
+	return ClientEventsRepository{hdfs}
 }
 
 func (r ClientEventsRepository) StoreEvents(
@@ -77,7 +76,6 @@ func (r ClientEventsRepository) DataPaths() []string {
 
 func (r ClientEventsRepository) filepath(username string) string {
 	var b strings.Builder
-	b.WriteString(r.host)
 	b.WriteString("/")
 	b.WriteString(strings.ToLower(username))
 	return b.String()

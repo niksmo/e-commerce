@@ -70,9 +70,10 @@ type hdfsStorage interface {
 
 type HDFS struct {
 	*hdfscl.Client
+	host string
 }
 
-func NewHDFS(addr, user string) (HDFS, error) {
+func NewHDFS(addr, user, host string) (HDFS, error) {
 	const op = "HDFS"
 	log := slog.With("op", op)
 
@@ -99,7 +100,7 @@ func NewHDFS(addr, user string) (HDFS, error) {
 	})
 	log.Info("HDFS is available")
 
-	return HDFS{cl}, nil
+	return HDFS{cl, host}, nil
 }
 
 func (s HDFS) Close() {
@@ -134,7 +135,7 @@ func (s HDFS) Filepaths(dir string) (paths []string) {
 			return fs.SkipDir
 		}
 
-		paths = append(paths, path)
+		paths = append(paths, s.host+"/"+path)
 		return nil
 	})
 
