@@ -63,7 +63,7 @@ func main() {
 	err = makeTopics(
 		sigCtx, cl, compactCleanupPolicy,
 		cfg.Broker.Topics.FilterProductTable,
-		cfg.Broker.Topics.Recommendations,
+		cfg.Broker.Topics.ProductOffers,
 	)
 	if err != nil {
 		printFail(err)
@@ -142,6 +142,7 @@ func printStart(cfg config.Config) {
 	- %q
 	- %q
 	- %q
+	- %q
 
 `,
 		cfg.Broker.Topics.ProductsFromShop,
@@ -149,6 +150,7 @@ func printStart(cfg config.Config) {
 		cfg.Broker.Topics.FilterProductStream,
 		cfg.Broker.Topics.FilterProductTable,
 		cfg.Broker.Topics.ClientFindProductEvents,
+		cfg.Broker.Topics.ProductOffers,
 	)
 }
 

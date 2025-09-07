@@ -18,17 +18,15 @@ var (
 )
 
 type Service struct {
-	productFilterProc      port.ProductFilterProcessor
-	productBlockerProc     port.ProductBlockerProcessor
-	productsProducer       port.ProductsProducer
-	productFilterProducer  port.ProductFilterProducer
-	productsStorage        port.ProductsStorage
-	clientEventsStorage    port.ClientEventsStorage
-	productReader          port.ProductReader
-	clientEventsAnalyzer   port.ClientEventsAnalyzer
-	recommendationProducer port.RecommendationProducer
-	evtWorker              *clientEventWorker
-	evtC                   chan<- domain.ClientFindProductEvent
+	productFilterProc     port.ProductFilterProcessor
+	productBlockerProc    port.ProductBlockerProcessor
+	productsProducer      port.ProductsProducer
+	productFilterProducer port.ProductFilterProducer
+	productsStorage       port.ProductsStorage
+	clientEventsStorage   port.ClientEventsStorage
+	productReader         port.ProductReader
+	clientEventsWorker    clientEventWorker
+	analyticsWorker       analyticsWorker
 }
 
 type ServiceConfig struct {
@@ -38,27 +36,35 @@ type ServiceConfig struct {
 	ProductsFilterProducer   port.ProductFilterProducer
 	ProductsStorage          port.ProductsStorage
 	ProductReader            port.ProductReader
-	FindProductEventProducer port.ClientFindProductEventEmitter
+	FindProductEventProducer port.ClientFindProductEventProducer
 	ClientEventsStorage      port.ClientEventsStorage
 	ClientEventsAnalyzer     port.ClientEventsAnalyzer
-	RecommendationProducer   port.RecommendationProducer
+	ProductOfferProducer     port.ProductOfferProducer
 }
 
 func New(
 	config ServiceConfig,
 ) *Service {
-	evtWorker := &clientEventWorker{emitter: config.FindProductEventProducer}
+	clientEventsWorker := newClientEventWorker(
+		config.FindProductEventProducer,
+	)
+
+	analyticsWorker := newAnalyticsWorker(
+		config.ClientEventsStorage,
+		config.ClientEventsAnalyzer,
+		config.ProductOfferProducer,
+	)
+
 	return &Service{
-		productFilterProc:      config.ProductFilterProc,
-		productBlockerProc:     config.ProductBlockerProc,
-		productsProducer:       config.ProductsProducer,
-		productFilterProducer:  config.ProductsFilterProducer,
-		productsStorage:        config.ProductsStorage,
-		clientEventsStorage:    config.ClientEventsStorage,
-		productReader:          config.ProductReader,
-		evtWorker:              evtWorker,
-		clientEventsAnalyzer:   config.ClientEventsAnalyzer,
-		recommendationProducer: config.RecommendationProducer,
+		productFilterProc:     config.ProductFilterProc,
+		productBlockerProc:    config.ProductBlockerProc,
+		productsProducer:      config.ProductsProducer,
+		productFilterProducer: config.ProductsFilterProducer,
+		productsStorage:       config.ProductsStorage,
+		clientEventsStorage:   config.ClientEventsStorage,
+		productReader:         config.ProductReader,
+		clientEventsWorker:    clientEventsWorker,
+		analyticsWorker:       analyticsWorker,
 	}
 }
 
@@ -69,15 +75,14 @@ func (s *Service) Run(ctx context.Context, stopFn context.CancelFunc) {
 	const op = "Service.Run"
 	log := slog.With("op", op)
 
-	s.evtC = s.evtWorker.run(ctx)
-
-	go s.runAnanalytics(ctx)
-
 	var wg sync.WaitGroup
 	wg.Add(2)
 	go s.productFilterProc.Run(ctx, stopFn, &wg)
 	go s.productBlockerProc.Run(ctx, stopFn, &wg)
 	wg.Wait()
+
+	go s.clientEventsWorker.run(ctx)
+	go s.analyticsWorker.run(ctx)
 
 	log.Info("running")
 }
@@ -89,7 +94,7 @@ func (s *Service) Close() {
 	log.Info("service is closing...")
 	s.productFilterProc.Close()
 	s.productBlockerProc.Close()
-	s.evtWorker.close()
+	s.clientEventsWorker.close()
 	log.Info("service is closed")
 }
 
@@ -194,11 +199,31 @@ func (s *Service) SaveEvents(
 }
 
 func (s *Service) emitEvent(evt domain.ClientFindProductEvent) {
-	s.evtC <- evt
+	s.clientEventsWorker.evtStream <- evt
 }
 
-func (s *Service) runAnanalytics(ctx context.Context) {
-	const op = "Service.runAnanalytics"
+// A analyticsWorker is used in core service for process client events.
+type analyticsWorker struct {
+	clientEventsStorage port.ClientEventsStorage
+	analyzer            port.ClientEventsAnalyzer
+	producer            port.ProductOfferProducer
+}
+
+func newAnalyticsWorker(
+	clientEventsStorage port.ClientEventsStorage,
+	analyzer port.ClientEventsAnalyzer,
+	producer port.ProductOfferProducer,
+
+) analyticsWorker {
+	return analyticsWorker{
+		clientEventsStorage: clientEventsStorage,
+		analyzer:            analyzer,
+		producer:            producer,
+	}
+}
+
+func (w *analyticsWorker) run(ctx context.Context) {
+	const op = "analyticsWorker.run"
 	log := slog.With("op", op)
 
 	ticker := time.NewTicker(5 * time.Second)
@@ -209,52 +234,57 @@ func (s *Service) runAnanalytics(ctx context.Context) {
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			srcPaths := s.clientEventsStorage.DataPaths()
+			log.Info("analytics tick")
+			srcPaths := w.clientEventsStorage.DataPaths()
 
 			if len(srcPaths) == 0 {
-				log.Info("no data for analytics")
+				log.Info("no data for product offers analytics")
 				continue
 			}
 
-			stream := s.clientEventsAnalyzer.Do(ctx, srcPaths)
-			for r := range stream {
-				s.produceRecommendation(ctx, r)
+			stream := w.analyzer.Do(ctx, srcPaths)
+			for v := range stream {
+				log.Info("make product offers", "username", v.Username)
+				w.saveProductOffers(ctx, v)
 			}
 		}
 	}
 }
 
-func (s *Service) produceRecommendation(
-	ctx context.Context, r domain.Recommendation,
+func (w *analyticsWorker) saveProductOffers(
+	ctx context.Context, v domain.ProductOffer,
 ) {
-	const op = "Service.produceRecommendation"
-	log := slog.With("op", op)
-	err := s.recommendationProducer.Produce(ctx, r)
+	const op = "analyticsWorker.saveProductOffers"
+	log := slog.With("op", op, "username", v.Username)
+	err := w.producer.Produce(ctx, v)
 	if err != nil {
-		log.Error("failed produce recommendation", "err", err)
+		log.Error("failed to produce product offer", "err", err)
+		return
+	}
+	log.Info("produce product offers")
+}
+
+// A clientEventWorker is used in core service for produce client event.
+type clientEventWorker struct {
+	evtStream chan domain.ClientFindProductEvent
+	emitter   port.ClientFindProductEventProducer
+}
+
+func newClientEventWorker(
+	emitter port.ClientFindProductEventProducer,
+) clientEventWorker {
+	return clientEventWorker{
+		emitter:   emitter,
+		evtStream: make(chan domain.ClientFindProductEvent, 1),
 	}
 }
 
-// A clientEventWorker is used for process client event in core service.
-type clientEventWorker struct {
-	evtC    chan domain.ClientFindProductEvent
-	emitter port.ClientFindProductEventEmitter
-}
-
-func (p *clientEventWorker) run(
-	ctx context.Context,
-) chan<- domain.ClientFindProductEvent {
-	p.evtC = make(chan domain.ClientFindProductEvent, 1)
-	go p.runProc(ctx)
-	return p.evtC
-}
-
-func (p *clientEventWorker) runProc(ctx context.Context) {
-	const op = "Service.clientEventWorker.runProc"
+func (w clientEventWorker) run(ctx context.Context) {
+	const op = "Service.clientEventWorker.run"
 	log := slog.With("op", op)
 
-	for evt := range p.evtC {
-		err := p.emitter.Emit(ctx, evt)
+	for evt := range w.evtStream {
+		err := w.emitter.Produce(ctx, evt)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				continue
@@ -266,8 +296,8 @@ func (p *clientEventWorker) runProc(ctx context.Context) {
 	}
 }
 
-func (p *clientEventWorker) close() {
-	close(p.evtC)
+func (w clientEventWorker) close() {
+	close(w.evtStream)
 }
 
 func userEvent(user string) bool {

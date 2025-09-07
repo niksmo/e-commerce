@@ -43,7 +43,7 @@ type ClientFindProductEvent struct {
 	StoreID        string
 }
 
-type Recommendation struct {
+type ProductOffer struct {
 	Username string
 	Events   int
 }

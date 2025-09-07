@@ -118,9 +118,9 @@ func schemaV1ToClientEvent(
 	return
 }
 
-func recommendationToSchema(
-	r domain.Recommendation,
-) (s schema.RecommendationV1) {
+func productOfferToSchema(
+	r domain.ProductOffer,
+) (s schema.ProductOfferV1) {
 	s.Username = r.Username
 	s.Events = r.Events
 	return

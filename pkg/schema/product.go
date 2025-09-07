@@ -57,10 +57,10 @@ type ClientFindProductEventV1 struct {
 	StoreID        string            `avro:"store_id"`
 }
 
-//go:embed recommendation_v1.avsc
-var RecommendationSchemaTextV1 string
+//go:embed product_offer_v1.avsc
+var ProductOfferSchemaTextV1 string
 
-type RecommendationV1 struct {
+type ProductOfferV1 struct {
 	Username string `avro:"username"`
 	Events   int    `avro:"events"`
 }

@@ -63,8 +63,8 @@ type ProductReader interface {
 	) (domain.Product, error)
 }
 
-type ClientFindProductEventEmitter interface {
-	Emit(context.Context, domain.ClientFindProductEvent) error
+type ClientFindProductEventProducer interface {
+	Produce(context.Context, domain.ClientFindProductEvent) error
 }
 
 type ClientEventsSaver interface {
@@ -78,9 +78,9 @@ type ClientEventsStorage interface {
 }
 
 type ClientEventsAnalyzer interface {
-	Do(ctx context.Context, srcPaths []string) <-chan domain.Recommendation
+	Do(ctx context.Context, srcPaths []string) <-chan domain.ProductOffer
 }
 
-type RecommendationProducer interface {
-	Produce(context.Context, domain.Recommendation) error
+type ProductOfferProducer interface {
+	Produce(context.Context, domain.ProductOffer) error
 }

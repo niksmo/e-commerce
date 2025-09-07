@@ -1,7 +1,7 @@
 {
 	"type": "record",
 	"namespace": "products",
-	"name": "recommendation",
+	"name": "product_offer",
 	"fields": [
 		{
 			"name": "username",

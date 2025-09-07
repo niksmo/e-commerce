@@ -33,7 +33,7 @@ type topics struct {
 	FilterProductStream     string `mapstructure:"filter_product_stream"`
 	FilterProductTable      string `mapstructure:"filter_product_table"`
 	ClientFindProductEvents string `mapstructure:"client_find_product_events"`
-	Recommendations         string `mapstructure:"recommendations"`
+	ProductOffers           string `mapstructure:"product_offers"`
 }
 
 type broker struct {
@@ -114,7 +114,7 @@ func (c Config) Print() {
 		FilterProductStream=%q
 		FilterProductTable=%q
 		ClientFindProductEvents=%q
-		Recommendations=%q
+		ProductOfferss=%q
 	Consumers:
 		FilterProductGroup=%q
 		ProductBlockerGroup=%q

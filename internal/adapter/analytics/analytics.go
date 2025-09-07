@@ -18,14 +18,14 @@ func NewClientEventsAnalyzer(addr string) ClientEventsAnalyzer {
 
 func (a ClientEventsAnalyzer) Do(
 	ctx context.Context, srcPaths []string,
-) <-chan domain.Recommendation {
-	c := make(chan domain.Recommendation, 1)
+) <-chan domain.ProductOffer {
+	c := make(chan domain.ProductOffer, 1)
 	go a.do(ctx, c, srcPaths)
 	return c
 }
 
 func (a ClientEventsAnalyzer) do(
-	ctx context.Context, stream chan<- domain.Recommendation, srcPaths []string,
+	ctx context.Context, stream chan<- domain.ProductOffer, srcPaths []string,
 ) {
 	const op = "ClientEventsAnalyzer.do"
 	log := slog.With("op", op)
@@ -35,15 +35,15 @@ func (a ClientEventsAnalyzer) do(
 	}
 	defer close(stream)
 
-	s, err := sql.NewSessionBuilder().Remote(a.addr).Build(ctx)
+	session, err := sql.NewSessionBuilder().Remote(a.addr).Build(ctx)
 	if err != nil {
 		log.Error("failed to build session", "err", err)
 	}
 
-	defer a.stop(s)
+	defer a.stop(session)
 
 	for _, src := range srcPaths {
-		df, err := s.Read().Format("json").Load(src)
+		df, err := session.Read().Format("json").Load(src)
 		if err != nil {
 			log.Error("failed to read source")
 			return
@@ -67,10 +67,12 @@ func (a ClientEventsAnalyzer) do(
 			return
 		}
 
-		stream <- domain.Recommendation{
+		v := domain.ProductOffer{
 			Username: username,
 			Events:   int(nEvents),
 		}
+
+		stream <- v
 	}
 
 }

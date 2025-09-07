@@ -88,11 +88,11 @@ func NewSerdeClientFindProductEventV1(ctx context.Context, opts ...Opt) (Serde, 
 	)
 }
 
-func NewSerdeRecommendationV1(ctx context.Context, opts ...Opt) (Serde, error) {
-	const op = "NewSerdeRecommendationV1"
+func NewSerdeProductOfferV1(ctx context.Context, opts ...Opt) (Serde, error) {
+	const op = "NewSerdeProductOfferV1"
 	return serdeConstructor(
 		ctx,
-		RecommendationSchemaTextV1, RecommendationV1{},
+		ProductOfferSchemaTextV1, ProductOfferV1{},
 		op, opts...,
 	)
 }

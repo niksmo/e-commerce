@@ -24,7 +24,7 @@ type serdes struct {
 	productToStorage  schema.Serde
 	productFilter     schema.Serde
 	findProductEvents schema.Serde
-	recommendation    schema.Serde
+	productOffer      schema.Serde
 }
 
 type streamProcessors struct {
@@ -41,7 +41,7 @@ type producers struct {
 	products         kafka.ProductsProducer
 	productFilter    kafka.ProductFilterProducer
 	findProductEvent kafka.FindProductEventProducer
-	recommendation   kafka.RecommendationProducer
+	productOffer     kafka.ProductOfferProducer
 }
 
 type consumers struct {
@@ -141,7 +141,7 @@ func (app *App) initSerdes() {
 	productsToStorageTopic := app.cfg.Broker.Topics.ProductsToStorage
 	filterProductsStream := app.cfg.Broker.Topics.FilterProductStream
 	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
-	recommendationsTopic := app.cfg.Broker.Topics.Recommendations
+	productOffersTopic := app.cfg.Broker.Topics.ProductOffers
 
 	srClient, err := sr.NewClient(sr.URLs(urls...))
 	if err != nil {
@@ -190,10 +190,10 @@ func (app *App) initSerdes() {
 		app.fallDown(op, err)
 	}
 
-	recommendationSS := schema.ValueSubject(recommendationsTopic)
-	recommendationSerde, err := schema.NewSerdeRecommendationV1(
+	productOfferSS := schema.ValueSubject(productOffersTopic)
+	productOfferSerde, err := schema.NewSerdeProductOfferV1(
 		ctx,
-		schema.SubjectOpt(recommendationSS),
+		schema.SubjectOpt(productOfferSS),
 		schema.SchemaIdentifierOpt(schemaCreater),
 	)
 	if err != nil {
@@ -204,7 +204,7 @@ func (app *App) initSerdes() {
 	app.serdes.productFilter = productFilterSerde
 	app.serdes.productToStorage = productToStorageSerde
 	app.serdes.findProductEvents = findProductEventsSerde
-	app.serdes.recommendation = recommendationSerde
+	app.serdes.productOffer = productOfferSerde
 }
 
 func (app *App) initAnalyzers() {
@@ -275,7 +275,7 @@ func (app *App) initOutboundAdapters() {
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
 	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
-	recommendationsTopic := app.cfg.Broker.Topics.Recommendations
+	productOffersTopic := app.cfg.Broker.Topics.ProductOffers
 	user := app.cfg.Broker.SASLSSL.AppUser
 	pass := app.cfg.Broker.SASLSSL.AppPass
 
@@ -345,17 +345,17 @@ func (app *App) initOutboundAdapters() {
 		app.fallDown(op, err)
 	}
 
-	recommendationProducer, err := kafka.NewRecommendationProducer(
+	productOfferProducer, err := kafka.NewProductOfferProducer(
 		kafka.ProducerConfig{
 			ProducerClient: kafka.NewProducerClient(ctx,
 				kafka.ProducerClientConfig{
 					SeedBrokers: seedBrokersPrimary,
-					Topic:       recommendationsTopic,
+					Topic:       productOffersTopic,
 					User:        user,
 					Pass:        pass,
 					TLSConfig:   app.tlsConfig,
 				}),
-			Encoder: app.serdes.recommendation,
+			Encoder: app.serdes.productOffer,
 		},
 	)
 	if err != nil {
@@ -371,7 +371,7 @@ func (app *App) initOutboundAdapters() {
 	app.producers.products = productsProducer
 	app.producers.productFilter = productFilterProducer
 	app.producers.findProductEvent = findProductEventProducer
-	app.producers.recommendation = recommendationProducer
+	app.producers.productOffer = productOfferProducer
 }
 
 func (app *App) initCoreService() {
@@ -385,7 +385,7 @@ func (app *App) initCoreService() {
 		FindProductEventProducer: app.producers.findProductEvent,
 		ClientEventsStorage:      app.storages.clientEvents,
 		ClientEventsAnalyzer:     app.analyzers.clientEvents,
-		RecommendationProducer:   app.producers.recommendation,
+		ProductOfferProducer:     app.producers.productOffer,
 	}
 	app.coreService = service.New(serviceConfig)
 }

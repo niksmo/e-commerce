@@ -250,10 +250,10 @@ func (p FindProductEventProducer) Close() {
 	p.producer.close()
 }
 
-func (p FindProductEventProducer) Emit(
+func (p FindProductEventProducer) Produce(
 	ctx context.Context, evt domain.ClientFindProductEvent,
 ) error {
-	const op = "Emit"
+	const op = "Produce"
 
 	if err := ctx.Err(); err != nil {
 		return opErr(err, p.opPrefix, op)
@@ -293,37 +293,35 @@ func (FindProductEventProducer) toSchema(
 	return clientEventToSchema(v)
 }
 
-// *****
-
-// A RecommendationProducer used for produce [domain.Recommendation]
-type RecommendationProducer struct {
+// A ProductOfferProducer used for produce [domain.ProductOffer]
+type ProductOfferProducer struct {
 	producer producer
 	encoder  Encoder
 	opPrefix string
 }
 
-func NewRecommendationProducer(
+func NewProductOfferProducer(
 	config ProducerConfig,
-) (RecommendationProducer, error) {
-	opPrefix := "RecommendationProducer"
+) (ProductOfferProducer, error) {
+	opPrefix := "ProductOfferProducer"
 	p := producer{
 		opPrefix: opPrefix,
 		cl:       config.ProducerClient,
 	}
 
-	return RecommendationProducer{
+	return ProductOfferProducer{
 		producer: p,
 		encoder:  config.Encoder,
 		opPrefix: opPrefix,
 	}, nil
 }
 
-func (p RecommendationProducer) Close() {
+func (p ProductOfferProducer) Close() {
 	p.producer.close()
 }
 
-func (p RecommendationProducer) Produce(
-	ctx context.Context, v domain.Recommendation,
+func (p ProductOfferProducer) Produce(
+	ctx context.Context, v domain.ProductOffer,
 ) error {
 	const op = "Emit"
 
@@ -343,8 +341,8 @@ func (p RecommendationProducer) Produce(
 	return nil
 }
 
-func (p RecommendationProducer) createRecord(
-	v domain.Recommendation,
+func (p ProductOfferProducer) createRecord(
+	v domain.ProductOffer,
 ) (rs kgo.Record, err error) {
 	const op = "createRecord"
 
@@ -359,8 +357,8 @@ func (p RecommendationProducer) createRecord(
 	return r, nil
 }
 
-func (RecommendationProducer) toSchema(
-	v domain.Recommendation,
-) schema.RecommendationV1 {
-	return recommendationToSchema(v)
+func (ProductOfferProducer) toSchema(
+	v domain.ProductOffer,
+) schema.ProductOfferV1 {
+	return productOfferToSchema(v)
 }

@@ -18,7 +18,7 @@ broker:
     filter_product_stream: filter-product-stream
     filter_product_table: filter-product-group-table # <prefix>-table derived from consumers.filter_product_group
     client_find_product_events: client-find-product-events
-    recommendations: recommendations
+    product_offers: product-offers
   consumers:
     filter_product_group: filter-product-group
     product_blocker_group: product-blocker-group

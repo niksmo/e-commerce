@@ -32,7 +32,7 @@ kafka-permissions:
   	--topic filter-product-group-table \
   	--topic filter-product-group \
   	--topic client-find-product-events
-	--topic recommendations
+	--topic product-offers
 
 spark-connect:
 	docker compose exec spark-master sbin/start-connect-server.sh \
