@@ -27,47 +27,38 @@ type Service struct {
 	productReader          port.ProductReader
 	clientEventsAnalyzer   port.ClientEventsAnalyzer
 	recommendationProducer port.RecommendationProducer
-	evtProc                *clientEventWorker
+	evtWorker              *clientEventWorker
 	evtC                   chan<- domain.ClientFindProductEvent
 }
 
 type ServiceConfig struct {
-	ProductFilterProc       port.ProductFilterProcessor
-	ProductBlockerProc      port.ProductBlockerProcessor
-	ProductsProducer        port.ProductsProducer
-	ProductsFilterProducer  port.ProductFilterProducer
-	ProductsStorage         port.ProductsStorage
-	ProductReader           port.ProductReader
-	FindProductEventEmitter port.ClientFindProductEventEmitter
-	ClientEventsStorage     port.ClientEventsStorage
-	ClientEventsAnalyzer    port.ClientEventsAnalyzer
-	RecommendationProducer  port.RecommendationProducer
+	ProductFilterProc        port.ProductFilterProcessor
+	ProductBlockerProc       port.ProductBlockerProcessor
+	ProductsProducer         port.ProductsProducer
+	ProductsFilterProducer   port.ProductFilterProducer
+	ProductsStorage          port.ProductsStorage
+	ProductReader            port.ProductReader
+	FindProductEventProducer port.ClientFindProductEventEmitter
+	ClientEventsStorage      port.ClientEventsStorage
+	ClientEventsAnalyzer     port.ClientEventsAnalyzer
+	RecommendationProducer   port.RecommendationProducer
 }
 
 func New(
-	productFilterProc port.ProductFilterProcessor,
-	productBlockerProc port.ProductBlockerProcessor,
-	productsProducer port.ProductsProducer,
-	productsFilterProducer port.ProductFilterProducer,
-	productsStorage port.ProductsStorage,
-	productReader port.ProductReader,
-	findProductEventEmitter port.ClientFindProductEventEmitter,
-	clientEventsStorage port.ClientEventsStorage,
-	clientEventsAnalyzer port.ClientEventsAnalyzer,
-	recommendationProducer port.RecommendationProducer,
+	config ServiceConfig,
 ) *Service {
-	evtProc := &clientEventWorker{emitter: findProductEventEmitter}
+	evtWorker := &clientEventWorker{emitter: config.FindProductEventProducer}
 	return &Service{
-		productFilterProc:      productFilterProc,
-		productBlockerProc:     productBlockerProc,
-		productsProducer:       productsProducer,
-		productFilterProducer:  productsFilterProducer,
-		productsStorage:        productsStorage,
-		clientEventsStorage:    clientEventsStorage,
-		productReader:          productReader,
-		evtProc:                evtProc,
-		clientEventsAnalyzer:   clientEventsAnalyzer,
-		recommendationProducer: recommendationProducer,
+		productFilterProc:      config.ProductFilterProc,
+		productBlockerProc:     config.ProductBlockerProc,
+		productsProducer:       config.ProductsProducer,
+		productFilterProducer:  config.ProductsFilterProducer,
+		productsStorage:        config.ProductsStorage,
+		clientEventsStorage:    config.ClientEventsStorage,
+		productReader:          config.ProductReader,
+		evtWorker:              evtWorker,
+		clientEventsAnalyzer:   config.ClientEventsAnalyzer,
+		recommendationProducer: config.RecommendationProducer,
 	}
 }
 
@@ -78,7 +69,7 @@ func (s *Service) Run(ctx context.Context, stopFn context.CancelFunc) {
 	const op = "Service.Run"
 	log := slog.With("op", op)
 
-	s.evtC = s.evtProc.run(ctx)
+	s.evtC = s.evtWorker.run(ctx)
 
 	go s.runAnanalytics(ctx)
 
@@ -98,7 +89,7 @@ func (s *Service) Close() {
 	log.Info("service is closing...")
 	s.productFilterProc.Close()
 	s.productBlockerProc.Close()
-	s.evtProc.close()
+	s.evtWorker.close()
 	log.Info("service is closed")
 }
 

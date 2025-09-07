@@ -117,3 +117,11 @@ func schemaV1ToClientEvent(
 	evt.StoreID = s.StoreID
 	return
 }
+
+func recommendationToSchema(
+	r domain.Recommendation,
+) (s schema.RecommendationV1) {
+	s.Username = r.Username
+	s.Events = r.Events
+	return
+}

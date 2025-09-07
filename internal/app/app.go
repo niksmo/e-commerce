@@ -10,6 +10,7 @@ import (
 
 	"github.com/niksmo/e-commerce/config"
 	"github.com/niksmo/e-commerce/internal/adapter"
+	"github.com/niksmo/e-commerce/internal/adapter/analytics"
 	"github.com/niksmo/e-commerce/internal/adapter/httphandler"
 	"github.com/niksmo/e-commerce/internal/adapter/kafka"
 	"github.com/niksmo/e-commerce/internal/adapter/storage"
@@ -23,6 +24,7 @@ type serdes struct {
 	productToStorage  schema.Serde
 	productFilter     schema.Serde
 	findProductEvents schema.Serde
+	recommendation    schema.Serde
 }
 
 type streamProcessors struct {
@@ -36,14 +38,19 @@ type storages struct {
 }
 
 type producers struct {
-	products                 kafka.ProductsProducer
-	productFilter            kafka.ProductFilterProducer
-	findProductEventProducer kafka.FindProductEventProducer
+	products         kafka.ProductsProducer
+	productFilter    kafka.ProductFilterProducer
+	findProductEvent kafka.FindProductEventProducer
+	recommendation   kafka.RecommendationProducer
 }
 
 type consumers struct {
 	products     kafka.ProductsConsumer
 	clientEvents kafka.ClientEventsConsumer
+}
+
+type analyzers struct {
+	clientEvents analytics.ClientEventsAnalyzer
 }
 
 type App struct {
@@ -54,6 +61,7 @@ type App struct {
 	storages    storages
 	producers   producers
 	consumers   consumers
+	analyzers   analyzers
 	coreService *service.Service
 	sqldb       storage.SQLDB
 	hdfs        storage.HDFS
@@ -74,6 +82,7 @@ func New(context context.Context, config config.Config) *App {
 	app.initTLSConfig()
 	app.initSerdes()
 	app.initStreamProcessors()
+	app.initAnalyzers()
 	app.initOutboundAdapters()
 	app.initCoreService()
 	app.initInboundAdapters()
@@ -132,6 +141,7 @@ func (app *App) initSerdes() {
 	productsToStorageTopic := app.cfg.Broker.Topics.ProductsToStorage
 	filterProductsStream := app.cfg.Broker.Topics.FilterProductStream
 	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
+	recommendationsTopic := app.cfg.Broker.Topics.Recommendations
 
 	srClient, err := sr.NewClient(sr.URLs(urls...))
 	if err != nil {
@@ -180,10 +190,27 @@ func (app *App) initSerdes() {
 		app.fallDown(op, err)
 	}
 
+	recommendationSS := schema.ValueSubject(recommendationsTopic)
+	recommendationSerde, err := schema.NewSerdeRecommendationV1(
+		ctx,
+		schema.SubjectOpt(recommendationSS),
+		schema.SchemaIdentifierOpt(schemaCreater),
+	)
+	if err != nil {
+		app.fallDown(op, err)
+	}
+
 	app.serdes.productFromShop = productFromShopSerde
 	app.serdes.productFilter = productFilterSerde
 	app.serdes.productToStorage = productToStorageSerde
 	app.serdes.findProductEvents = findProductEventsSerde
+	app.serdes.recommendation = recommendationSerde
+}
+
+func (app *App) initAnalyzers() {
+	app.analyzers.clientEvents = analytics.NewClientEventsAnalyzer(
+		app.cfg.Spark.Addr,
+	)
 }
 
 func (app *App) initStreamProcessors() {
@@ -248,6 +275,7 @@ func (app *App) initOutboundAdapters() {
 	productsFromShopTopic := app.cfg.Broker.Topics.ProductsFromShop
 	filterProductStream := app.cfg.Broker.Topics.FilterProductStream
 	findProductEventsTopic := app.cfg.Broker.Topics.ClientFindProductEvents
+	recommendationsTopic := app.cfg.Broker.Topics.Recommendations
 	user := app.cfg.Broker.SASLSSL.AppUser
 	pass := app.cfg.Broker.SASLSSL.AppPass
 
@@ -317,7 +345,24 @@ func (app *App) initOutboundAdapters() {
 		app.fallDown(op, err)
 	}
 
-	clientEventsRepository := storage.NewClientEventsRepository(hdfs)
+	recommendationProducer, err := kafka.NewRecommendationProducer(
+		kafka.ProducerConfig{
+			ProducerClient: kafka.NewProducerClient(ctx,
+				kafka.ProducerClientConfig{
+					SeedBrokers: seedBrokersPrimary,
+					Topic:       recommendationsTopic,
+					User:        user,
+					Pass:        pass,
+					TLSConfig:   app.tlsConfig,
+				}),
+			Encoder: app.serdes.recommendation,
+		},
+	)
+	if err != nil {
+		app.fallDown(op, err)
+	}
+
+	clientEventsRepository := storage.NewClientEventsRepository(hdfs, app.cfg.HDFS.Host)
 
 	app.sqldb = sqldb
 	app.hdfs = hdfs
@@ -325,17 +370,24 @@ func (app *App) initOutboundAdapters() {
 	app.storages.clientEvents = clientEventsRepository
 	app.producers.products = productsProducer
 	app.producers.productFilter = productFilterProducer
-	app.producers.findProductEventProducer = findProductEventProducer
+	app.producers.findProductEvent = findProductEventProducer
+	app.producers.recommendation = recommendationProducer
 }
 
 func (app *App) initCoreService() {
-	app.coreService = service.New(
-		app.streamProcs.productFilter, app.streamProcs.productBlocker,
-		app.producers.products, app.producers.productFilter,
-		app.storages.products, app.storages.products,
-		app.producers.findProductEventProducer,
-		app.storages.clientEvents,
-	)
+	serviceConfig := service.ServiceConfig{
+		ProductFilterProc:        app.streamProcs.productFilter,
+		ProductBlockerProc:       app.streamProcs.productBlocker,
+		ProductsProducer:         app.producers.products,
+		ProductsFilterProducer:   app.producers.productFilter,
+		ProductsStorage:          app.storages.products,
+		ProductReader:            app.storages.products,
+		FindProductEventProducer: app.producers.findProductEvent,
+		ClientEventsStorage:      app.storages.clientEvents,
+		ClientEventsAnalyzer:     app.analyzers.clientEvents,
+		RecommendationProducer:   app.producers.recommendation,
+	}
+	app.coreService = service.New(serviceConfig)
 }
 
 func (app *App) initInboundAdapters() {

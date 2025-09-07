@@ -33,6 +33,7 @@ type topics struct {
 	FilterProductStream     string `mapstructure:"filter_product_stream"`
 	FilterProductTable      string `mapstructure:"filter_product_table"`
 	ClientFindProductEvents string `mapstructure:"client_find_product_events"`
+	Recommendations         string `mapstructure:"recommendations"`
 }
 
 type broker struct {
@@ -47,6 +48,11 @@ type broker struct {
 type hdfs struct {
 	Addr string `mapstructure:"addr"`
 	User string `mapstructure:"user"`
+	Host string `mapstructure:"host"`
+}
+
+type spark struct {
+	Addr string `mapstructure:"addr"`
 }
 
 type Config struct {
@@ -55,6 +61,7 @@ type Config struct {
 	SQLDB          string     `mapstructure:"sql_db"`
 	Broker         broker     `mapstructure:"broker"`
 	HDFS           hdfs       `mapstructure:"hdfs"`
+	Spark          spark      `mapstructure:"spark"`
 }
 
 func Load() Config {
@@ -107,6 +114,7 @@ func (c Config) Print() {
 		FilterProductStream=%q
 		FilterProductTable=%q
 		ClientFindProductEvents=%q
+		Recommendations=%q
 	Consumers:
 		FilterProductGroup=%q
 		ProductBlockerGroup=%q
@@ -121,6 +129,9 @@ func (c Config) Print() {
 	HDFS:
 		Addr=%q
 		User=%q
+		Host=%q
+	Spark:
+		Addr=%q
 
 `
 	fmt.Println("Loaded config:")
@@ -148,5 +159,7 @@ func (c Config) Print() {
 		c.Broker.SASLSSL.AppPass,
 		c.HDFS.Addr,
 		c.HDFS.User,
+		c.HDFS.Host,
+		c.Spark.Addr,
 	)
 }

@@ -88,6 +88,15 @@ func NewSerdeClientFindProductEventV1(ctx context.Context, opts ...Opt) (Serde, 
 	)
 }
 
+func NewSerdeRecommendationV1(ctx context.Context, opts ...Opt) (Serde, error) {
+	const op = "NewSerdeRecommendationV1"
+	return serdeConstructor(
+		ctx,
+		RecommendationSchemaTextV1, RecommendationV1{},
+		op, opts...,
+	)
+}
+
 func allRequiredOpts(opts []Opt) bool {
 	return len(opts) == 2
 }

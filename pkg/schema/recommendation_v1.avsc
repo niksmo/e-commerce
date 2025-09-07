@@ -1,0 +1,15 @@
+{
+	"type": "record",
+	"namespace": "products",
+	"name": "recommendation",
+	"fields": [
+		{
+			"name": "username",
+			"type": "string"
+		},
+		{
+            "name": "events",
+            "type": "long"
+		}
+	]
+}

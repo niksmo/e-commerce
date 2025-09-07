@@ -42,3 +42,8 @@ type ClientFindProductEvent struct {
 	Specifications map[string]string
 	StoreID        string
 }
+
+type Recommendation struct {
+	Username string
+	Events   int
+}

@@ -45,16 +45,22 @@ type ProductFilterV1 struct {
 //go:embed client_find_product_event_v1.avsc
 var ClientFindProductSchemaTextV1 string
 
-type (
-	ClientFindProductEventV1 struct {
-		Username       string            `avro:"username"`
-		ProductName    string            `avro:"product_name"`
-		Brand          string            `avro:"brand"`
-		Category       string            `avro:"category"`
-		Description    string            `avro:"description"`
-		Price          ProductPriceV1    `avro:"price"`
-		Tags           []string          `avro:"tags"`
-		Specifications map[string]string `avro:"specifications"`
-		StoreID        string            `avro:"store_id"`
-	}
-)
+type ClientFindProductEventV1 struct {
+	Username       string            `avro:"username"`
+	ProductName    string            `avro:"product_name"`
+	Brand          string            `avro:"brand"`
+	Category       string            `avro:"category"`
+	Description    string            `avro:"description"`
+	Price          ProductPriceV1    `avro:"price"`
+	Tags           []string          `avro:"tags"`
+	Specifications map[string]string `avro:"specifications"`
+	StoreID        string            `avro:"store_id"`
+}
+
+//go:embed recommendation_v1.avsc
+var RecommendationSchemaTextV1 string
+
+type RecommendationV1 struct {
+	Username string `avro:"username"`
+	Events   int    `avro:"events"`
+}

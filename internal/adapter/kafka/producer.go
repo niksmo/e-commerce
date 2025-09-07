@@ -292,3 +292,75 @@ func (FindProductEventProducer) toSchema(
 ) schema.ClientFindProductEventV1 {
 	return clientEventToSchema(v)
 }
+
+// *****
+
+// A RecommendationProducer used for produce [domain.Recommendation]
+type RecommendationProducer struct {
+	producer producer
+	encoder  Encoder
+	opPrefix string
+}
+
+func NewRecommendationProducer(
+	config ProducerConfig,
+) (RecommendationProducer, error) {
+	opPrefix := "RecommendationProducer"
+	p := producer{
+		opPrefix: opPrefix,
+		cl:       config.ProducerClient,
+	}
+
+	return RecommendationProducer{
+		producer: p,
+		encoder:  config.Encoder,
+		opPrefix: opPrefix,
+	}, nil
+}
+
+func (p RecommendationProducer) Close() {
+	p.producer.close()
+}
+
+func (p RecommendationProducer) Produce(
+	ctx context.Context, v domain.Recommendation,
+) error {
+	const op = "Emit"
+
+	if err := ctx.Err(); err != nil {
+		return opErr(err, p.opPrefix, op)
+	}
+
+	rs, err := p.createRecord(v)
+	if err != nil {
+		return opErr(err, p.opPrefix, op)
+	}
+
+	if err := p.producer.produce(ctx, &rs); err != nil {
+		return opErr(err, p.opPrefix, op)
+	}
+
+	return nil
+}
+
+func (p RecommendationProducer) createRecord(
+	v domain.Recommendation,
+) (rs kgo.Record, err error) {
+	const op = "createRecord"
+
+	s := p.toSchema(v)
+	b, err := p.encoder.Encode(s)
+	if err != nil {
+		return kgo.Record{}, opErr(err, p.opPrefix, op)
+	}
+	msgKey := []byte(s.Username)
+	r := kgo.Record{Key: msgKey, Value: b}
+
+	return r, nil
+}
+
+func (RecommendationProducer) toSchema(
+	v domain.Recommendation,
+) schema.RecommendationV1 {
+	return recommendationToSchema(v)
+}

@@ -63,6 +63,7 @@ func main() {
 	err = makeTopics(
 		sigCtx, cl, compactCleanupPolicy,
 		cfg.Broker.Topics.FilterProductTable,
+		cfg.Broker.Topics.Recommendations,
 	)
 	if err != nil {
 		printFail(err)
