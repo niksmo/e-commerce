@@ -1,0 +1,29 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+rule_files:
+  - "alert.rules"
+
+alerting:
+  alertmanagers:
+    - follow_redirects: true
+      enable_http2: true
+      scheme: http
+      timeout: 10s
+      api_version: v2
+      static_configs:
+        - targets:
+            - "alertmanager:9093"
+
+scrape_configs:
+  - job_name: kafka-a
+    static_configs:
+      - targets:
+          ["jmx-kafka-a-1:5556", "jmx-kafka-a-2:5556", "jmx-kafka-a-3:5556"]
+
+  - job_name: kafka-b
+    static_configs:
+      - targets:
+          ["jmx-kafka-b-1:5556", "jmx-kafka-b-2:5556", "jmx-kafka-b-3:5556"]

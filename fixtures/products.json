@@ -1,0 +1,4698 @@
+[
+  {
+    "product_id": "20001",
+    "name": "P50 Pro",
+    "sku": "Huawei-P50Pro-1",
+    "brand": "Huawei",
+    "category": "Смартфоны",
+    "description": "P50 Pro — популярный продукт категории Смартфоны от Huawei.",
+    "price": {
+      "amount": 106612.16,
+      "currency": "RUB"
+    },
+    "available_stock": 110,
+    "tags": [
+      "смартфон",
+      "android",
+      "ноутбук",
+      "аудио",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Huawei-P50Pro-1_front.jpg",
+        "alt": "P50 Pro вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Huawei-P50Pro-1_side.jpg",
+        "alt": "P50 Pro сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "240g",
+      "dimensions": "24mm x 37mm x 10mm",
+      "battery_life": "70 hours",
+      "color": "White"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20002",
+    "name": "Galaxy Z Fold4",
+    "sku": "Samsung-GalaxyZFold4-2",
+    "brand": "Samsung",
+    "category": "Смартфоны",
+    "description": "Galaxy Z Fold4 — популярный продукт категории Смартфоны от Samsung.",
+    "price": {
+      "amount": 217565.29,
+      "currency": "RUB"
+    },
+    "available_stock": 283,
+    "tags": [
+      "ios",
+      "новинка",
+      "аудио",
+      "премиум"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyZFold4-2_front.jpg",
+        "alt": "Galaxy Z Fold4 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyZFold4-2_side.jpg",
+        "alt": "Galaxy Z Fold4 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1409g",
+      "dimensions": "70mm x 247mm x 32mm",
+      "battery_life": "68 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20003",
+    "name": "Pavilion 15",
+    "sku": "HP-Pavilion15-3",
+    "brand": "HP",
+    "category": "Ноутбуки",
+    "description": "Pavilion 15 — популярный продукт категории Ноутбуки от HP.",
+    "price": {
+      "amount": 244491.15,
+      "currency": "RUB"
+    },
+    "available_stock": 222,
+    "tags": [
+      "аудио",
+      "смартфон",
+      "технологии",
+      "новинка",
+      "android"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/HP-Pavilion15-3_front.jpg",
+        "alt": "Pavilion 15 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/HP-Pavilion15-3_side.jpg",
+        "alt": "Pavilion 15 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1648g",
+      "dimensions": "169mm x 195mm x 15mm",
+      "battery_life": "24 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20004",
+    "name": "AirPods 3",
+    "sku": "Apple-AirPods3-4",
+    "brand": "Apple",
+    "category": "Аудио",
+    "description": "AirPods 3 — популярный продукт категории Аудио от Apple.",
+    "price": {
+      "amount": 61236.09,
+      "currency": "RUB"
+    },
+    "available_stock": 112,
+    "tags": [
+      "технологии",
+      "ноутбук"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Apple-AirPods3-4_front.jpg",
+        "alt": "AirPods 3 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Apple-AirPods3-4_side.jpg",
+        "alt": "AirPods 3 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1557g",
+      "dimensions": "24mm x 45mm x 46mm",
+      "battery_life": "15 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20005",
+    "name": "AirPods Pro 2",
+    "sku": "Apple-AirPodsPro2-5",
+    "brand": "Apple",
+    "category": "Аудио",
+    "description": "AirPods Pro 2 — популярный продукт категории Аудио от Apple.",
+    "price": {
+      "amount": 69031.69,
+      "currency": "RUB"
+    },
+    "available_stock": 43,
+    "tags": [
+      "технологии",
+      "аудио",
+      "гаджеты"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Apple-AirPodsPro2-5_front.jpg",
+        "alt": "AirPods Pro 2 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Apple-AirPodsPro2-5_side.jpg",
+        "alt": "AirPods Pro 2 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1191g",
+      "dimensions": "244mm x 86mm x 45mm",
+      "battery_life": "21 hours",
+      "color": "Green"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20006",
+    "name": "Tone Free FP9",
+    "sku": "LG-ToneFreeFP9-6",
+    "brand": "LG",
+    "category": "Аудио",
+    "description": "Tone Free FP9 — популярный продукт категории Аудио от LG.",
+    "price": {
+      "amount": 274507.88,
+      "currency": "RUB"
+    },
+    "available_stock": 109,
+    "tags": [
+      "аудио",
+      "новинка",
+      "ios",
+      "премиум",
+      "технологии"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-ToneFreeFP9-6_front.jpg",
+        "alt": "Tone Free FP9 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-ToneFreeFP9-6_side.jpg",
+        "alt": "Tone Free FP9 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1302g",
+      "dimensions": "20mm x 80mm x 7mm",
+      "battery_life": "11 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20007",
+    "name": "XPS 13",
+    "sku": "Dell-XPS13-7",
+    "brand": "Dell",
+    "category": "Ноутбуки",
+    "description": "XPS 13 — популярный продукт категории Ноутбуки от Dell.",
+    "price": {
+      "amount": 18617.35,
+      "currency": "RUB"
+    },
+    "available_stock": 107,
+    "tags": [
+      "android",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Dell-XPS13-7_front.jpg",
+        "alt": "XPS 13 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Dell-XPS13-7_side.jpg",
+        "alt": "XPS 13 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1045g",
+      "dimensions": "134mm x 393mm x 9mm",
+      "battery_life": "51 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20008",
+    "name": "TWINWash",
+    "sku": "LG-TWINWash-8",
+    "brand": "LG",
+    "category": "Бытовая техника",
+    "description": "TWINWash — популярный продукт категории Бытовая техника от LG.",
+    "price": {
+      "amount": 207000.45,
+      "currency": "RUB"
+    },
+    "available_stock": 22,
+    "tags": [
+      "технологии",
+      "распродажа",
+      "android"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-TWINWash-8_front.jpg",
+        "alt": "TWINWash вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-TWINWash-8_side.jpg",
+        "alt": "TWINWash сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1765g",
+      "dimensions": "364mm x 344mm x 25mm",
+      "battery_life": "62 hours",
+      "color": "White"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20009",
+    "name": "Mate 50",
+    "sku": "Huawei-Mate50-9",
+    "brand": "Huawei",
+    "category": "Смартфоны",
+    "description": "Mate 50 — популярный продукт категории Смартфоны от Huawei.",
+    "price": {
+      "amount": 185954.15,
+      "currency": "RUB"
+    },
+    "available_stock": 169,
+    "tags": [
+      "смартфон",
+      "технологии",
+      "ios",
+      "распродажа",
+      "гаджеты"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Huawei-Mate50-9_front.jpg",
+        "alt": "Mate 50 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Huawei-Mate50-9_side.jpg",
+        "alt": "Mate 50 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1996g",
+      "dimensions": "302mm x 391mm x 36mm",
+      "battery_life": "45 hours",
+      "color": "White"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20010",
+    "name": "Latitude 7420",
+    "sku": "Dell-Latitude7420-10",
+    "brand": "Dell",
+    "category": "Ноутбуки",
+    "description": "Latitude 7420 — популярный продукт категории Ноутбуки от Dell.",
+    "price": {
+      "amount": 33708.52,
+      "currency": "RUB"
+    },
+    "available_stock": 268,
+    "tags": [
+      "технологии",
+      "ios"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Dell-Latitude7420-10_front.jpg",
+        "alt": "Latitude 7420 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Dell-Latitude7420-10_side.jpg",
+        "alt": "Latitude 7420 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "410g",
+      "dimensions": "187mm x 391mm x 50mm",
+      "battery_life": "24 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20011",
+    "name": "Galaxy A54",
+    "sku": "Samsung-GalaxyA54-11",
+    "brand": "Samsung",
+    "category": "Смартфоны",
+    "description": "Galaxy A54 — популярный продукт категории Смартфоны от Samsung.",
+    "price": {
+      "amount": 242667.78,
+      "currency": "RUB"
+    },
+    "available_stock": 185,
+    "tags": [
+      "смартфон",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyA54-11_front.jpg",
+        "alt": "Galaxy A54 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyA54-11_side.jpg",
+        "alt": "Galaxy A54 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "342g",
+      "dimensions": "67mm x 396mm x 14mm",
+      "battery_life": "49 hours",
+      "color": "Black"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20012",
+    "name": "Galaxy Buds2 Pro",
+    "sku": "Samsung-GalaxyBuds2Pro-12",
+    "brand": "Samsung",
+    "category": "Аудио",
+    "description": "Galaxy Buds2 Pro — популярный продукт категории Аудио от Samsung.",
+    "price": {
+      "amount": 165068.97,
+      "currency": "RUB"
+    },
+    "available_stock": 36,
+    "tags": [
+      "премиум",
+      "android"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBuds2Pro-12_front.jpg",
+        "alt": "Galaxy Buds2 Pro вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBuds2Pro-12_side.jpg",
+        "alt": "Galaxy Buds2 Pro сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1854g",
+      "dimensions": "225mm x 131mm x 13mm",
+      "battery_life": "35 hours",
+      "color": "Black"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20013",
+    "name": "Crystal UHD AU8000",
+    "sku": "Samsung-CrystalUHDAU8000-13",
+    "brand": "Samsung",
+    "category": "Телевизоры",
+    "description": "Crystal UHD AU8000 — популярный продукт категории Телевизоры от Samsung.",
+    "price": {
+      "amount": 237568.7,
+      "currency": "RUB"
+    },
+    "available_stock": 227,
+    "tags": [
+      "технологии",
+      "android"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-CrystalUHDAU8000-13_front.jpg",
+        "alt": "Crystal UHD AU8000 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-CrystalUHDAU8000-13_side.jpg",
+        "alt": "Crystal UHD AU8000 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1233g",
+      "dimensions": "109mm x 157mm x 49mm",
+      "battery_life": "23 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20014",
+    "name": "CordZero A9",
+    "sku": "LG-CordZeroA9-14",
+    "brand": "LG",
+    "category": "Бытовая техника",
+    "description": "CordZero A9 — популярный продукт категории Бытовая техника от LG.",
+    "price": {
+      "amount": 19923.76,
+      "currency": "RUB"
+    },
+    "available_stock": 231,
+    "tags": [
+      "премиум",
+      "ios",
+      "смартфон",
+      "android",
+      "технологии"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-CordZeroA9-14_front.jpg",
+        "alt": "CordZero A9 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-CordZeroA9-14_side.jpg",
+        "alt": "CordZero A9 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2325g",
+      "dimensions": "287mm x 159mm x 29mm",
+      "battery_life": "35 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20015",
+    "name": "Yoga Slim 7",
+    "sku": "Lenovo-YogaSlim7-15",
+    "brand": "Lenovo",
+    "category": "Ноутбуки",
+    "description": "Yoga Slim 7 — популярный продукт категории Ноутбуки от Lenovo.",
+    "price": {
+      "amount": 80708.61,
+      "currency": "RUB"
+    },
+    "available_stock": 73,
+    "tags": [
+      "ios",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Lenovo-YogaSlim7-15_front.jpg",
+        "alt": "Yoga Slim 7 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Lenovo-YogaSlim7-15_side.jpg",
+        "alt": "Yoga Slim 7 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2249g",
+      "dimensions": "155mm x 288mm x 42mm",
+      "battery_life": "71 hours",
+      "color": "White"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20016",
+    "name": "MacBook Pro 14",
+    "sku": "Apple-MacBookPro14-16",
+    "brand": "Apple",
+    "category": "Ноутбуки",
+    "description": "MacBook Pro 14 — популярный продукт категории Ноутбуки от Apple.",
+    "price": {
+      "amount": 222408.2,
+      "currency": "RUB"
+    },
+    "available_stock": 18,
+    "tags": [
+      "ios",
+      "новинка",
+      "android",
+      "смартфон",
+      "ноутбук"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Apple-MacBookPro14-16_front.jpg",
+        "alt": "MacBook Pro 14 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Apple-MacBookPro14-16_side.jpg",
+        "alt": "MacBook Pro 14 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1180g",
+      "dimensions": "231mm x 327mm x 39mm",
+      "battery_life": "49 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20017",
+    "name": "Family Hub Холодильник",
+    "sku": "Samsung-FamilyHubХолодильник-17",
+    "brand": "Samsung",
+    "category": "Бытовая техника",
+    "description": "Family Hub Холодильник — популярный продукт категории Бытовая техника от Samsung.",
+    "price": {
+      "amount": 232939.61,
+      "currency": "RUB"
+    },
+    "available_stock": 71,
+    "tags": [
+      "премиум",
+      "android"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-FamilyHubХолодильник-17_front.jpg",
+        "alt": "Family Hub Холодильник вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-FamilyHubХолодильник-17_side.jpg",
+        "alt": "Family Hub Холодильник сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "169g",
+      "dimensions": "318mm x 344mm x 44mm",
+      "battery_life": "46 hours",
+      "color": "White"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20018",
+    "name": "TWINWash",
+    "sku": "LG-TWINWash-18",
+    "brand": "LG",
+    "category": "Бытовая техника",
+    "description": "TWINWash — популярный продукт категории Бытовая техника от LG.",
+    "price": {
+      "amount": 100435.45,
+      "currency": "RUB"
+    },
+    "available_stock": 283,
+    "tags": [
+      "смартфон",
+      "технологии",
+      "ios"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-TWINWash-18_front.jpg",
+        "alt": "TWINWash вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-TWINWash-18_side.jpg",
+        "alt": "TWINWash сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2456g",
+      "dimensions": "135mm x 51mm x 46mm",
+      "battery_life": "12 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20019",
+    "name": "Crystal UHD AU8000",
+    "sku": "Samsung-CrystalUHDAU8000-19",
+    "brand": "Samsung",
+    "category": "Телевизоры",
+    "description": "Crystal UHD AU8000 — популярный продукт категории Телевизоры от Samsung.",
+    "price": {
+      "amount": 47132.77,
+      "currency": "RUB"
+    },
+    "available_stock": 191,
+    "tags": [
+      "смартфон",
+      "новинка",
+      "ноутбук"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-CrystalUHDAU8000-19_front.jpg",
+        "alt": "Crystal UHD AU8000 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-CrystalUHDAU8000-19_side.jpg",
+        "alt": "Crystal UHD AU8000 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1747g",
+      "dimensions": "161mm x 384mm x 41mm",
+      "battery_life": "68 hours",
+      "color": "White"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20020",
+    "name": "Pavilion 15",
+    "sku": "HP-Pavilion15-20",
+    "brand": "HP",
+    "category": "Ноутбуки",
+    "description": "Pavilion 15 — популярный продукт категории Ноутбуки от HP.",
+    "price": {
+      "amount": 122242.66,
+      "currency": "RUB"
+    },
+    "available_stock": 129,
+    "tags": [
+      "технологии",
+      "ios",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/HP-Pavilion15-20_front.jpg",
+        "alt": "Pavilion 15 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/HP-Pavilion15-20_side.jpg",
+        "alt": "Pavilion 15 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2384g",
+      "dimensions": "246mm x 378mm x 47mm",
+      "battery_life": "27 hours",
+      "color": "Green"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20021",
+    "name": "InstaView Холодильник",
+    "sku": "LG-InstaViewХолодильник-21",
+    "brand": "LG",
+    "category": "Бытовая техника",
+    "description": "InstaView Холодильник — популярный продукт категории Бытовая техника от LG.",
+    "price": {
+      "amount": 134748.72,
+      "currency": "RUB"
+    },
+    "available_stock": 282,
+    "tags": [
+      "смартфон",
+      "премиум",
+      "новинка",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-InstaViewХолодильник-21_front.jpg",
+        "alt": "InstaView Холодильник вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-InstaViewХолодильник-21_side.jpg",
+        "alt": "InstaView Холодильник сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2156g",
+      "dimensions": "198mm x 183mm x 37mm",
+      "battery_life": "22 hours",
+      "color": "Green"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20022",
+    "name": "Bravia X90J",
+    "sku": "Sony-BraviaX90J-22",
+    "brand": "Sony",
+    "category": "Телевизоры",
+    "description": "Bravia X90J — популярный продукт категории Телевизоры от Sony.",
+    "price": {
+      "amount": 168484.96,
+      "currency": "RUB"
+    },
+    "available_stock": 200,
+    "tags": [
+      "новинка",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Sony-BraviaX90J-22_front.jpg",
+        "alt": "Bravia X90J вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Sony-BraviaX90J-22_side.jpg",
+        "alt": "Bravia X90J сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1203g",
+      "dimensions": "201mm x 153mm x 42mm",
+      "battery_life": "18 hours",
+      "color": "Black"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20023",
+    "name": "Galaxy A54",
+    "sku": "Samsung-GalaxyA54-23",
+    "brand": "Samsung",
+    "category": "Смартфоны",
+    "description": "Galaxy A54 — популярный продукт категории Смартфоны от Samsung.",
+    "price": {
+      "amount": 57186.51,
+      "currency": "RUB"
+    },
+    "available_stock": 212,
+    "tags": [
+      "смартфон",
+      "гаджеты",
+      "премиум",
+      "новинка",
+      "ios"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyA54-23_front.jpg",
+        "alt": "Galaxy A54 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyA54-23_side.jpg",
+        "alt": "Galaxy A54 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2064g",
+      "dimensions": "287mm x 246mm x 19mm",
+      "battery_life": "22 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20024",
+    "name": "Nova 10",
+    "sku": "Huawei-Nova10-24",
+    "brand": "Huawei",
+    "category": "Смартфоны",
+    "description": "Nova 10 — популярный продукт категории Смартфоны от Huawei.",
+    "price": {
+      "amount": 24003.53,
+      "currency": "RUB"
+    },
+    "available_stock": 225,
+    "tags": [
+      "ноутбук",
+      "ios",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Huawei-Nova10-24_front.jpg",
+        "alt": "Nova 10 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Huawei-Nova10-24_side.jpg",
+        "alt": "Nova 10 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1609g",
+      "dimensions": "152mm x 329mm x 31mm",
+      "battery_life": "16 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20025",
+    "name": "VivoBook S15",
+    "sku": "Asus-VivoBookS15-25",
+    "brand": "Asus",
+    "category": "Ноутбуки",
+    "description": "VivoBook S15 — популярный продукт категории Ноутбуки от Asus.",
+    "price": {
+      "amount": 82032.61,
+      "currency": "RUB"
+    },
+    "available_stock": 166,
+    "tags": [
+      "премиум",
+      "ios"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Asus-VivoBookS15-25_front.jpg",
+        "alt": "VivoBook S15 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Asus-VivoBookS15-25_side.jpg",
+        "alt": "VivoBook S15 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "885g",
+      "dimensions": "46mm x 43mm x 26mm",
+      "battery_life": "52 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20026",
+    "name": "Mate 50",
+    "sku": "Huawei-Mate50-26",
+    "brand": "Huawei",
+    "category": "Смартфоны",
+    "description": "Mate 50 — популярный продукт категории Смартфоны от Huawei.",
+    "price": {
+      "amount": 192608.16,
+      "currency": "RUB"
+    },
+    "available_stock": 58,
+    "tags": [
+      "android",
+      "аудио",
+      "премиум",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Huawei-Mate50-26_front.jpg",
+        "alt": "Mate 50 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Huawei-Mate50-26_side.jpg",
+        "alt": "Mate 50 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "214g",
+      "dimensions": "82mm x 195mm x 37mm",
+      "battery_life": "9 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20027",
+    "name": "MacBook Pro 16",
+    "sku": "Apple-MacBookPro16-27",
+    "brand": "Apple",
+    "category": "Ноутбуки",
+    "description": "MacBook Pro 16 — популярный продукт категории Ноутбуки от Apple.",
+    "price": {
+      "amount": 149189.0,
+      "currency": "RUB"
+    },
+    "available_stock": 153,
+    "tags": [
+      "премиум",
+      "гаджеты",
+      "ios"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Apple-MacBookPro16-27_front.jpg",
+        "alt": "MacBook Pro 16 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Apple-MacBookPro16-27_side.jpg",
+        "alt": "MacBook Pro 16 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1133g",
+      "dimensions": "87mm x 261mm x 22mm",
+      "battery_life": "15 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20028",
+    "name": "MacBook Pro 16",
+    "sku": "Apple-MacBookPro16-28",
+    "brand": "Apple",
+    "category": "Ноутбуки",
+    "description": "MacBook Pro 16 — популярный продукт категории Ноутбуки от Apple.",
+    "price": {
+      "amount": 58770.48,
+      "currency": "RUB"
+    },
+    "available_stock": 284,
+    "tags": [
+      "распродажа",
+      "смартфон",
+      "аудио",
+      "android",
+      "технологии"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Apple-MacBookPro16-28_front.jpg",
+        "alt": "MacBook Pro 16 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Apple-MacBookPro16-28_side.jpg",
+        "alt": "MacBook Pro 16 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1175g",
+      "dimensions": "111mm x 76mm x 17mm",
+      "battery_life": "14 hours",
+      "color": "White"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20029",
+    "name": "Galaxy S23",
+    "sku": "Samsung-GalaxyS23-29",
+    "brand": "Samsung",
+    "category": "Смартфоны",
+    "description": "Galaxy S23 — популярный продукт категории Смартфоны от Samsung.",
+    "price": {
+      "amount": 70860.43,
+      "currency": "RUB"
+    },
+    "available_stock": 160,
+    "tags": [
+      "гаджеты",
+      "премиум"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyS23-29_front.jpg",
+        "alt": "Galaxy S23 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyS23-29_side.jpg",
+        "alt": "Galaxy S23 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "142g",
+      "dimensions": "355mm x 103mm x 31mm",
+      "battery_life": "17 hours",
+      "color": "Green"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20030",
+    "name": "Neo QLED QN90B",
+    "sku": "Samsung-NeoQLEDQN90B-30",
+    "brand": "Samsung",
+    "category": "Телевизоры",
+    "description": "Neo QLED QN90B — популярный продукт категории Телевизоры от Samsung.",
+    "price": {
+      "amount": 268627.44,
+      "currency": "RUB"
+    },
+    "available_stock": 81,
+    "tags": [
+      "аудио",
+      "распродажа",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-NeoQLEDQN90B-30_front.jpg",
+        "alt": "Neo QLED QN90B вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-NeoQLEDQN90B-30_side.jpg",
+        "alt": "Neo QLED QN90B сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "429g",
+      "dimensions": "374mm x 21mm x 7mm",
+      "battery_life": "56 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20031",
+    "name": "Galaxy Buds Live",
+    "sku": "Samsung-GalaxyBudsLive-31",
+    "brand": "Samsung",
+    "category": "Аудио",
+    "description": "Galaxy Buds Live — популярный продукт категории Аудио от Samsung.",
+    "price": {
+      "amount": 17411.74,
+      "currency": "RUB"
+    },
+    "available_stock": 293,
+    "tags": [
+      "android",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBudsLive-31_front.jpg",
+        "alt": "Galaxy Buds Live вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBudsLive-31_side.jpg",
+        "alt": "Galaxy Buds Live сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1201g",
+      "dimensions": "305mm x 324mm x 11mm",
+      "battery_life": "66 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20032",
+    "name": "Tone Free FP9",
+    "sku": "LG-ToneFreeFP9-32",
+    "brand": "LG",
+    "category": "Аудио",
+    "description": "Tone Free FP9 — популярный продукт категории Аудио от LG.",
+    "price": {
+      "amount": 287155.18,
+      "currency": "RUB"
+    },
+    "available_stock": 56,
+    "tags": [
+      "аудио",
+      "android",
+      "распродажа",
+      "ноутбук"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-ToneFreeFP9-32_front.jpg",
+        "alt": "Tone Free FP9 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-ToneFreeFP9-32_side.jpg",
+        "alt": "Tone Free FP9 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "241g",
+      "dimensions": "271mm x 278mm x 41mm",
+      "battery_life": "11 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20033",
+    "name": "Galaxy S23",
+    "sku": "Samsung-GalaxyS23-33",
+    "brand": "Samsung",
+    "category": "Смартфоны",
+    "description": "Galaxy S23 — популярный продукт категории Смартфоны от Samsung.",
+    "price": {
+      "amount": 25605.25,
+      "currency": "RUB"
+    },
+    "available_stock": 150,
+    "tags": [
+      "ноутбук",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyS23-33_front.jpg",
+        "alt": "Galaxy S23 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyS23-33_side.jpg",
+        "alt": "Galaxy S23 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2423g",
+      "dimensions": "30mm x 73mm x 36mm",
+      "battery_life": "70 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20034",
+    "name": "Pavilion 15",
+    "sku": "HP-Pavilion15-34",
+    "brand": "HP",
+    "category": "Ноутбуки",
+    "description": "Pavilion 15 — популярный продукт категории Ноутбуки от HP.",
+    "price": {
+      "amount": 236445.04,
+      "currency": "RUB"
+    },
+    "available_stock": 182,
+    "tags": [
+      "гаджеты",
+      "смартфон",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/HP-Pavilion15-34_front.jpg",
+        "alt": "Pavilion 15 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/HP-Pavilion15-34_side.jpg",
+        "alt": "Pavilion 15 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1447g",
+      "dimensions": "182mm x 388mm x 40mm",
+      "battery_life": "44 hours",
+      "color": "Green"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20035",
+    "name": "CordZero A9",
+    "sku": "LG-CordZeroA9-35",
+    "brand": "LG",
+    "category": "Бытовая техника",
+    "description": "CordZero A9 — популярный продукт категории Бытовая техника от LG.",
+    "price": {
+      "amount": 167284.46,
+      "currency": "RUB"
+    },
+    "available_stock": 251,
+    "tags": [
+      "смартфон",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-CordZeroA9-35_front.jpg",
+        "alt": "CordZero A9 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-CordZeroA9-35_side.jpg",
+        "alt": "CordZero A9 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "973g",
+      "dimensions": "26mm x 121mm x 46mm",
+      "battery_life": "57 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20036",
+    "name": "Family Hub Холодильник",
+    "sku": "Samsung-FamilyHubХолодильник-36",
+    "brand": "Samsung",
+    "category": "Бытовая техника",
+    "description": "Family Hub Холодильник — популярный продукт категории Бытовая техника от Samsung.",
+    "price": {
+      "amount": 185554.99,
+      "currency": "RUB"
+    },
+    "available_stock": 175,
+    "tags": [
+      "смартфон",
+      "ноутбук",
+      "премиум",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-FamilyHubХолодильник-36_front.jpg",
+        "alt": "Family Hub Холодильник вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-FamilyHubХолодильник-36_side.jpg",
+        "alt": "Family Hub Холодильник сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "240g",
+      "dimensions": "129mm x 205mm x 41mm",
+      "battery_life": "49 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20037",
+    "name": "NanoCell 75",
+    "sku": "LG-NanoCell75-37",
+    "brand": "LG",
+    "category": "Телевизоры",
+    "description": "NanoCell 75 — популярный продукт категории Телевизоры от LG.",
+    "price": {
+      "amount": 36050.11,
+      "currency": "RUB"
+    },
+    "available_stock": 157,
+    "tags": [
+      "гаджеты",
+      "распродажа",
+      "технологии",
+      "ноутбук"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-NanoCell75-37_front.jpg",
+        "alt": "NanoCell 75 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-NanoCell75-37_side.jpg",
+        "alt": "NanoCell 75 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "496g",
+      "dimensions": "216mm x 299mm x 28mm",
+      "battery_life": "59 hours",
+      "color": "Green"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20038",
+    "name": "Nova 10",
+    "sku": "Huawei-Nova10-38",
+    "brand": "Huawei",
+    "category": "Смартфоны",
+    "description": "Nova 10 — популярный продукт категории Смартфоны от Huawei.",
+    "price": {
+      "amount": 41414.51,
+      "currency": "RUB"
+    },
+    "available_stock": 7,
+    "tags": [
+      "ios",
+      "гаджеты",
+      "технологии"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Huawei-Nova10-38_front.jpg",
+        "alt": "Nova 10 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Huawei-Nova10-38_side.jpg",
+        "alt": "Nova 10 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "909g",
+      "dimensions": "267mm x 97mm x 34mm",
+      "battery_life": "17 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20039",
+    "name": "NanoCell 75",
+    "sku": "LG-NanoCell75-39",
+    "brand": "LG",
+    "category": "Телевизоры",
+    "description": "NanoCell 75 — популярный продукт категории Телевизоры от LG.",
+    "price": {
+      "amount": 217623.52,
+      "currency": "RUB"
+    },
+    "available_stock": 276,
+    "tags": [
+      "аудио",
+      "смартфон",
+      "ноутбук",
+      "android"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-NanoCell75-39_front.jpg",
+        "alt": "NanoCell 75 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-NanoCell75-39_side.jpg",
+        "alt": "NanoCell 75 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "961g",
+      "dimensions": "26mm x 310mm x 23mm",
+      "battery_life": "33 hours",
+      "color": "Black"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20040",
+    "name": "WF-1000XM4",
+    "sku": "Sony-WF-1000XM4-40",
+    "brand": "Sony",
+    "category": "Аудио",
+    "description": "WF-1000XM4 — популярный продукт категории Аудио от Sony.",
+    "price": {
+      "amount": 99267.05,
+      "currency": "RUB"
+    },
+    "available_stock": 279,
+    "tags": [
+      "ноутбук",
+      "технологии"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Sony-WF-1000XM4-40_front.jpg",
+        "alt": "WF-1000XM4 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Sony-WF-1000XM4-40_side.jpg",
+        "alt": "WF-1000XM4 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1099g",
+      "dimensions": "39mm x 101mm x 29mm",
+      "battery_life": "49 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20041",
+    "name": "Tone Free DFP8W",
+    "sku": "LG-ToneFreeDFP8W-41",
+    "brand": "LG",
+    "category": "Аудио",
+    "description": "Tone Free DFP8W — популярный продукт категории Аудио от LG.",
+    "price": {
+      "amount": 210498.44,
+      "currency": "RUB"
+    },
+    "available_stock": 299,
+    "tags": [
+      "смартфон",
+      "премиум",
+      "новинка",
+      "технологии",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-ToneFreeDFP8W-41_front.jpg",
+        "alt": "Tone Free DFP8W вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-ToneFreeDFP8W-41_side.jpg",
+        "alt": "Tone Free DFP8W сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2440g",
+      "dimensions": "117mm x 37mm x 26mm",
+      "battery_life": "19 hours",
+      "color": "Black"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20042",
+    "name": "Pavilion 15",
+    "sku": "HP-Pavilion15-42",
+    "brand": "HP",
+    "category": "Ноутбуки",
+    "description": "Pavilion 15 — популярный продукт категории Ноутбуки от HP.",
+    "price": {
+      "amount": 63009.13,
+      "currency": "RUB"
+    },
+    "available_stock": 175,
+    "tags": [
+      "распродажа",
+      "смартфон",
+      "android"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/HP-Pavilion15-42_front.jpg",
+        "alt": "Pavilion 15 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/HP-Pavilion15-42_side.jpg",
+        "alt": "Pavilion 15 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2498g",
+      "dimensions": "378mm x 217mm x 38mm",
+      "battery_life": "32 hours",
+      "color": "Black"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20043",
+    "name": "TWINWash",
+    "sku": "LG-TWINWash-43",
+    "brand": "LG",
+    "category": "Бытовая техника",
+    "description": "TWINWash — популярный продукт категории Бытовая техника от LG.",
+    "price": {
+      "amount": 181082.44,
+      "currency": "RUB"
+    },
+    "available_stock": 264,
+    "tags": [
+      "технологии",
+      "премиум",
+      "смартфон",
+      "гаджеты",
+      "ios"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-TWINWash-43_front.jpg",
+        "alt": "TWINWash вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-TWINWash-43_side.jpg",
+        "alt": "TWINWash сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "403g",
+      "dimensions": "368mm x 256mm x 23mm",
+      "battery_life": "24 hours",
+      "color": "Black"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20044",
+    "name": "OLED55C2",
+    "sku": "LG-OLED55C2-44",
+    "brand": "LG",
+    "category": "Телевизоры",
+    "description": "OLED55C2 — популярный продукт категории Телевизоры от LG.",
+    "price": {
+      "amount": 266371.35,
+      "currency": "RUB"
+    },
+    "available_stock": 162,
+    "tags": [
+      "смартфон",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-OLED55C2-44_front.jpg",
+        "alt": "OLED55C2 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-OLED55C2-44_side.jpg",
+        "alt": "OLED55C2 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "849g",
+      "dimensions": "160mm x 121mm x 48mm",
+      "battery_life": "43 hours",
+      "color": "Green"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20045",
+    "name": "Spectre x360",
+    "sku": "HP-Spectrex360-45",
+    "brand": "HP",
+    "category": "Ноутбуки",
+    "description": "Spectre x360 — популярный продукт категории Ноутбуки от HP.",
+    "price": {
+      "amount": 283843.78,
+      "currency": "RUB"
+    },
+    "available_stock": 166,
+    "tags": [
+      "смартфон",
+      "android"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/HP-Spectrex360-45_front.jpg",
+        "alt": "Spectre x360 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/HP-Spectrex360-45_side.jpg",
+        "alt": "Spectre x360 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "460g",
+      "dimensions": "368mm x 150mm x 11mm",
+      "battery_life": "15 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20046",
+    "name": "Legion 5 Pro",
+    "sku": "Lenovo-Legion5Pro-46",
+    "brand": "Lenovo",
+    "category": "Ноутбуки",
+    "description": "Legion 5 Pro — популярный продукт категории Ноутбуки от Lenovo.",
+    "price": {
+      "amount": 203524.72,
+      "currency": "RUB"
+    },
+    "available_stock": 98,
+    "tags": [
+      "премиум",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Lenovo-Legion5Pro-46_front.jpg",
+        "alt": "Legion 5 Pro вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Lenovo-Legion5Pro-46_side.jpg",
+        "alt": "Legion 5 Pro сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1941g",
+      "dimensions": "297mm x 111mm x 42mm",
+      "battery_life": "63 hours",
+      "color": "Black"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20047",
+    "name": "Tone Free DFP8W",
+    "sku": "LG-ToneFreeDFP8W-47",
+    "brand": "LG",
+    "category": "Аудио",
+    "description": "Tone Free DFP8W — популярный продукт категории Аудио от LG.",
+    "price": {
+      "amount": 199844.11,
+      "currency": "RUB"
+    },
+    "available_stock": 47,
+    "tags": [
+      "ноутбук",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-ToneFreeDFP8W-47_front.jpg",
+        "alt": "Tone Free DFP8W вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-ToneFreeDFP8W-47_side.jpg",
+        "alt": "Tone Free DFP8W сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2392g",
+      "dimensions": "298mm x 189mm x 39mm",
+      "battery_life": "50 hours",
+      "color": "Black"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20048",
+    "name": "The Frame 55",
+    "sku": "Samsung-TheFrame55-48",
+    "brand": "Samsung",
+    "category": "Телевизоры",
+    "description": "The Frame 55 — популярный продукт категории Телевизоры от Samsung.",
+    "price": {
+      "amount": 99401.02,
+      "currency": "RUB"
+    },
+    "available_stock": 168,
+    "tags": [
+      "ios",
+      "аудио",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-TheFrame55-48_front.jpg",
+        "alt": "The Frame 55 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-TheFrame55-48_side.jpg",
+        "alt": "The Frame 55 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2050g",
+      "dimensions": "49mm x 327mm x 23mm",
+      "battery_life": "41 hours",
+      "color": "Black"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20049",
+    "name": "MacBook Pro 14",
+    "sku": "Apple-MacBookPro14-49",
+    "brand": "Apple",
+    "category": "Ноутбуки",
+    "description": "MacBook Pro 14 — популярный продукт категории Ноутбуки от Apple.",
+    "price": {
+      "amount": 23013.63,
+      "currency": "RUB"
+    },
+    "available_stock": 291,
+    "tags": [
+      "android",
+      "ноутбук"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Apple-MacBookPro14-49_front.jpg",
+        "alt": "MacBook Pro 14 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Apple-MacBookPro14-49_side.jpg",
+        "alt": "MacBook Pro 14 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1815g",
+      "dimensions": "41mm x 103mm x 38mm",
+      "battery_life": "70 hours",
+      "color": "Black"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20050",
+    "name": "InstaView Холодильник",
+    "sku": "LG-InstaViewХолодильник-50",
+    "brand": "LG",
+    "category": "Бытовая техника",
+    "description": "InstaView Холодильник — популярный продукт категории Бытовая техника от LG.",
+    "price": {
+      "amount": 70900.48,
+      "currency": "RUB"
+    },
+    "available_stock": 268,
+    "tags": [
+      "распродажа",
+      "ios",
+      "смартфон",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-InstaViewХолодильник-50_front.jpg",
+        "alt": "InstaView Холодильник вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-InstaViewХолодильник-50_side.jpg",
+        "alt": "InstaView Холодильник сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1885g",
+      "dimensions": "159mm x 161mm x 24mm",
+      "battery_life": "67 hours",
+      "color": "Green"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20051",
+    "name": "Bespoke Стиральная машина",
+    "sku": "Samsung-BespokeСтиральнаямашина-51",
+    "brand": "Samsung",
+    "category": "Бытовая техника",
+    "description": "Bespoke Стиральная машина — популярный продукт категории Бытовая техника от Samsung.",
+    "price": {
+      "amount": 215856.41,
+      "currency": "RUB"
+    },
+    "available_stock": 54,
+    "tags": [
+      "android",
+      "технологии"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-BespokeСтиральнаямашина-51_front.jpg",
+        "alt": "Bespoke Стиральная машина вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-BespokeСтиральнаямашина-51_side.jpg",
+        "alt": "Bespoke Стиральная машина сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "241g",
+      "dimensions": "202mm x 65mm x 41mm",
+      "battery_life": "44 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20052",
+    "name": "VivoBook S15",
+    "sku": "Asus-VivoBookS15-52",
+    "brand": "Asus",
+    "category": "Ноутбуки",
+    "description": "VivoBook S15 — популярный продукт категории Ноутбуки от Asus.",
+    "price": {
+      "amount": 165302.63,
+      "currency": "RUB"
+    },
+    "available_stock": 249,
+    "tags": [
+      "распродажа",
+      "android"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Asus-VivoBookS15-52_front.jpg",
+        "alt": "VivoBook S15 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Asus-VivoBookS15-52_side.jpg",
+        "alt": "VivoBook S15 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1221g",
+      "dimensions": "200mm x 87mm x 22mm",
+      "battery_life": "14 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20053",
+    "name": "Series 6 Посудомоечная машина",
+    "sku": "Bosch-Series6Посудомоечнаямашина-53",
+    "brand": "Bosch",
+    "category": "Бытовая техника",
+    "description": "Series 6 Посудомоечная машина — популярный продукт категории Бытовая техника от Bosch.",
+    "price": {
+      "amount": 150017.62,
+      "currency": "RUB"
+    },
+    "available_stock": 19,
+    "tags": [
+      "ios",
+      "новинка",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Bosch-Series6Посудомоечнаямашина-53_front.jpg",
+        "alt": "Series 6 Посудомоечная машина вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Bosch-Series6Посудомоечнаямашина-53_side.jpg",
+        "alt": "Series 6 Посудомоечная машина сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2277g",
+      "dimensions": "109mm x 118mm x 35mm",
+      "battery_life": "21 hours",
+      "color": "Green"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20054",
+    "name": "Series 6 Посудомоечная машина",
+    "sku": "Bosch-Series6Посудомоечнаямашина-54",
+    "brand": "Bosch",
+    "category": "Бытовая техника",
+    "description": "Series 6 Посудомоечная машина — популярный продукт категории Бытовая техника от Bosch.",
+    "price": {
+      "amount": 106366.78,
+      "currency": "RUB"
+    },
+    "available_stock": 240,
+    "tags": [
+      "технологии",
+      "смартфон",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Bosch-Series6Посудомоечнаямашина-54_front.jpg",
+        "alt": "Series 6 Посудомоечная машина вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Bosch-Series6Посудомоечнаямашина-54_side.jpg",
+        "alt": "Series 6 Посудомоечная машина сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "896g",
+      "dimensions": "118mm x 62mm x 28mm",
+      "battery_life": "30 hours",
+      "color": "Black"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20055",
+    "name": "Nova 10",
+    "sku": "Huawei-Nova10-55",
+    "brand": "Huawei",
+    "category": "Смартфоны",
+    "description": "Nova 10 — популярный продукт категории Смартфоны от Huawei.",
+    "price": {
+      "amount": 14791.49,
+      "currency": "RUB"
+    },
+    "available_stock": 119,
+    "tags": [
+      "новинка",
+      "технологии"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Huawei-Nova10-55_front.jpg",
+        "alt": "Nova 10 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Huawei-Nova10-55_side.jpg",
+        "alt": "Nova 10 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2099g",
+      "dimensions": "332mm x 247mm x 34mm",
+      "battery_life": "11 hours",
+      "color": "Green"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20056",
+    "name": "Bravia XR A80K",
+    "sku": "Sony-BraviaXRA80K-56",
+    "brand": "Sony",
+    "category": "Телевизоры",
+    "description": "Bravia XR A80K — популярный продукт категории Телевизоры от Sony.",
+    "price": {
+      "amount": 215286.07,
+      "currency": "RUB"
+    },
+    "available_stock": 43,
+    "tags": [
+      "ios",
+      "смартфон",
+      "гаджеты"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Sony-BraviaXRA80K-56_front.jpg",
+        "alt": "Bravia XR A80K вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Sony-BraviaXRA80K-56_side.jpg",
+        "alt": "Bravia XR A80K сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "238g",
+      "dimensions": "226mm x 372mm x 23mm",
+      "battery_life": "20 hours",
+      "color": "Black"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20057",
+    "name": "EliteBook 840",
+    "sku": "HP-EliteBook840-57",
+    "brand": "HP",
+    "category": "Ноутбуки",
+    "description": "EliteBook 840 — популярный продукт категории Ноутбуки от HP.",
+    "price": {
+      "amount": 179360.8,
+      "currency": "RUB"
+    },
+    "available_stock": 235,
+    "tags": [
+      "android",
+      "премиум",
+      "ios",
+      "технологии",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/HP-EliteBook840-57_front.jpg",
+        "alt": "EliteBook 840 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/HP-EliteBook840-57_side.jpg",
+        "alt": "EliteBook 840 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2105g",
+      "dimensions": "357mm x 165mm x 26mm",
+      "battery_life": "15 hours",
+      "color": "Green"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20058",
+    "name": "Redmi Note 12",
+    "sku": "Xiaomi-RedmiNote12-58",
+    "brand": "Xiaomi",
+    "category": "Смартфоны",
+    "description": "Redmi Note 12 — популярный продукт категории Смартфоны от Xiaomi.",
+    "price": {
+      "amount": 35230.41,
+      "currency": "RUB"
+    },
+    "available_stock": 161,
+    "tags": [
+      "ios",
+      "технологии",
+      "ноутбук",
+      "смартфон",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Xiaomi-RedmiNote12-58_front.jpg",
+        "alt": "Redmi Note 12 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Xiaomi-RedmiNote12-58_side.jpg",
+        "alt": "Redmi Note 12 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2161g",
+      "dimensions": "32mm x 211mm x 19mm",
+      "battery_life": "51 hours",
+      "color": "White"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20059",
+    "name": "Neo QLED QN90B",
+    "sku": "Samsung-NeoQLEDQN90B-59",
+    "brand": "Samsung",
+    "category": "Телевизоры",
+    "description": "Neo QLED QN90B — популярный продукт категории Телевизоры от Samsung.",
+    "price": {
+      "amount": 18922.92,
+      "currency": "RUB"
+    },
+    "available_stock": 147,
+    "tags": [
+      "премиум",
+      "смартфон",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-NeoQLEDQN90B-59_front.jpg",
+        "alt": "Neo QLED QN90B вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-NeoQLEDQN90B-59_side.jpg",
+        "alt": "Neo QLED QN90B сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1816g",
+      "dimensions": "346mm x 205mm x 16mm",
+      "battery_life": "71 hours",
+      "color": "White"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20060",
+    "name": "WF-1000XM4",
+    "sku": "Sony-WF-1000XM4-60",
+    "brand": "Sony",
+    "category": "Аудио",
+    "description": "WF-1000XM4 — популярный продукт категории Аудио от Sony.",
+    "price": {
+      "amount": 292861.25,
+      "currency": "RUB"
+    },
+    "available_stock": 264,
+    "tags": [
+      "новинка",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Sony-WF-1000XM4-60_front.jpg",
+        "alt": "WF-1000XM4 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Sony-WF-1000XM4-60_side.jpg",
+        "alt": "WF-1000XM4 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1657g",
+      "dimensions": "226mm x 160mm x 48mm",
+      "battery_life": "32 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20061",
+    "name": "Family Hub Холодильник",
+    "sku": "Samsung-FamilyHubХолодильник-61",
+    "brand": "Samsung",
+    "category": "Бытовая техника",
+    "description": "Family Hub Холодильник — популярный продукт категории Бытовая техника от Samsung.",
+    "price": {
+      "amount": 52713.96,
+      "currency": "RUB"
+    },
+    "available_stock": 83,
+    "tags": [
+      "android",
+      "новинка",
+      "ios",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-FamilyHubХолодильник-61_front.jpg",
+        "alt": "Family Hub Холодильник вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-FamilyHubХолодильник-61_side.jpg",
+        "alt": "Family Hub Холодильник сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "219g",
+      "dimensions": "239mm x 313mm x 31mm",
+      "battery_life": "26 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20062",
+    "name": "Nova 10",
+    "sku": "Huawei-Nova10-62",
+    "brand": "Huawei",
+    "category": "Смартфоны",
+    "description": "Nova 10 — популярный продукт категории Смартфоны от Huawei.",
+    "price": {
+      "amount": 140364.52,
+      "currency": "RUB"
+    },
+    "available_stock": 164,
+    "tags": [
+      "технологии",
+      "смартфон",
+      "аудио",
+      "ios",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Huawei-Nova10-62_front.jpg",
+        "alt": "Nova 10 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Huawei-Nova10-62_side.jpg",
+        "alt": "Nova 10 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1600g",
+      "dimensions": "279mm x 72mm x 14mm",
+      "battery_life": "10 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20063",
+    "name": "Neo QLED QN90B",
+    "sku": "Samsung-NeoQLEDQN90B-63",
+    "brand": "Samsung",
+    "category": "Телевизоры",
+    "description": "Neo QLED QN90B — популярный продукт категории Телевизоры от Samsung.",
+    "price": {
+      "amount": 72874.52,
+      "currency": "RUB"
+    },
+    "available_stock": 61,
+    "tags": [
+      "новинка",
+      "премиум"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-NeoQLEDQN90B-63_front.jpg",
+        "alt": "Neo QLED QN90B вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-NeoQLEDQN90B-63_side.jpg",
+        "alt": "Neo QLED QN90B сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2093g",
+      "dimensions": "387mm x 240mm x 33mm",
+      "battery_life": "29 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20064",
+    "name": "Galaxy Buds Live",
+    "sku": "Samsung-GalaxyBudsLive-64",
+    "brand": "Samsung",
+    "category": "Аудио",
+    "description": "Galaxy Buds Live — популярный продукт категории Аудио от Samsung.",
+    "price": {
+      "amount": 211662.81,
+      "currency": "RUB"
+    },
+    "available_stock": 236,
+    "tags": [
+      "ios",
+      "гаджеты"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBudsLive-64_front.jpg",
+        "alt": "Galaxy Buds Live вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBudsLive-64_side.jpg",
+        "alt": "Galaxy Buds Live сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "682g",
+      "dimensions": "240mm x 139mm x 11mm",
+      "battery_life": "32 hours",
+      "color": "White"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20065",
+    "name": "Nova 10",
+    "sku": "Huawei-Nova10-65",
+    "brand": "Huawei",
+    "category": "Смартфоны",
+    "description": "Nova 10 — популярный продукт категории Смартфоны от Huawei.",
+    "price": {
+      "amount": 249165.12,
+      "currency": "RUB"
+    },
+    "available_stock": 113,
+    "tags": [
+      "смартфон",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Huawei-Nova10-65_front.jpg",
+        "alt": "Nova 10 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Huawei-Nova10-65_side.jpg",
+        "alt": "Nova 10 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2430g",
+      "dimensions": "206mm x 153mm x 7mm",
+      "battery_life": "50 hours",
+      "color": "Black"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20066",
+    "name": "WF-1000XM4",
+    "sku": "Sony-WF-1000XM4-66",
+    "brand": "Sony",
+    "category": "Аудио",
+    "description": "WF-1000XM4 — популярный продукт категории Аудио от Sony.",
+    "price": {
+      "amount": 101423.5,
+      "currency": "RUB"
+    },
+    "available_stock": 36,
+    "tags": [
+      "смартфон",
+      "гаджеты",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Sony-WF-1000XM4-66_front.jpg",
+        "alt": "WF-1000XM4 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Sony-WF-1000XM4-66_side.jpg",
+        "alt": "WF-1000XM4 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1399g",
+      "dimensions": "314mm x 103mm x 17mm",
+      "battery_life": "38 hours",
+      "color": "Green"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20067",
+    "name": "Galaxy A54",
+    "sku": "Samsung-GalaxyA54-67",
+    "brand": "Samsung",
+    "category": "Смартфоны",
+    "description": "Galaxy A54 — популярный продукт категории Смартфоны от Samsung.",
+    "price": {
+      "amount": 132286.96,
+      "currency": "RUB"
+    },
+    "available_stock": 15,
+    "tags": [
+      "распродажа",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyA54-67_front.jpg",
+        "alt": "Galaxy A54 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyA54-67_side.jpg",
+        "alt": "Galaxy A54 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1787g",
+      "dimensions": "141mm x 317mm x 11mm",
+      "battery_life": "9 hours",
+      "color": "Black"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20068",
+    "name": "OLED55C2",
+    "sku": "LG-OLED55C2-68",
+    "brand": "LG",
+    "category": "Телевизоры",
+    "description": "OLED55C2 — популярный продукт категории Телевизоры от LG.",
+    "price": {
+      "amount": 141918.58,
+      "currency": "RUB"
+    },
+    "available_stock": 223,
+    "tags": [
+      "android",
+      "ноутбук"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-OLED55C2-68_front.jpg",
+        "alt": "OLED55C2 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-OLED55C2-68_side.jpg",
+        "alt": "OLED55C2 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "491g",
+      "dimensions": "250mm x 246mm x 39mm",
+      "battery_life": "37 hours",
+      "color": "Black"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20069",
+    "name": "ROG Zephyrus G14",
+    "sku": "Asus-ROGZephyrusG14-69",
+    "brand": "Asus",
+    "category": "Ноутбуки",
+    "description": "ROG Zephyrus G14 — популярный продукт категории Ноутбуки от Asus.",
+    "price": {
+      "amount": 285240.13,
+      "currency": "RUB"
+    },
+    "available_stock": 32,
+    "tags": [
+      "ios",
+      "гаджеты",
+      "технологии",
+      "премиум",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Asus-ROGZephyrusG14-69_front.jpg",
+        "alt": "ROG Zephyrus G14 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Asus-ROGZephyrusG14-69_side.jpg",
+        "alt": "ROG Zephyrus G14 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2484g",
+      "dimensions": "194mm x 118mm x 20mm",
+      "battery_life": "58 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20070",
+    "name": "CordZero A9",
+    "sku": "LG-CordZeroA9-70",
+    "brand": "LG",
+    "category": "Бытовая техника",
+    "description": "CordZero A9 — популярный продукт категории Бытовая техника от LG.",
+    "price": {
+      "amount": 292724.87,
+      "currency": "RUB"
+    },
+    "available_stock": 180,
+    "tags": [
+      "ios",
+      "технологии",
+      "ноутбук",
+      "новинка",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-CordZeroA9-70_front.jpg",
+        "alt": "CordZero A9 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-CordZeroA9-70_side.jpg",
+        "alt": "CordZero A9 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "624g",
+      "dimensions": "200mm x 193mm x 15mm",
+      "battery_life": "55 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20071",
+    "name": "MacBook Pro 16",
+    "sku": "Apple-MacBookPro16-71",
+    "brand": "Apple",
+    "category": "Ноутбуки",
+    "description": "MacBook Pro 16 — популярный продукт категории Ноутбуки от Apple.",
+    "price": {
+      "amount": 114924.69,
+      "currency": "RUB"
+    },
+    "available_stock": 13,
+    "tags": [
+      "новинка",
+      "ios"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Apple-MacBookPro16-71_front.jpg",
+        "alt": "MacBook Pro 16 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Apple-MacBookPro16-71_side.jpg",
+        "alt": "MacBook Pro 16 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2089g",
+      "dimensions": "303mm x 48mm x 28mm",
+      "battery_life": "50 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20072",
+    "name": "iPhone 13",
+    "sku": "Apple-iPhone13-72",
+    "brand": "Apple",
+    "category": "Смартфоны",
+    "description": "iPhone 13 — популярный продукт категории Смартфоны от Apple.",
+    "price": {
+      "amount": 110733.53,
+      "currency": "RUB"
+    },
+    "available_stock": 191,
+    "tags": [
+      "новинка",
+      "технологии"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Apple-iPhone13-72_front.jpg",
+        "alt": "iPhone 13 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Apple-iPhone13-72_side.jpg",
+        "alt": "iPhone 13 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1057g",
+      "dimensions": "331mm x 123mm x 38mm",
+      "battery_life": "25 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20073",
+    "name": "Pavilion 15",
+    "sku": "HP-Pavilion15-73",
+    "brand": "HP",
+    "category": "Ноутбуки",
+    "description": "Pavilion 15 — популярный продукт категории Ноутбуки от HP.",
+    "price": {
+      "amount": 156156.24,
+      "currency": "RUB"
+    },
+    "available_stock": 167,
+    "tags": [
+      "ноутбук",
+      "новинка",
+      "гаджеты"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/HP-Pavilion15-73_front.jpg",
+        "alt": "Pavilion 15 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/HP-Pavilion15-73_side.jpg",
+        "alt": "Pavilion 15 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "729g",
+      "dimensions": "144mm x 293mm x 37mm",
+      "battery_life": "5 hours",
+      "color": "White"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20074",
+    "name": "iPhone 14 Pro",
+    "sku": "Apple-iPhone14Pro-74",
+    "brand": "Apple",
+    "category": "Смартфоны",
+    "description": "iPhone 14 Pro — популярный продукт категории Смартфоны от Apple.",
+    "price": {
+      "amount": 291894.84,
+      "currency": "RUB"
+    },
+    "available_stock": 172,
+    "tags": [
+      "смартфон",
+      "android"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Apple-iPhone14Pro-74_front.jpg",
+        "alt": "iPhone 14 Pro вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Apple-iPhone14Pro-74_side.jpg",
+        "alt": "iPhone 14 Pro сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1823g",
+      "dimensions": "323mm x 266mm x 21mm",
+      "battery_life": "51 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20075",
+    "name": "XPS 13",
+    "sku": "Dell-XPS13-75",
+    "brand": "Dell",
+    "category": "Ноутбуки",
+    "description": "XPS 13 — популярный продукт категории Ноутбуки от Dell.",
+    "price": {
+      "amount": 139770.03,
+      "currency": "RUB"
+    },
+    "available_stock": 33,
+    "tags": [
+      "android",
+      "ios",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Dell-XPS13-75_front.jpg",
+        "alt": "XPS 13 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Dell-XPS13-75_side.jpg",
+        "alt": "XPS 13 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "985g",
+      "dimensions": "97mm x 307mm x 11mm",
+      "battery_life": "24 hours",
+      "color": "Black"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20076",
+    "name": "Pavilion 15",
+    "sku": "HP-Pavilion15-76",
+    "brand": "HP",
+    "category": "Ноутбуки",
+    "description": "Pavilion 15 — популярный продукт категории Ноутбуки от HP.",
+    "price": {
+      "amount": 53389.53,
+      "currency": "RUB"
+    },
+    "available_stock": 215,
+    "tags": [
+      "распродажа",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/HP-Pavilion15-76_front.jpg",
+        "alt": "Pavilion 15 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/HP-Pavilion15-76_side.jpg",
+        "alt": "Pavilion 15 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "532g",
+      "dimensions": "100mm x 369mm x 6mm",
+      "battery_life": "69 hours",
+      "color": "White"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20077",
+    "name": "Galaxy Buds2 Pro",
+    "sku": "Samsung-GalaxyBuds2Pro-77",
+    "brand": "Samsung",
+    "category": "Аудио",
+    "description": "Galaxy Buds2 Pro — популярный продукт категории Аудио от Samsung.",
+    "price": {
+      "amount": 53324.81,
+      "currency": "RUB"
+    },
+    "available_stock": 116,
+    "tags": [
+      "гаджеты",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBuds2Pro-77_front.jpg",
+        "alt": "Galaxy Buds2 Pro вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBuds2Pro-77_side.jpg",
+        "alt": "Galaxy Buds2 Pro сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1461g",
+      "dimensions": "196mm x 44mm x 34mm",
+      "battery_life": "56 hours",
+      "color": "Green"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20078",
+    "name": "AirPods Max",
+    "sku": "Apple-AirPodsMax-78",
+    "brand": "Apple",
+    "category": "Аудио",
+    "description": "AirPods Max — популярный продукт категории Аудио от Apple.",
+    "price": {
+      "amount": 74276.97,
+      "currency": "RUB"
+    },
+    "available_stock": 201,
+    "tags": [
+      "новинка",
+      "ноутбук",
+      "android",
+      "аудио",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Apple-AirPodsMax-78_front.jpg",
+        "alt": "AirPods Max вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Apple-AirPodsMax-78_side.jpg",
+        "alt": "AirPods Max сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "359g",
+      "dimensions": "311mm x 169mm x 10mm",
+      "battery_life": "68 hours",
+      "color": "Black"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20079",
+    "name": "AirPods 3",
+    "sku": "Apple-AirPods3-79",
+    "brand": "Apple",
+    "category": "Аудио",
+    "description": "AirPods 3 — популярный продукт категории Аудио от Apple.",
+    "price": {
+      "amount": 153670.04,
+      "currency": "RUB"
+    },
+    "available_stock": 212,
+    "tags": [
+      "распродажа",
+      "премиум"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Apple-AirPods3-79_front.jpg",
+        "alt": "AirPods 3 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Apple-AirPods3-79_side.jpg",
+        "alt": "AirPods 3 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1475g",
+      "dimensions": "212mm x 47mm x 46mm",
+      "battery_life": "27 hours",
+      "color": "Green"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20080",
+    "name": "Galaxy Buds2 Pro",
+    "sku": "Samsung-GalaxyBuds2Pro-80",
+    "brand": "Samsung",
+    "category": "Аудио",
+    "description": "Galaxy Buds2 Pro — популярный продукт категории Аудио от Samsung.",
+    "price": {
+      "amount": 192010.32,
+      "currency": "RUB"
+    },
+    "available_stock": 271,
+    "tags": [
+      "android",
+      "аудио",
+      "распродажа",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBuds2Pro-80_front.jpg",
+        "alt": "Galaxy Buds2 Pro вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBuds2Pro-80_side.jpg",
+        "alt": "Galaxy Buds2 Pro сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2498g",
+      "dimensions": "56mm x 141mm x 25mm",
+      "battery_life": "72 hours",
+      "color": "White"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20081",
+    "name": "The Frame 55",
+    "sku": "Samsung-TheFrame55-81",
+    "brand": "Samsung",
+    "category": "Телевизоры",
+    "description": "The Frame 55 — популярный продукт категории Телевизоры от Samsung.",
+    "price": {
+      "amount": 62586.01,
+      "currency": "RUB"
+    },
+    "available_stock": 122,
+    "tags": [
+      "технологии",
+      "новинка",
+      "премиум",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-TheFrame55-81_front.jpg",
+        "alt": "The Frame 55 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-TheFrame55-81_side.jpg",
+        "alt": "The Frame 55 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2241g",
+      "dimensions": "172mm x 300mm x 27mm",
+      "battery_life": "21 hours",
+      "color": "White"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "20082",
+    "name": "Bravia X90J",
+    "sku": "Sony-BraviaX90J-82",
+    "brand": "Sony",
+    "category": "Телевизоры",
+    "description": "Bravia X90J — популярный продукт категории Телевизоры от Sony.",
+    "price": {
+      "amount": 223218.51,
+      "currency": "RUB"
+    },
+    "available_stock": 19,
+    "tags": [
+      "смартфон",
+      "гаджеты",
+      "новинка",
+      "ios",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Sony-BraviaX90J-82_front.jpg",
+        "alt": "Bravia X90J вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Sony-BraviaX90J-82_side.jpg",
+        "alt": "Bravia X90J сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "279g",
+      "dimensions": "195mm x 278mm x 17mm",
+      "battery_life": "39 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20083",
+    "name": "Neo QLED QN90B",
+    "sku": "Samsung-NeoQLEDQN90B-83",
+    "brand": "Samsung",
+    "category": "Телевизоры",
+    "description": "Neo QLED QN90B — популярный продукт категории Телевизоры от Samsung.",
+    "price": {
+      "amount": 173835.48,
+      "currency": "RUB"
+    },
+    "available_stock": 227,
+    "tags": [
+      "новинка",
+      "технологии",
+      "ios",
+      "android",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-NeoQLEDQN90B-83_front.jpg",
+        "alt": "Neo QLED QN90B вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-NeoQLEDQN90B-83_side.jpg",
+        "alt": "Neo QLED QN90B сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1536g",
+      "dimensions": "182mm x 378mm x 38mm",
+      "battery_life": "16 hours",
+      "color": "White"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20084",
+    "name": "NanoCell 75",
+    "sku": "LG-NanoCell75-84",
+    "brand": "LG",
+    "category": "Телевизоры",
+    "description": "NanoCell 75 — популярный продукт категории Телевизоры от LG.",
+    "price": {
+      "amount": 35500.21,
+      "currency": "RUB"
+    },
+    "available_stock": 209,
+    "tags": [
+      "смартфон",
+      "технологии"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-NanoCell75-84_front.jpg",
+        "alt": "NanoCell 75 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-NanoCell75-84_side.jpg",
+        "alt": "NanoCell 75 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1268g",
+      "dimensions": "380mm x 201mm x 14mm",
+      "battery_life": "5 hours",
+      "color": "Black"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20085",
+    "name": "EliteBook 840",
+    "sku": "HP-EliteBook840-85",
+    "brand": "HP",
+    "category": "Ноутбуки",
+    "description": "EliteBook 840 — популярный продукт категории Ноутбуки от HP.",
+    "price": {
+      "amount": 271545.28,
+      "currency": "RUB"
+    },
+    "available_stock": 180,
+    "tags": [
+      "android",
+      "ноутбук",
+      "ios"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/HP-EliteBook840-85_front.jpg",
+        "alt": "EliteBook 840 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/HP-EliteBook840-85_side.jpg",
+        "alt": "EliteBook 840 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "606g",
+      "dimensions": "318mm x 372mm x 46mm",
+      "battery_life": "43 hours",
+      "color": "Black"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20086",
+    "name": "WH-1000XM5",
+    "sku": "Sony-WH-1000XM5-86",
+    "brand": "Sony",
+    "category": "Аудио",
+    "description": "WH-1000XM5 — популярный продукт категории Аудио от Sony.",
+    "price": {
+      "amount": 76492.25,
+      "currency": "RUB"
+    },
+    "available_stock": 166,
+    "tags": [
+      "смартфон",
+      "аудио",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Sony-WH-1000XM5-86_front.jpg",
+        "alt": "WH-1000XM5 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Sony-WH-1000XM5-86_side.jpg",
+        "alt": "WH-1000XM5 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "992g",
+      "dimensions": "145mm x 395mm x 44mm",
+      "battery_life": "57 hours",
+      "color": "Green"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20087",
+    "name": "Bravia X90J",
+    "sku": "Sony-BraviaX90J-87",
+    "brand": "Sony",
+    "category": "Телевизоры",
+    "description": "Bravia X90J — популярный продукт категории Телевизоры от Sony.",
+    "price": {
+      "amount": 268863.59,
+      "currency": "RUB"
+    },
+    "available_stock": 182,
+    "tags": [
+      "android",
+      "смартфон",
+      "ios",
+      "новинка",
+      "гаджеты"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Sony-BraviaX90J-87_front.jpg",
+        "alt": "Bravia X90J вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Sony-BraviaX90J-87_side.jpg",
+        "alt": "Bravia X90J сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1540g",
+      "dimensions": "337mm x 381mm x 41mm",
+      "battery_life": "52 hours",
+      "color": "Blue"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20088",
+    "name": "Jet 90 Пылесос",
+    "sku": "Samsung-Jet90Пылесос-88",
+    "brand": "Samsung",
+    "category": "Бытовая техника",
+    "description": "Jet 90 Пылесос — популярный продукт категории Бытовая техника от Samsung.",
+    "price": {
+      "amount": 248783.81,
+      "currency": "RUB"
+    },
+    "available_stock": 62,
+    "tags": [
+      "распродажа",
+      "технологии"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-Jet90Пылесос-88_front.jpg",
+        "alt": "Jet 90 Пылесос вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-Jet90Пылесос-88_side.jpg",
+        "alt": "Jet 90 Пылесос сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2275g",
+      "dimensions": "372mm x 373mm x 7mm",
+      "battery_life": "21 hours",
+      "color": "Black"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20089",
+    "name": "P50 Pro",
+    "sku": "Huawei-P50Pro-89",
+    "brand": "Huawei",
+    "category": "Смартфоны",
+    "description": "P50 Pro — популярный продукт категории Смартфоны от Huawei.",
+    "price": {
+      "amount": 124341.35,
+      "currency": "RUB"
+    },
+    "available_stock": 153,
+    "tags": [
+      "технологии",
+      "android",
+      "новинка"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Huawei-P50Pro-89_front.jpg",
+        "alt": "P50 Pro вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Huawei-P50Pro-89_side.jpg",
+        "alt": "P50 Pro сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2430g",
+      "dimensions": "87mm x 27mm x 25mm",
+      "battery_life": "65 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20090",
+    "name": "TWINWash",
+    "sku": "LG-TWINWash-90",
+    "brand": "LG",
+    "category": "Бытовая техника",
+    "description": "TWINWash — популярный продукт категории Бытовая техника от LG.",
+    "price": {
+      "amount": 291250.24,
+      "currency": "RUB"
+    },
+    "available_stock": 71,
+    "tags": [
+      "android",
+      "технологии",
+      "смартфон",
+      "ios"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-TWINWash-90_front.jpg",
+        "alt": "TWINWash вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-TWINWash-90_side.jpg",
+        "alt": "TWINWash сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2208g",
+      "dimensions": "174mm x 293mm x 18mm",
+      "battery_life": "32 hours",
+      "color": "Green"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20091",
+    "name": "Galaxy Buds Live",
+    "sku": "Samsung-GalaxyBudsLive-91",
+    "brand": "Samsung",
+    "category": "Аудио",
+    "description": "Galaxy Buds Live — популярный продукт категории Аудио от Samsung.",
+    "price": {
+      "amount": 13087.37,
+      "currency": "RUB"
+    },
+    "available_stock": 141,
+    "tags": [
+      "ios",
+      "ноутбук",
+      "android"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBudsLive-91_front.jpg",
+        "alt": "Galaxy Buds Live вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-GalaxyBudsLive-91_side.jpg",
+        "alt": "Galaxy Buds Live сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2353g",
+      "dimensions": "281mm x 379mm x 31mm",
+      "battery_life": "61 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20092",
+    "name": "Inspiron 15",
+    "sku": "Dell-Inspiron15-92",
+    "brand": "Dell",
+    "category": "Ноутбуки",
+    "description": "Inspiron 15 — популярный продукт категории Ноутбуки от Dell.",
+    "price": {
+      "amount": 200474.81,
+      "currency": "RUB"
+    },
+    "available_stock": 53,
+    "tags": [
+      "новинка",
+      "ноутбук",
+      "премиум"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Dell-Inspiron15-92_front.jpg",
+        "alt": "Inspiron 15 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Dell-Inspiron15-92_side.jpg",
+        "alt": "Inspiron 15 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1546g",
+      "dimensions": "188mm x 241mm x 40mm",
+      "battery_life": "72 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20093",
+    "name": "Neo QLED QN90B",
+    "sku": "Samsung-NeoQLEDQN90B-93",
+    "brand": "Samsung",
+    "category": "Телевизоры",
+    "description": "Neo QLED QN90B — популярный продукт категории Телевизоры от Samsung.",
+    "price": {
+      "amount": 97813.25,
+      "currency": "RUB"
+    },
+    "available_stock": 77,
+    "tags": [
+      "премиум",
+      "технологии",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-NeoQLEDQN90B-93_front.jpg",
+        "alt": "Neo QLED QN90B вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-NeoQLEDQN90B-93_side.jpg",
+        "alt": "Neo QLED QN90B сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "281g",
+      "dimensions": "202mm x 324mm x 38mm",
+      "battery_life": "5 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20094",
+    "name": "ThinkPad X1 Carbon",
+    "sku": "Lenovo-ThinkPadX1Carbon-94",
+    "brand": "Lenovo",
+    "category": "Ноутбуки",
+    "description": "ThinkPad X1 Carbon — популярный продукт категории Ноутбуки от Lenovo.",
+    "price": {
+      "amount": 237462.68,
+      "currency": "RUB"
+    },
+    "available_stock": 75,
+    "tags": [
+      "ноутбук",
+      "распродажа"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Lenovo-ThinkPadX1Carbon-94_front.jpg",
+        "alt": "ThinkPad X1 Carbon вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Lenovo-ThinkPadX1Carbon-94_side.jpg",
+        "alt": "ThinkPad X1 Carbon сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1133g",
+      "dimensions": "183mm x 330mm x 39mm",
+      "battery_life": "66 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20095",
+    "name": "Bravia X90J",
+    "sku": "Sony-BraviaX90J-95",
+    "brand": "Sony",
+    "category": "Телевизоры",
+    "description": "Bravia X90J — популярный продукт категории Телевизоры от Sony.",
+    "price": {
+      "amount": 59576.29,
+      "currency": "RUB"
+    },
+    "available_stock": 120,
+    "tags": [
+      "технологии",
+      "гаджеты",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Sony-BraviaX90J-95_front.jpg",
+        "alt": "Bravia X90J вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Sony-BraviaX90J-95_side.jpg",
+        "alt": "Bravia X90J сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1293g",
+      "dimensions": "236mm x 399mm x 10mm",
+      "battery_life": "48 hours",
+      "color": "Green"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "20096",
+    "name": "TWINWash",
+    "sku": "LG-TWINWash-96",
+    "brand": "LG",
+    "category": "Бытовая техника",
+    "description": "TWINWash — популярный продукт категории Бытовая техника от LG.",
+    "price": {
+      "amount": 164651.31,
+      "currency": "RUB"
+    },
+    "available_stock": 44,
+    "tags": [
+      "технологии",
+      "аудио"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-TWINWash-96_front.jpg",
+        "alt": "TWINWash вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-TWINWash-96_side.jpg",
+        "alt": "TWINWash сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1876g",
+      "dimensions": "174mm x 256mm x 39mm",
+      "battery_life": "62 hours",
+      "color": "Gray"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20097",
+    "name": "NanoCell 75",
+    "sku": "LG-NanoCell75-97",
+    "brand": "LG",
+    "category": "Телевизоры",
+    "description": "NanoCell 75 — популярный продукт категории Телевизоры от LG.",
+    "price": {
+      "amount": 188424.53,
+      "currency": "RUB"
+    },
+    "available_stock": 24,
+    "tags": [
+      "ios",
+      "новинка",
+      "ноутбук"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-NanoCell75-97_front.jpg",
+        "alt": "NanoCell 75 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-NanoCell75-97_side.jpg",
+        "alt": "NanoCell 75 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "147g",
+      "dimensions": "235mm x 305mm x 45mm",
+      "battery_life": "21 hours",
+      "color": "Green"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "20098",
+    "name": "Series 6 Посудомоечная машина",
+    "sku": "Bosch-Series6Посудомоечнаямашина-98",
+    "brand": "Bosch",
+    "category": "Бытовая техника",
+    "description": "Series 6 Посудомоечная машина — популярный продукт категории Бытовая техника от Bosch.",
+    "price": {
+      "amount": 297102.42,
+      "currency": "RUB"
+    },
+    "available_stock": 130,
+    "tags": [
+      "технологии",
+      "премиум"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Bosch-Series6Посудомоечнаямашина-98_front.jpg",
+        "alt": "Series 6 Посудомоечная машина вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Bosch-Series6Посудомоечнаямашина-98_side.jpg",
+        "alt": "Series 6 Посудомоечная машина сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1987g",
+      "dimensions": "85mm x 298mm x 35mm",
+      "battery_life": "19 hours",
+      "color": "Green"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "20099",
+    "name": "CordZero A9",
+    "sku": "LG-CordZeroA9-99",
+    "brand": "LG",
+    "category": "Бытовая техника",
+    "description": "CordZero A9 — популярный продукт категории Бытовая техника от LG.",
+    "price": {
+      "amount": 191761.48,
+      "currency": "RUB"
+    },
+    "available_stock": 256,
+    "tags": [
+      "ios",
+      "аудио",
+      "новинка",
+      "гаджеты"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/LG-CordZeroA9-99_front.jpg",
+        "alt": "CordZero A9 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/LG-CordZeroA9-99_side.jpg",
+        "alt": "CordZero A9 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2184g",
+      "dimensions": "319mm x 99mm x 24mm",
+      "battery_life": "56 hours",
+      "color": "Silver"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "20100",
+    "name": "The Frame 55",
+    "sku": "Samsung-TheFrame55-100",
+    "brand": "Samsung",
+    "category": "Телевизоры",
+    "description": "The Frame 55 — популярный продукт категории Телевизоры от Samsung.",
+    "price": {
+      "amount": 128838.35,
+      "currency": "RUB"
+    },
+    "available_stock": 242,
+    "tags": [
+      "премиум",
+      "гаджеты",
+      "новинка",
+      "смартфон"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/Samsung-TheFrame55-100_front.jpg",
+        "alt": "The Frame 55 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/Samsung-TheFrame55-100_side.jpg",
+        "alt": "The Frame 55 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2232g",
+      "dimensions": "341mm x 82mm x 44mm",
+      "battery_life": "68 hours",
+      "color": "White"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "50001",
+    "name": "Bosch Перфоратор GBH 2-26",
+    "sku": "Bosch-GBH226-1",
+    "brand": "Bosch",
+    "category": "Электроинструменты",
+    "description": "Bosch GBH 2-26 — надежный перфоратор SDS-plus для профессионального бурения и долбления.",
+    "price": {
+      "amount": 15999.99,
+      "currency": "RUB"
+    },
+    "available_stock": 42,
+    "tags": [
+      "инструменты",
+      "ремонт",
+      "профессиональный"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/bosch_gbh226_front.jpg",
+        "alt": "Bosch GBH 2-26 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/bosch_gbh226_side.jpg",
+        "alt": "Bosch GBH 2-26 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2800g",
+      "dimensions": "377mm x 83mm x 210mm",
+      "power": "800 W",
+      "voltage": "220 V",
+      "rpm": "1200 об/мин",
+      "color": "Blue"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "50002",
+    "name": "Bosch Аккумуляторная дрель GSR 18V-50",
+    "sku": "Bosch-GSR18V50-2",
+    "brand": "Bosch",
+    "category": "Электроинструменты",
+    "description": "Bosch GSR 18V-50 — мощная аккумуляторная дрель для точного сверления.",
+    "price": {
+      "amount": 12999.90,
+      "currency": "RUB"
+    },
+    "available_stock": 58,
+    "tags": [
+      "инструменты",
+      "аккумуляторный",
+      "ремонт"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/bosch_gsr18v50_front.jpg",
+        "alt": "Bosch GSR 18V-50 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/bosch_gsr18v50_side.jpg",
+        "alt": "Bosch GSR 18V-50 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1800g",
+      "dimensions": "200mm x 70mm x 230mm",
+      "power": "650 W",
+      "voltage": "18 V",
+      "rpm": "1700 об/мин",
+      "color": "Blue"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "50003",
+    "name": "Bosch Угловая шлифмашина GWS 7-125",
+    "sku": "Bosch-GWS7125-3",
+    "brand": "Bosch",
+    "category": "Электроинструменты",
+    "description": "Компактная угловая шлифмашина Bosch GWS 7-125 с эргономичной рукояткой.",
+    "price": {
+      "amount": 7499.00,
+      "currency": "RUB"
+    },
+    "available_stock": 74,
+    "tags": [
+      "инструменты",
+      "шлифмашина",
+      "bosch"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/bosch_gws7125_front.jpg",
+        "alt": "Bosch GWS 7-125 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/bosch_gws7125_side.jpg",
+        "alt": "Bosch GWS 7-125 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2000g",
+      "dimensions": "263mm x 77mm x 104mm",
+      "power": "720 W",
+      "voltage": "220 V",
+      "rpm": "11000 об/мин",
+      "color": "Blue"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "50004",
+    "name": "Bosch Лобзик PST 900 PEL",
+    "sku": "Bosch-PST900PEL-4",
+    "brand": "Bosch",
+    "category": "Электроинструменты",
+    "description": "Лобзик Bosch PST 900 PEL для чистых и точных пропилов.",
+    "price": {
+      "amount": 6999.00,
+      "currency": "RUB"
+    },
+    "available_stock": 64,
+    "tags": [
+      "инструменты",
+      "лобзик",
+      "bosch"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/bosch_pst900pel_front.jpg",
+        "alt": "Bosch PST 900 PEL вид спереди"
+      },
+      {
+        "url": "https://example.com/images/bosch_pst900pel_side.jpg",
+        "alt": "Bosch PST 900 PEL сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2200g",
+      "dimensions": "340mm x 70mm x 200mm",
+      "power": "620 W",
+      "voltage": "220 V",
+      "rpm": "3100 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "50005",
+    "name": "Bosch Отбойный молоток GSH 11E",
+    "sku": "Bosch-GSH11E-5",
+    "brand": "Bosch",
+    "category": "Электроинструменты",
+    "description": "Bosch GSH 11E — мощный отбойный молоток для тяжелых строительных работ.",
+    "price": {
+      "amount": 34999.00,
+      "currency": "RUB"
+    },
+    "available_stock": 21,
+    "tags": [
+      "инструменты",
+      "отбойный молоток",
+      "bosch"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/bosch_gsh11e_front.jpg",
+        "alt": "Bosch GSH 11E вид спереди"
+      },
+      {
+        "url": "https://example.com/images/bosch_gsh11e_side.jpg",
+        "alt": "Bosch GSH 11E сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "10400g",
+      "dimensions": "570mm x 110mm x 260mm",
+      "power": "1500 W",
+      "voltage": "220 V",
+      "rpm": "1890 об/мин",
+      "color": "Blue"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "50006",
+    "name": "Makita Шуруповерт DDF482",
+    "sku": "Makita-DDF482-6",
+    "brand": "Makita",
+    "category": "Электроинструменты",
+    "description": "Аккумуляторный шуруповерт Makita DDF482 — легкий и компактный инструмент для профессионалов.",
+    "price": {
+      "amount": 11500.00,
+      "currency": "RUB"
+    },
+    "available_stock": 77,
+    "tags": [
+      "инструменты",
+      "аккумуляторный",
+      "шуруповерт"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/makita_ddf482_front.jpg",
+        "alt": "Makita DDF482 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/makita_ddf482_side.jpg",
+        "alt": "Makita DDF482 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1700g",
+      "dimensions": "198mm x 79mm x 249mm",
+      "power": "600 W",
+      "voltage": "18 V",
+      "rpm": "1900 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "50007",
+    "name": "Makita Болгарка GA5030R",
+    "sku": "Makita-GA5030R-7",
+    "brand": "Makita",
+    "category": "Электроинструменты",
+    "description": "Makita GA5030R — компактная и удобная угловая шлифмашина для дома и работы.",
+    "price": {
+      "amount": 8500.00,
+      "currency": "RUB"
+    },
+    "available_stock": 88,
+    "tags": [
+      "инструменты",
+      "шлифмашина",
+      "makita"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/makita_ga5030r_front.jpg",
+        "alt": "Makita GA5030R вид спереди"
+      },
+      {
+        "url": "https://example.com/images/makita_ga5030r_side.jpg",
+        "alt": "Makita GA5030R сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2100g",
+      "dimensions": "266mm x 138mm x 103mm",
+      "power": "720 W",
+      "voltage": "220 V",
+      "rpm": "11000 об/мин",
+      "color": "Black"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "50001",
+    "name": "Bosch Перфоратор GBH 2-26",
+    "sku": "Bosch-GBH226-1",
+    "brand": "Bosch",
+    "category": "Электроинструменты",
+    "description": "Bosch GBH 2-26 — надежный перфоратор SDS-plus для профессионального бурения и долбления.",
+    "price": {
+      "amount": 15999.99,
+      "currency": "RUB"
+    },
+    "available_stock": 42,
+    "tags": [
+      "инструменты",
+      "ремонт",
+      "профессиональный"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/bosch_gbh226_front.jpg",
+        "alt": "Bosch GBH 2-26 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/bosch_gbh226_side.jpg",
+        "alt": "Bosch GBH 2-26 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2800g",
+      "dimensions": "377mm x 83mm x 210mm",
+      "power": "800 W",
+      "voltage": "220 V",
+      "rpm": "1200 об/мин",
+      "color": "Blue"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "50002",
+    "name": "Bosch Аккумуляторная дрель GSR 18V-50",
+    "sku": "Bosch-GSR18V50-2",
+    "brand": "Bosch",
+    "category": "Электроинструменты",
+    "description": "Bosch GSR 18V-50 — мощная аккумуляторная дрель для точного сверления.",
+    "price": {
+      "amount": 12999.90,
+      "currency": "RUB"
+    },
+    "available_stock": 58,
+    "tags": [
+      "инструменты",
+      "аккумуляторный",
+      "ремонт"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/bosch_gsr18v50_front.jpg",
+        "alt": "Bosch GSR 18V-50 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/bosch_gsr18v50_side.jpg",
+        "alt": "Bosch GSR 18V-50 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1800g",
+      "dimensions": "200mm x 70mm x 230mm",
+      "power": "650 W",
+      "voltage": "18 V",
+      "rpm": "1700 об/мин",
+      "color": "Blue"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "50003",
+    "name": "Bosch Угловая шлифмашина GWS 7-125",
+    "sku": "Bosch-GWS7125-3",
+    "brand": "Bosch",
+    "category": "Электроинструменты",
+    "description": "Компактная угловая шлифмашина Bosch GWS 7-125 с эргономичной рукояткой.",
+    "price": {
+      "amount": 7499.00,
+      "currency": "RUB"
+    },
+    "available_stock": 74,
+    "tags": [
+      "инструменты",
+      "шлифмашина",
+      "bosch"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/bosch_gws7125_front.jpg",
+        "alt": "Bosch GWS 7-125 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/bosch_gws7125_side.jpg",
+        "alt": "Bosch GWS 7-125 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2000g",
+      "dimensions": "263mm x 77mm x 104mm",
+      "power": "720 W",
+      "voltage": "220 V",
+      "rpm": "11000 об/мин",
+      "color": "Blue"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "50004",
+    "name": "Bosch Лобзик PST 900 PEL",
+    "sku": "Bosch-PST900PEL-4",
+    "brand": "Bosch",
+    "category": "Электроинструменты",
+    "description": "Лобзик Bosch PST 900 PEL для чистых и точных пропилов.",
+    "price": {
+      "amount": 6999.00,
+      "currency": "RUB"
+    },
+    "available_stock": 64,
+    "tags": [
+      "инструменты",
+      "лобзик",
+      "bosch"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/bosch_pst900pel_front.jpg",
+        "alt": "Bosch PST 900 PEL вид спереди"
+      },
+      {
+        "url": "https://example.com/images/bosch_pst900pel_side.jpg",
+        "alt": "Bosch PST 900 PEL сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2200g",
+      "dimensions": "340mm x 70mm x 200mm",
+      "power": "620 W",
+      "voltage": "220 V",
+      "rpm": "3100 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "50005",
+    "name": "Bosch Отбойный молоток GSH 11E",
+    "sku": "Bosch-GSH11E-5",
+    "brand": "Bosch",
+    "category": "Электроинструменты",
+    "description": "Bosch GSH 11E — мощный отбойный молоток для тяжелых строительных работ.",
+    "price": {
+      "amount": 34999.00,
+      "currency": "RUB"
+    },
+    "available_stock": 21,
+    "tags": [
+      "инструменты",
+      "отбойный молоток",
+      "bosch"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/bosch_gsh11e_front.jpg",
+        "alt": "Bosch GSH 11E вид спереди"
+      },
+      {
+        "url": "https://example.com/images/bosch_gsh11e_side.jpg",
+        "alt": "Bosch GSH 11E сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "10400g",
+      "dimensions": "570mm x 110mm x 260mm",
+      "power": "1500 W",
+      "voltage": "220 V",
+      "rpm": "1890 об/мин",
+      "color": "Blue"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "50006",
+    "name": "Makita Шуруповерт DDF482",
+    "sku": "Makita-DDF482-6",
+    "brand": "Makita",
+    "category": "Электроинструменты",
+    "description": "Аккумуляторный шуруповерт Makita DDF482 — легкий и компактный инструмент для профессионалов.",
+    "price": {
+      "amount": 11500.00,
+      "currency": "RUB"
+    },
+    "available_stock": 77,
+    "tags": [
+      "инструменты",
+      "аккумуляторный",
+      "шуруповерт"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/makita_ddf482_front.jpg",
+        "alt": "Makita DDF482 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/makita_ddf482_side.jpg",
+        "alt": "Makita DDF482 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1700g",
+      "dimensions": "198mm x 79mm x 249mm",
+      "power": "600 W",
+      "voltage": "18 V",
+      "rpm": "1900 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "50007",
+    "name": "Makita Болгарка GA5030R",
+    "sku": "Makita-GA5030R-7",
+    "brand": "Makita",
+    "category": "Электроинструменты",
+    "description": "Makita GA5030R — компактная и удобная угловая шлифмашина для дома и работы.",
+    "price": {
+      "amount": 8500.00,
+      "currency": "RUB"
+    },
+    "available_stock": 88,
+    "tags": [
+      "инструменты",
+      "шлифмашина",
+      "makita"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/makita_ga5030r_front.jpg",
+        "alt": "Makita GA5030R вид спереди"
+      },
+      {
+        "url": "https://example.com/images/makita_ga5030r_side.jpg",
+        "alt": "Makita GA5030R сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2100g",
+      "dimensions": "266mm x 138mm x 103mm",
+      "power": "720 W",
+      "voltage": "220 V",
+      "rpm": "11000 об/мин",
+      "color": "Black"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "50008",
+    "name": "Makita Лобзик JV0600K",
+    "sku": "Makita-JV0600K-8",
+    "brand": "Makita",
+    "category": "Электроинструменты",
+    "description": "Makita JV0600K — надежный лобзик с плавным пуском для точных резов.",
+    "price": {
+      "amount": 9600.00,
+      "currency": "RUB"
+    },
+    "available_stock": 52,
+    "tags": [
+      "инструменты",
+      "лобзик",
+      "makita"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/makita_jv0600k_front.jpg",
+        "alt": "Makita JV0600K вид спереди"
+      },
+      {
+        "url": "https://example.com/images/makita_jv0600k_side.jpg",
+        "alt": "Makita JV0600K сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2400g",
+      "dimensions": "236mm x 73mm x 207mm",
+      "power": "650 W",
+      "voltage": "220 V",
+      "rpm": "3100 об/мин",
+      "color": "Blue"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "50009",
+    "name": "Makita Перфоратор HR2470",
+    "sku": "Makita-HR2470-9",
+    "brand": "Makita",
+    "category": "Электроинструменты",
+    "description": "Makita HR2470 — популярный перфоратор для бурения и долбления бетона.",
+    "price": {
+      "amount": 13400.00,
+      "currency": "RUB"
+    },
+    "available_stock": 61,
+    "tags": [
+      "инструменты",
+      "перфоратор",
+      "ремонт"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/makita_hr2470_front.jpg",
+        "alt": "Makita HR2470 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/makita_hr2470_side.jpg",
+        "alt": "Makita HR2470 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2900g",
+      "dimensions": "370mm x 84mm x 214mm",
+      "power": "780 W",
+      "voltage": "220 V",
+      "rpm": "1100 об/мин",
+      "color": "Blue"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "50010",
+    "name": "Makita Аккумуляторная пила DSS610Z",
+    "sku": "Makita-DSS610Z-10",
+    "brand": "Makita",
+    "category": "Электроинструменты",
+    "description": "Makita DSS610Z — мощная аккумуляторная циркулярная пила.",
+    "price": {
+      "amount": 17200.00,
+      "currency": "RUB"
+    },
+    "available_stock": 34,
+    "tags": [
+      "инструменты",
+      "пила",
+      "аккумуляторный"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/makita_dss610z_front.jpg",
+        "alt": "Makita DSS610Z вид спереди"
+      },
+      {
+        "url": "https://example.com/images/makita_dss610z_side.jpg",
+        "alt": "Makita DSS610Z сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "3100g",
+      "dimensions": "348mm x 202mm x 228mm",
+      "power": "1100 W",
+      "voltage": "18 V",
+      "rpm": "3700 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "50011",
+    "name": "DeWalt Гайковерт DCF899",
+    "sku": "DeWalt-DCF899-11",
+    "brand": "DeWalt",
+    "category": "Электроинструменты",
+    "description": "Мощный ударный гайковерт DeWalt DCF899 для работы с крепежом.",
+    "price": {
+      "amount": 21500.00,
+      "currency": "RUB"
+    },
+    "available_stock": 48,
+    "tags": [
+      "инструменты",
+      "гайковерт",
+      "dewalt"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/dewalt_dcf899_front.jpg",
+        "alt": "DeWalt DCF899 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/dewalt_dcf899_side.jpg",
+        "alt": "DeWalt DCF899 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "3200g",
+      "dimensions": "224mm x 86mm x 278mm",
+      "power": "950 W",
+      "voltage": "18 V",
+      "rpm": "1900 об/мин",
+      "color": "Yellow"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "50012",
+    "name": "DeWalt Дрель-шуруповерт DCD791",
+    "sku": "DeWalt-DCD791-12",
+    "brand": "DeWalt",
+    "category": "Электроинструменты",
+    "description": "Компактный и мощный шуруповерт DeWalt DCD791 с бесщеточным двигателем.",
+    "price": {
+      "amount": 18500.00,
+      "currency": "RUB"
+    },
+    "available_stock": 66,
+    "tags": [
+      "инструменты",
+      "шуруповерт",
+      "dewalt"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/dewalt_dcd791_front.jpg",
+        "alt": "DeWalt DCD791 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/dewalt_dcd791_side.jpg",
+        "alt": "DeWalt DCD791 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1500g",
+      "dimensions": "173mm x 67mm x 203mm",
+      "power": "700 W",
+      "voltage": "18 V",
+      "rpm": "2000 об/мин",
+      "color": "Yellow"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "50013",
+    "name": "DeWalt Торцовочная пила DWS777",
+    "sku": "DeWalt-DWS777-13",
+    "brand": "DeWalt",
+    "category": "Электроинструменты",
+    "description": "DeWalt DWS777 — точная и надежная торцовочная пила для профессионалов.",
+    "price": {
+      "amount": 29900.00,
+      "currency": "RUB"
+    },
+    "available_stock": 27,
+    "tags": [
+      "инструменты",
+      "пила",
+      "dewalt"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/dewalt_dws777_front.jpg",
+        "alt": "DeWalt DWS777 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/dewalt_dws777_side.jpg",
+        "alt": "DeWalt DWS777 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "14000g",
+      "dimensions": "550mm x 280mm x 465mm",
+      "power": "1800 W",
+      "voltage": "220 V",
+      "rpm": "6300 об/мин",
+      "color": "Yellow"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "50014",
+    "name": "DeWalt Перфоратор D25144K",
+    "sku": "DeWalt-D25144K-14",
+    "brand": "DeWalt",
+    "category": "Электроинструменты",
+    "description": "Перфоратор DeWalt D25144K с антивибрационной системой для комфортной работы.",
+    "price": {
+      "amount": 17800.00,
+      "currency": "RUB"
+    },
+    "available_stock": 53,
+    "tags": [
+      "инструменты",
+      "перфоратор",
+      "dewalt"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/dewalt_d25144k_front.jpg",
+        "alt": "DeWalt D25144K вид спереди"
+      },
+      {
+        "url": "https://example.com/images/dewalt_d25144k_side.jpg",
+        "alt": "DeWalt D25144K сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "3100g",
+      "dimensions": "353mm x 85mm x 210mm",
+      "power": "800 W",
+      "voltage": "220 V",
+      "rpm": "1500 об/мин",
+      "color": "Yellow"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "50015",
+    "name": "DeWalt Болгарка DWE4016",
+    "sku": "DeWalt-DWE4016-15",
+    "brand": "DeWalt",
+    "category": "Электроинструменты",
+    "description": "Компактная угловая шлифмашина DeWalt DWE4016 для работы с металлом и камнем.",
+    "price": {
+      "amount": 7200.00,
+      "currency": "RUB"
+    },
+    "available_stock": 82,
+    "tags": [
+      "инструменты",
+      "шлифмашина",
+      "dewalt"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/dewalt_dwe4016_front.jpg",
+        "alt": "DeWalt DWE4016 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/dewalt_dwe4016_side.jpg",
+        "alt": "DeWalt DWE4016 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1800g",
+      "dimensions": "270mm x 73mm x 101mm",
+      "power": "730 W",
+      "voltage": "220 V",
+      "rpm": "11000 об/мин",
+      "color": "Yellow"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "50016",
+    "name": "Metabo Перфоратор KHE 2860",
+    "sku": "Metabo-KHE2860-16",
+    "brand": "Metabo",
+    "category": "Электроинструменты",
+    "description": "Перфоратор Metabo KHE 2860 с высокой мощностью для бурения бетона и камня.",
+    "price": {
+      "amount": 16200.00,
+      "currency": "RUB"
+    },
+    "available_stock": 44,
+    "tags": [
+      "инструменты",
+      "перфоратор",
+      "metabo"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/metabo_khe2860_front.jpg",
+        "alt": "Metabo KHE 2860 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/metabo_khe2860_side.jpg",
+        "alt": "Metabo KHE 2860 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "3100g",
+      "dimensions": "353mm x 85mm x 210mm",
+      "power": "880 W",
+      "voltage": "220 V",
+      "rpm": "1100 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "50017",
+    "name": "Metabo Шуруповерт PowerMaxx BS",
+    "sku": "Metabo-PowerMaxxBS-17",
+    "brand": "Metabo",
+    "category": "Электроинструменты",
+    "description": "Компактный аккумуляторный шуруповерт Metabo PowerMaxx BS для точной работы.",
+    "price": {
+      "amount": 9700.00,
+      "currency": "RUB"
+    },
+    "available_stock": 73,
+    "tags": [
+      "инструменты",
+      "шуруповерт",
+      "аккумуляторный"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/metabo_powermaxxbs_front.jpg",
+        "alt": "Metabo PowerMaxx BS вид спереди"
+      },
+      {
+        "url": "https://example.com/images/metabo_powermaxxbs_side.jpg",
+        "alt": "Metabo PowerMaxx BS сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1300g",
+      "dimensions": "162mm x 65mm x 192mm",
+      "power": "400 W",
+      "voltage": "12 V",
+      "rpm": "1400 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "50018",
+    "name": "Metabo Шлифмашина WEV 10-125",
+    "sku": "Metabo-WEV10125-18",
+    "brand": "Metabo",
+    "category": "Электроинструменты",
+    "description": "Metabo WEV 10-125 — универсальная угловая шлифмашина с регулировкой оборотов.",
+    "price": {
+      "amount": 10200.00,
+      "currency": "RUB"
+    },
+    "available_stock": 67,
+    "tags": [
+      "инструменты",
+      "шлифмашина",
+      "metabo"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/metabo_wev10125_front.jpg",
+        "alt": "Metabo WEV 10-125 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/metabo_wev10125_side.jpg",
+        "alt": "Metabo WEV 10-125 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2200g",
+      "dimensions": "280mm x 75mm x 103mm",
+      "power": "1000 W",
+      "voltage": "220 V",
+      "rpm": "10000 об/мин",
+      "color": "Black"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "50019",
+    "name": "Metabo Лобзик STEB 140 Plus",
+    "sku": "Metabo-STEB140Plus-19",
+    "brand": "Metabo",
+    "category": "Электроинструменты",
+    "description": "Лобзик Metabo STEB 140 Plus для профессиональных резов по дереву и металлу.",
+    "price": {
+      "amount": 14600.00,
+      "currency": "RUB"
+    },
+    "available_stock": 39,
+    "tags": [
+      "инструменты",
+      "лобзик",
+      "metabo"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/metabo_steb140_front.jpg",
+        "alt": "Metabo STEB 140 Plus вид спереди"
+      },
+      {
+        "url": "https://example.com/images/metabo_steb140_side.jpg",
+        "alt": "Metabo STEB 140 Plus сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2500g",
+      "dimensions": "250mm x 77mm x 206mm",
+      "power": "750 W",
+      "voltage": "220 V",
+      "rpm": "3100 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "50020",
+    "name": "Metabo Аккумуляторная дрель SB 18 L",
+    "sku": "Metabo-SB18L-20",
+    "brand": "Metabo",
+    "category": "Электроинструменты",
+    "description": "Metabo SB 18 L — аккумуляторная ударная дрель с высоким крутящим моментом.",
+    "price": {
+      "amount": 15800.00,
+      "currency": "RUB"
+    },
+    "available_stock": 55,
+    "tags": [
+      "инструменты",
+      "дрель",
+      "аккумуляторный"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/metabo_sb18l_front.jpg",
+        "alt": "Metabo SB 18 L вид спереди"
+      },
+      {
+        "url": "https://example.com/images/metabo_sb18l_side.jpg",
+        "alt": "Metabo SB 18 L сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1900g",
+      "dimensions": "202mm x 78mm x 250mm",
+      "power": "650 W",
+      "voltage": "18 V",
+      "rpm": "1800 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_4"
+  },
+  {
+    "product_id": "50021",
+    "name": "Hitachi Перфоратор DH36DAL",
+    "sku": "Hitachi-DH36DAL-21",
+    "brand": "Hitachi",
+    "category": "Электроинструменты",
+    "description": "Hitachi DH36DAL — мощный аккумуляторный перфоратор для интенсивной работы.",
+    "price": {
+      "amount": 18900.00,
+      "currency": "RUB"
+    },
+    "available_stock": 46,
+    "tags": [
+      "инструменты",
+      "перфоратор",
+      "hitachi"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/hitachi_dh36dal_front.jpg",
+        "alt": "Hitachi DH36DAL вид спереди"
+      },
+      {
+        "url": "https://example.com/images/hitachi_dh36dal_side.jpg",
+        "alt": "Hitachi DH36DAL сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "3400g",
+      "dimensions": "378mm x 88mm x 220mm",
+      "power": "850 W",
+      "voltage": "36 V",
+      "rpm": "1200 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_2"
+  },
+  {
+    "product_id": "50022",
+    "name": "Hitachi Дрель DS18DBFL2",
+    "sku": "Hitachi-DS18DBFL2-22",
+    "brand": "Hitachi",
+    "category": "Электроинструменты",
+    "description": "Hitachi DS18DBFL2 — компактная аккумуляторная дрель-шуруповерт с бесщеточным двигателем.",
+    "price": {
+      "amount": 11200.00,
+      "currency": "RUB"
+    },
+    "available_stock": 63,
+    "tags": [
+      "инструменты",
+      "дрель",
+      "шуруповерт"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/hitachi_ds18dbfl2_front.jpg",
+        "alt": "Hitachi DS18DBFL2 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/hitachi_ds18dbfl2_side.jpg",
+        "alt": "Hitachi DS18DBFL2 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "1800g",
+      "dimensions": "192mm x 78mm x 248mm",
+      "power": "600 W",
+      "voltage": "18 V",
+      "rpm": "1800 об/мин",
+      "color": "Black"
+    },
+    "store_id": "store_1"
+  },
+  {
+    "product_id": "50023",
+    "name": "Hitachi Шлифмашина G13SR4",
+    "sku": "Hitachi-G13SR4-23",
+    "brand": "Hitachi",
+    "category": "Электроинструменты",
+    "description": "Угловая шлифмашина Hitachi G13SR4 для работы с металлом и бетоном.",
+    "price": {
+      "amount": 7800.00,
+      "currency": "RUB"
+    },
+    "available_stock": 71,
+    "tags": [
+      "инструменты",
+      "шлифмашина",
+      "hitachi"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/hitachi_g13sr4_front.jpg",
+        "alt": "Hitachi G13SR4 вид спереди"
+      },
+      {
+        "url": "https://example.com/images/hitachi_g13sr4_side.jpg",
+        "alt": "Hitachi G13SR4 сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2100g",
+      "dimensions": "270mm x 72mm x 100mm",
+      "power": "730 W",
+      "voltage": "220 V",
+      "rpm": "10000 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_3"
+  },
+  {
+    "product_id": "50024",
+    "name": "Hitachi Лобзик CJ90VST",
+    "sku": "Hitachi-CJ90VST-24",
+    "brand": "Hitachi",
+    "category": "Электроинструменты",
+    "description": "Hitachi CJ90VST — лобзик с мощным мотором для точного и быстрого реза.",
+    "price": {
+      "amount": 8900.00,
+      "currency": "RUB"
+    },
+    "available_stock": 54,
+    "tags": [
+      "инструменты",
+      "лобзик",
+      "hitachi"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/hitachi_cj90vst_front.jpg",
+        "alt": "Hitachi CJ90VST вид спереди"
+      },
+      {
+        "url": "https://example.com/images/hitachi_cj90vst_side.jpg",
+        "alt": "Hitachi CJ90VST сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "2000g",
+      "dimensions": "228mm x 67mm x 206mm",
+      "power": "705 W",
+      "voltage": "220 V",
+      "rpm": "3000 об/мин",
+      "color": "Green"
+    },
+    "store_id": "store_5"
+  },
+  {
+    "product_id": "50025",
+    "name": "Hitachi Аккумуляторная пила C18DBL",
+    "sku": "Hitachi-C18DBL-25",
+    "brand": "Hitachi",
+    "category": "Электроинструменты",
+    "description": "Аккумуляторная дисковая пила Hitachi C18DBL для профессионального использования.",
+    "price": {
+      "amount": 16400.00,
+      "currency": "RUB"
+    },
+    "available_stock": 37,
+    "tags": [
+      "инструменты",
+      "пила",
+      "аккумуляторный"
+    ],
+    "images": [
+      {
+        "url": "https://example.com/images/hitachi_c18dbl_front.jpg",
+        "alt": "Hitachi C18DBL вид спереди"
+      },
+      {
+        "url": "https://example.com/images/hitachi_c18dbl_side.jpg",
+        "alt": "Hitachi C18DBL сбоку"
+      }
+    ],
+    "specifications": {
+      "weight": "3600g",
+      "dimensions": "355mm x 245mm x 240mm",
+      "power": "1200 W",
+      "voltage": "18 V",
+      "rpm": "4100 об/мин",
+      "color": "Black"
+    },
+    "store_id": "store_4"
+  }
+]

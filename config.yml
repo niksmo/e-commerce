@@ -1,0 +1,39 @@
+log_level: -4
+http_server_addr: 127.0.0.1:8000
+sql_db: postgres://user:pass@127.0.0.1:5432/ecom?sslmode=disable
+broker:
+  seed_brokers_primary:
+    - 127.0.0.1:7011
+    - 127.0.0.1:7012
+    - 127.0.0.1:7013
+  seed_brokers_secondary:
+    - 127.0.0.1:7021
+    - 127.0.0.1:7022
+    - 127.0.0.1:7023
+  schema_registry_urls:
+    - http://127.0.0.1:8081
+  topics:
+    products_from_shop: products-from-shop
+    products_to_storage: products-to-storage
+    filter_product_stream: filter-product-stream
+    filter_product_table: filter-product-group-table # <prefix>-table derived from consumers.filter_product_group
+    client_find_product_events: client-find-product-events
+    product_offers: product-offers
+  consumers:
+    filter_product_group: filter-product-group
+    product_blocker_group: product-blocker-group
+    product_saver_group: product-saver-group
+    client_events_group: client-events-group
+    product_offers_group: product-offers-group
+  sasl_ssl:
+    ca_cert: ./certs/ca.crt
+    app_cert: ./certs/app.crt
+    app_key: ./certs/app.key
+    app_user: app
+    app_pass: app
+hdfs:
+  addr: 127.0.0.1:9000
+  user: root
+  host: hdfs://namenode:9000
+spark:
+  addr: sc://127.0.0.1:15002
